@@ -1,0 +1,1202 @@
+/* ============================================================================
+   dwkemotes - Hoja de estilos
+   ---------------------------------------------------------------------------
+   Sistema de diseño:
+     Este recurso usa el sistema de diseño ResetRP (`html/design-system/`).
+     `tokens.css` y `components.css` se cargan ANTES que este archivo desde
+     `index.html`. Aqui no se define ningun color, tipografia ni radio nuevo:
+     las variables locales `--*` son solo alias semanticos sobre los tokens
+     `--rrp-*`, para que el resto de la hoja siga leyendose igual.
+
+     Escala de fondo del sistema (oscuro -> claro), respetada en todo el panel:
+       black-green  -> barra lateral (queda detras de todo)
+       bg-dark      -> fondo exterior del panel
+       bg-primary   -> tarjetas, cajas de texto, superficies elevadas
+       bg-secondary -> botones, cabeceras
+       hover-btn-bg -> hover generico de botones y filas
+       accent       -> solo maximo enfasis (favoritos, seleccion, aceptar)
+
+   Convenciones propias del recurso:
+     - Todo el color pasa por variables para que el acento sea configurable.
+     - `--panel-scale` escala la interfaz cambiando el tamaño base de fuente,
+       no con transform: asi el arrastre del panel no pelea con la escala.
+     - `body.compact` y `body.no-anim` son los interruptores de los ajustes.
+   ========================================================================== */
+
+:root {
+    /* Acento: token del sistema. Las variantes translucidas las recalcula
+       app.js a partir del acento elegido por el jugador en los ajustes. */
+    --accent: var(--rrp-accent);
+    --accent-dim: rgba(206, 220, 0, 0.16);
+    --accent-subtle: rgba(206, 220, 0, 0.07);
+    --accent-border: rgba(206, 220, 0, 0.42);
+    --on-accent: var(--rrp-text-on-accent);
+
+    --panel-scale: 1;
+    --panel-alpha: 0.92;
+    --cols: 2;
+
+    /* Los mismos tokens de fondo, en triplete RGB.
+       No son colores nuevos: son exactamente los valores de `tokens.css`
+         --rrp-black-green #000908   --rrp-bg-dark      #001D19
+         --rrp-bg-primary  #00352F   --rrp-bg-secondary #005A50
+       escritos asi porque el menu deja al jugador regular la opacidad del
+       panel, y `rgba()` no puede tomar la alfa de un hex guardado en una
+       variable (`color-mix()` no existe en el CEF de FiveM). Si cambia un
+       token de fondo del sistema, hay que actualizar tambien su triplete. */
+    --rrp-black-green-rgb: 0, 9, 8;
+    --rrp-bg-dark-rgb: 0, 29, 25;
+    --rrp-bg-primary-rgb: 0, 53, 47;
+    --rrp-bg-secondary-rgb: 0, 90, 80;
+
+    /* El fondo del panel se compone con `rgba(var(--bg-panel), --panel-alpha)`. */
+    --bg-panel: var(--rrp-bg-dark-rgb);
+    --bg-sidebar: rgba(var(--rrp-black-green-rgb), 0.55);
+
+    /* Las superficies de dentro del panel van translucidas para que el ajuste
+       de opacidad siga afectando al menu entero y no deje islas opacas. */
+    --bg-card: rgba(var(--rrp-bg-primary-rgb), 0.85);
+    --bg-input: rgba(var(--rrp-bg-primary-rgb), 0.85);
+    --bg-button: rgba(var(--rrp-bg-secondary-rgb), 0.9);
+    --bg-card-hover: var(--rrp-hover-btn-bg);   /* estado momentaneo: opaco */
+    --bg-elevated: var(--rrp-bg-primary);       /* flota sobre el panel: opaco */
+    --bg-scrim: rgba(var(--rrp-black-green-rgb), 0.72);
+
+    /* El borde del sistema es blanco; aqui solo se baja su opacidad. */
+    --border: rgba(255, 255, 255, 0.14);
+    --border-strong: rgba(255, 255, 255, 0.28);
+    --chip: rgba(255, 255, 255, 0.1);
+
+    --text: var(--rrp-white);
+    --text-secondary: rgba(255, 255, 255, 0.68);
+    --text-tertiary: rgba(255, 255, 255, 0.42);
+
+    /* EXTENSION FUERA DEL SISTEMA
+       El sistema ResetRP no define colores de estado (error / aviso / exito) y
+       el menu los necesita para los toasts y para las acciones destructivas.
+       Se mantienen los del recurso hasta que el sistema los incorpore; no
+       usarlos para nada decorativo. */
+    --danger: #FF453A;
+    --warning: #FF9F0A;
+    --success: #30D158;
+    --danger-tint: rgba(255, 69, 58, 0.12);
+
+    --radius-sm: var(--rrp-radius-sm);
+    --radius: var(--rrp-radius-md);
+    --radius-lg: var(--rrp-radius-lg);
+    --transition: var(--rrp-transition-fast);
+
+    --nav-width: 3.25rem;
+    --nav-width-labels: 5.4rem;
+    --panel-width: calc(clamp(18rem, 22vw, 26rem) + (var(--cols) - 2) * 5rem);
+}
+
+html {
+    font-size: calc(clamp(12px, 0.78vw, 17px) * var(--panel-scale));
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--rrp-font-family);
+    color: var(--text);
+    overflow: hidden;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.hidden { display: none !important; }
+
+.icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    display: block;
+}
+
+/* Desactivar animaciones desde los ajustes o por preferencia del sistema */
+body.no-anim *,
+body.no-anim *::before,
+body.no-anim *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+/* ── Panel ─────────────────────────────────────────────────────────────── */
+
+/* Nada de backdrop-filter aqui.
+   El juego no esta detras de la pagina, sino en otra capa del compositor, asi
+   que el filtro no puede difuminarlo: no tiene backdrop que leer. Lo que hace
+   CEF en ese caso es rellenar la region con negro opaco, y ese bloque se comia
+   la zona de la pantalla donde se dibuja el ped de vista previa.
+   Por la misma razon la sombra se mantiene corta: un blur de 5rem pintaba un
+   halo enorme sobre el juego. */
+#emote-menu {
+    position: fixed;
+    top: 50%;
+    right: 1.5rem;
+    transform: translateY(-50%);
+    width: var(--panel-width);
+    height: clamp(22rem, 64vh, 44rem);
+    background: rgba(var(--bg-panel), var(--panel-alpha));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--rrp-shadow-panel),
+                inset 0 0 0 0.5px rgba(255, 255, 255, 0.07);
+    display: flex;
+    animation: panelIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+#emote-menu.dragged {
+    transform: none;
+    animation: fadeIn 0.18s ease;
+}
+
+@keyframes panelIn {
+    from { opacity: 0; transform: translateY(-50%) scale(0.96); }
+    to   { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ── Barra lateral ─────────────────────────────────────────────────────── */
+
+.sidebar {
+    width: var(--nav-width);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.5rem 0.35rem;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sidebar.with-labels { width: var(--nav-width-labels); }
+
+/* Misma barra de desplazamiento que la rejilla: la del navegador se pintaba
+   en blanco y rompia la escala de fondo del sistema. */
+.sidebar::-webkit-scrollbar { width: 0.25rem; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 1rem;
+}
+.sidebar::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+
+.sidebar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.5rem 0.2rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+    font: inherit;
+}
+
+.sidebar-item:hover { background: var(--bg-card-hover); }
+
+.sidebar-item.active {
+    background: var(--accent-dim);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px var(--accent-border);
+}
+
+.sidebar-icon { font-size: 1.05rem; }
+
+/* Dos lineas como maximo y puntos suspensivos: los nombres de categoria varian
+   mucho de largo y recortarlos por caracteres los volvia ambiguos. */
+.sidebar-label {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-size: 0.56rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-align: center;
+    line-height: 1.15;
+    max-width: 100%;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+}
+
+.sidebar-add { color: var(--text-tertiary); }
+.sidebar-add:hover { color: var(--accent); }
+
+/* ── Zona principal ────────────────────────────────────────────────────── */
+
+.menu-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.menu-header { padding: 0 0.75rem; }
+
+.drag-handle {
+    height: 1.1rem;
+    margin: 0 -0.75rem;
+    cursor: grab;
+    position: relative;
+}
+
+.drag-handle::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0.5rem;
+    transform: translateX(-50%);
+    width: 2.25rem;
+    height: 0.2rem;
+    border-radius: 1rem;
+    background: var(--border-strong);
+    transition: background var(--transition);
+}
+
+.drag-handle:hover::after { background: var(--text-tertiary); }
+.drag-handle.dragging { cursor: grabbing; }
+.drag-handle.dragging::after { background: var(--accent); }
+
+.search-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding-bottom: 0.5rem;
+}
+
+.search-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+    padding: 0.35rem 0.55rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color var(--transition), background var(--transition);
+}
+
+.search-container:focus-within {
+    border-color: var(--accent-border);
+    background: var(--accent-subtle);
+}
+
+.search-icon {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+}
+
+#search-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.8rem;
+}
+
+#search-input::placeholder { color: var(--text-tertiary); }
+
+.search-clear {
+    border: none;
+    background: transparent;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0 0.15rem;
+}
+
+.search-clear:hover { color: var(--text); }
+
+.header-btn {
+    display: grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    flex-shrink: 0;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--bg-button);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+}
+
+.header-btn:hover { background: var(--bg-card-hover); color: var(--text); }
+.header-btn.active { background: var(--accent-dim); color: var(--accent); }
+.header-icon { font-size: 0.8rem; }
+
+/* ── Titulo de categoria ───────────────────────────────────────────────── */
+
+.category-title {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.15rem 0.85rem 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.cat-count {
+    padding: 0.05rem 0.35rem;
+    border-radius: 1rem;
+    background: var(--bg-card);
+    color: var(--text-tertiary);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.title-action {
+    margin-left: auto;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: pointer;
+    padding: 0.1rem 0.25rem;
+    border-radius: var(--radius-sm);
+}
+
+.title-action:hover { background: var(--bg-card-hover); color: var(--text); }
+
+/* ── Barra de estado (caminar / animo activos) ─────────────────────────── */
+
+.status-bar { padding: 0 0.85rem 0.45rem; }
+
+.status-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.3rem 0.2rem 0.4rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    font-size: 0.65rem;
+    max-width: 100%;
+}
+
+.status-item-icon { font-size: 0.7rem; }
+
+.status-item-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 8rem;
+    color: var(--text-secondary);
+}
+
+.status-item-reset {
+    display: grid;
+    place-items: center;
+    width: 0.95rem;
+    height: 0.95rem;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-tertiary);
+    font-size: 0.55rem;
+    cursor: pointer;
+}
+
+.status-item-reset:hover { background: var(--danger); color: var(--rrp-white); }
+
+/* ── Rejilla ───────────────────────────────────────────────────────────── */
+
+.content-area {
+    flex: 1;
+    min-height: 0;
+    padding: 0 0.5rem 0 0.85rem;
+}
+
+.content-scroll {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.35rem;
+}
+
+.content-scroll::-webkit-scrollbar { width: 0.35rem; }
+.content-scroll::-webkit-scrollbar-track { background: transparent; }
+.content-scroll::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 1rem;
+}
+.content-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+
+.emote-grid { position: relative; }
+
+.emote-card {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 1.75rem;
+    padding: 0 0.45rem;
+    background: var(--bg-card);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    overflow: hidden;
+    transition: background var(--transition), border-color var(--transition);
+}
+
+body.compact .emote-card { height: 1.5rem; }
+
+.emote-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-strong);
+}
+
+.emote-card.selected {
+    background: var(--accent-dim);
+    border-color: var(--accent-border);
+}
+
+.emote-card.active {
+    background: var(--accent-subtle);
+    border-color: var(--accent-border);
+}
+
+.emote-card.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.emote-card.favorited::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0.15rem;
+    background: var(--accent);
+}
+
+.card-icon {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+}
+
+.emote-card:hover .card-icon,
+.emote-card.selected .card-icon { color: var(--accent); }
+
+.card-label {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.72rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.card-label .hl {
+    background: transparent;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.card-badge,
+.card-variant {
+    flex-shrink: 0;
+    padding: 0.05rem 0.28rem;
+    border-radius: 1rem;
+    background: var(--chip);
+    color: var(--text-tertiary);
+    font-size: 0.55rem;
+    font-weight: 700;
+}
+
+.card-badge { background: var(--accent-dim); color: var(--accent); }
+
+.card-slot {
+    display: grid;
+    place-items: center;
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    background: var(--chip);
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.card-key {
+    flex-shrink: 0;
+    padding: 0.05rem 0.3rem;
+    border-radius: var(--radius-sm);
+    background: var(--chip);
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.keybind-card.empty-slot { opacity: 0.5; cursor: default; }
+.keybind-card.empty-slot .card-label { color: var(--text-tertiary); font-style: italic; }
+
+.preview-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 0.1rem;
+    width: 0;
+    background: var(--accent);
+    animation: previewFill linear forwards;
+}
+
+@keyframes previewFill {
+    from { width: 0; }
+    to   { width: 100%; }
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    height: 100%;
+    padding: 1rem;
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+.empty-icon { font-size: 1.8rem; opacity: 0.5; }
+
+/* ── Pie ───────────────────────────────────────────────────────────────── */
+
+.menu-footer {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.6rem;
+    overflow: hidden;
+    padding: 0.4rem 0.85rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.6rem;
+    color: var(--text-tertiary);
+}
+
+.footer-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.22rem;
+    white-space: nowrap;
+}
+
+.menu-footer kbd,
+.keybind-slot-btn kbd {
+    display: inline-block;
+    min-width: 1.1rem;
+    padding: 0.05rem 0.28rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.25rem;
+    background: var(--chip);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* ── Desplegable de variantes ──────────────────────────────────────────── */
+
+.variant-dropdown {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 40;
+    min-width: 100%;
+    max-height: 11rem;
+    overflow-y: auto;
+    padding: 0.2rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--rrp-shadow-panel);
+}
+
+.variant-option {
+    padding: 0.3rem 0.45rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.68rem;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.variant-option:hover { background: var(--bg-card-hover); }
+
+/* ── Menu contextual ───────────────────────────────────────────────────── */
+
+.ctx-menu {
+    position: absolute;
+    z-index: 60;
+    min-width: 10rem;
+    padding: 0.25rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--rrp-shadow-panel);
+    animation: fadeIn 0.12s ease;
+}
+
+.ctx-item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.45rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+
+.ctx-item:hover { background: var(--bg-card-hover); }
+.ctx-icon { font-size: 0.75rem; color: var(--text-secondary); }
+.ctx-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctx-check { font-size: 0.7rem; color: var(--accent); }
+
+.ctx-divider {
+    height: 1px;
+    margin: 0.25rem 0.3rem;
+    background: var(--border);
+}
+
+/* ── Tooltip del comando ───────────────────────────────────────────────── */
+
+.cmd-tooltip {
+    position: absolute;
+    z-index: 70;
+    transform: translateX(-50%);
+    padding: 0.18rem 0.4rem;
+    background: var(--bg-scrim);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.6rem;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.cmd-tooltip.visible { opacity: 1; }
+
+/* ── Panel de ajustes ──────────────────────────────────────────────────── */
+
+.settings-panel {
+    position: absolute;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    flex-direction: column;
+    background: rgba(var(--bg-panel), 0.99);
+    border-radius: var(--radius-lg);
+    animation: fadeIn 0.16s ease;
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.settings-header h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.settings-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.75rem 0.85rem 1rem;
+}
+
+.settings-body::-webkit-scrollbar { width: 0.35rem; }
+.settings-body::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 1rem;
+}
+
+.settings-section { margin-bottom: 1.1rem; }
+
+.settings-heading {
+    margin-bottom: 0.45rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    min-height: 1.9rem;
+    padding: 0.25rem 0;
+}
+
+.settings-label {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+}
+
+.settings-colors {
+    display: flex;
+    gap: 0.28rem;
+}
+
+.color-dot {
+    width: 0.95rem;
+    height: 0.95rem;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    transition: transform var(--transition), border-color var(--transition);
+}
+
+.color-dot:hover { transform: scale(1.15); }
+.color-dot.active {
+    border-color: var(--rrp-white);
+    box-shadow: 0 0 0 1px rgba(var(--rrp-black-green-rgb), 0.6);
+}
+
+.segmented {
+    display: flex;
+    gap: 0.15rem;
+    padding: 0.12rem;
+    background: var(--bg-input);
+    border-radius: var(--radius-sm);
+}
+
+.segment {
+    min-width: 1.5rem;
+    padding: 0.15rem 0.35rem;
+    border: none;
+    border-radius: 0.3rem;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.68rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+}
+
+.segment.active { background: var(--accent); color: var(--on-accent); }
+
+.settings-slider {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.settings-slider input[type='range'] {
+    width: 7rem;
+    height: 0.9rem;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.settings-slider input[type='range']::-webkit-slider-runnable-track {
+    height: 0.22rem;
+    border-radius: 1rem;
+    background: var(--bg-input);
+}
+
+.settings-slider input[type='range']::-webkit-slider-thumb {
+    appearance: none;
+    margin-top: -0.29rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 1px 3px rgba(var(--rrp-black-green-rgb), 0.5);
+}
+
+.slider-value {
+    min-width: 3rem;
+    text-align: right;
+    font-size: 0.65rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-tertiary);
+}
+
+.switch {
+    position: relative;
+    width: 2rem;
+    height: 1.15rem;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 1rem;
+    background: var(--bg-input);
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.switch.on { background: var(--accent); }
+
+.switch-knob {
+    position: absolute;
+    top: 0.13rem;
+    left: 0.13rem;
+    width: 0.89rem;
+    height: 0.89rem;
+    border-radius: 50%;
+    background: var(--rrp-white);
+    box-shadow: 0 1px 3px rgba(var(--rrp-black-green-rgb), 0.5);
+    transition: transform var(--transition);
+}
+
+.switch.on .switch-knob { transform: translateX(0.85rem); }
+
+.settings-action {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: 100%;
+    margin-bottom: 0.3rem;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.72rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--transition), border-color var(--transition);
+}
+
+.settings-action:hover { background: var(--bg-card-hover); border-color: var(--border-strong); }
+.settings-action.danger { color: var(--danger); }
+.settings-action.danger:hover { background: var(--danger-tint); }
+.settings-action-icon { font-size: 0.8rem; }
+
+.settings-hint {
+    margin-top: 0.5rem;
+    font-size: 0.62rem;
+    line-height: 1.5;
+    color: var(--text-tertiary);
+}
+
+.settings-textarea {
+    width: 100%;
+    height: 9rem;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--bg-input);
+    color: var(--text);
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.62rem;
+    resize: none;
+    outline: none;
+}
+
+.settings-textarea:focus { border-color: var(--accent-border); }
+
+.settings-actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+/* ── Modales ───────────────────────────────────────────────────────────── */
+
+.modal {
+    position: absolute;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: var(--bg-scrim);
+    border-radius: var(--radius-lg);
+    animation: fadeIn 0.15s ease;
+}
+
+.modal-content {
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 0.9rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--rrp-shadow-panel);
+}
+
+.modal-content h3 {
+    margin-bottom: 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.keybind-slot-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.3rem;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.7rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.keybind-slot-btn:hover { background: var(--accent-dim); border-color: var(--accent-border); }
+.keybind-slot-btn .muted { color: var(--text-tertiary); font-style: italic; }
+
+.modal-cancel {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.45rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--bg-button);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+
+.modal-cancel:hover { background: var(--bg-card-hover); }
+
+/* El modal de listas es mas estrecho que el de atajos: solo lleva un campo. */
+.list-modal-content { max-width: 20rem; }
+
+.list-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+}
+
+.list-modal-icon {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius);
+    background: var(--accent-subtle);
+    color: var(--accent);
+}
+
+.list-modal-glyph,
+.list-confirm-glyph { font-size: 1rem; }
+
+.list-name-input {
+    width: 100%;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--bg-input);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.75rem;
+    outline: none;
+}
+
+.list-name-input:focus { border-color: var(--accent-border); }
+
+.color-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.7rem 0;
+}
+
+.color-picker .color-dot { width: 1.1rem; height: 1.1rem; }
+
+.list-modal-actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.list-btn {
+    flex: 1;
+    padding: 0.45rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Mismo comportamiento que `.rrp-btn` del sistema: reposo en bg-secondary,
+   hover generico a hover-btn-bg y hover de "aceptar" al acento con texto
+   oscuro. El acento aparece solo en el momento de confirmar. */
+.list-btn-cancel { background: var(--bg-button); color: var(--text); }
+.list-btn-cancel:hover { background: var(--bg-card-hover); }
+.list-btn-save { background: var(--bg-button); color: var(--text); }
+.list-btn-save:hover { background: var(--accent); color: var(--on-accent); }
+.list-btn-danger { background: var(--danger); color: var(--rrp-white); }
+
+.list-btn-delete {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.4rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--danger);
+    font: inherit;
+    font-size: 0.68rem;
+    cursor: pointer;
+}
+
+.list-btn-delete:hover { background: var(--danger-tint); }
+
+.list-confirm { text-align: center; }
+
+.list-confirm-icon {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    margin: 0 auto 0.6rem;
+    border-radius: 50%;
+    background: var(--danger-tint);
+    color: var(--danger);
+}
+
+.list-confirm-title {
+    margin-bottom: 0.3rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.list-confirm-msg {
+    margin-bottom: 0.8rem;
+    font-size: 0.68rem;
+    color: var(--text-tertiary);
+}
+
+/* ── Avisos ────────────────────────────────────────────────────────────── */
+
+#toast-container {
+    position: absolute;
+    left: 0.6rem;
+    right: 0.6rem;
+    bottom: 2.6rem;
+    z-index: 100;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.3rem;
+    pointer-events: none;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    position: relative;
+    padding: 0.45rem 0.55rem;
+    overflow: hidden;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--rrp-shadow-panel);
+    font-size: 0.68rem;
+    pointer-events: auto;
+    cursor: pointer;
+    animation: toastIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-leaving { animation: toastOut 0.18s ease forwards; }
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(0.5rem); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes toastOut {
+    to { opacity: 0; transform: translateY(0.3rem); }
+}
+
+.toast-icon { font-size: 0.85rem; }
+.toast-success .toast-icon { color: var(--success); }
+.toast-error   .toast-icon { color: var(--danger); }
+.toast-warning .toast-icon { color: var(--warning); }
+.toast-info    .toast-icon { color: var(--accent); }
+
+.toast-msg {
+    flex: 1;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.toast-bar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 0.1rem;
+    width: 100%;
+    background: var(--accent);
+    transform-origin: left;
+    animation: toastBar linear forwards;
+}
+
+.toast-success .toast-bar { background: var(--success); }
+.toast-error   .toast-bar { background: var(--danger); }
+.toast-warning .toast-bar { background: var(--warning); }
+
+@keyframes toastBar {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+}

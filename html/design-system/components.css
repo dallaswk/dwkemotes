@@ -1,0 +1,140 @@
+/* ============================================================
+   ResetRP Design System — Componentes base
+   Requiere tokens.css cargado antes que este archivo.
+   Pensado para NUI FiveM en HTML/CSS/JS vanilla (sin build step).
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+  font-family: var(--rrp-font-family);
+}
+
+/* ---------- Panel contenedor ---------- */
+.rrp-panel {
+  background: var(--rrp-bg-dark);
+  border-radius: var(--rrp-radius-lg);
+  box-shadow: var(--rrp-shadow-panel);
+  padding: var(--rrp-space-lg);
+  color: var(--rrp-white);
+}
+
+/* ---------- Título principal ---------- */
+.rrp-title {
+  background: var(--rrp-bg-secondary);
+  border-radius: var(--rrp-radius-md);
+  padding: var(--rrp-space-md);
+  text-align: center;
+  margin-bottom: var(--rrp-space-md);
+}
+.rrp-title h1 {
+  margin: 0;
+  font-weight: var(--rrp-font-weight-bold);
+  font-size: var(--rrp-font-size-title);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.rrp-title p {
+  margin: var(--rrp-space-xs) 0 0;
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-subtitle);
+  opacity: 0.9;
+}
+
+/* ---------- Título 2 (sección) ---------- */
+.rrp-heading2 {
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-heading2);
+  margin: 0 0 var(--rrp-space-sm);
+}
+
+/* ---------- Caja de texto básico ---------- */
+.rrp-textbox {
+  background: var(--rrp-bg-primary);
+  border: var(--rrp-border-width) solid var(--rrp-border-color);
+  border-radius: var(--rrp-radius-sm);
+  padding: var(--rrp-space-md);
+  margin-bottom: var(--rrp-space-md);
+}
+.rrp-textbox .rrp-textbox__title {
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-heading2);
+  text-align: center;
+  margin: 0 0 var(--rrp-space-sm);
+}
+.rrp-textbox p {
+  font-weight: var(--rrp-font-weight-regular);
+  font-size: var(--rrp-font-size-body);
+  line-height: 1.5;
+  margin: 0 0 var(--rrp-space-sm);
+}
+
+/* ---------- Desplegable / dropdown ---------- */
+.rrp-dropdown {
+  background: var(--rrp-bg-dark);
+  border-radius: var(--rrp-radius-sm);
+  overflow: hidden;
+}
+.rrp-dropdown__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--rrp-bg-secondary);
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-button);
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  cursor: pointer;
+}
+.rrp-dropdown__option {
+  font-weight: var(--rrp-font-weight-regular);
+  font-size: var(--rrp-font-size-label);
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  cursor: pointer;
+  transition: background var(--rrp-transition-fast);
+}
+.rrp-dropdown__option:hover,
+.rrp-dropdown__option.is-hover {
+  background: var(--rrp-hover-btn-bg);
+}
+/* Fila ya seleccionada / marcada — variante de máximo énfasis */
+.rrp-dropdown__option.is-selected {
+  background: var(--rrp-accent);
+  color: var(--rrp-text-on-accent);
+  font-weight: var(--rrp-font-weight-semibold);
+}
+
+/* ---------- Botones ---------- */
+.rrp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rrp-bg-secondary);
+  color: var(--rrp-white);
+  border: none;
+  border-radius: var(--rrp-radius-sm);
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-button);
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  cursor: pointer;
+  transition: background var(--rrp-transition-fast), color var(--rrp-transition-fast);
+}
+/* Hover genérico / botón "Cancelar" */
+.rrp-btn:hover,
+.rrp-btn--cancel:hover {
+  background: var(--rrp-hover-btn-bg);
+}
+/* Botón "Aceptar": hover pasa a color accent con texto oscuro */
+.rrp-btn--accept:hover {
+  background: var(--rrp-accent);
+  color: var(--rrp-text-on-accent);
+}
+.rrp-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- Degradados ---------- */
+/* Siempre oscuro arriba -> claro abajo (180deg) */
+.rrp-gradient-1 { background: linear-gradient(180deg, var(--rrp-gradient-1-from), var(--rrp-gradient-1-to)); }
+.rrp-gradient-2 { background: linear-gradient(180deg, var(--rrp-gradient-2-from), var(--rrp-gradient-2-to)); }
+.rrp-gradient-3 { background: linear-gradient(180deg, var(--rrp-gradient-3-from), var(--rrp-gradient-3-to)); }
+.rrp-gradient-4 { background: linear-gradient(180deg, var(--rrp-gradient-4-from), var(--rrp-gradient-4-to)); }

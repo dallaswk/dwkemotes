@@ -1,0 +1,68 @@
+/* ============================================================
+   ResetRP Design System — Design Tokens
+   Fuente de verdad visual para todas las NUI de recursos FiveM.
+   No redefinir estos valores en un recurso concreto: importar
+   este archivo y usar las variables.
+   ============================================================ */
+
+:root {
+  /* ---- Color: escala de fondo (oscuro -> claro) -------------- */
+  --rrp-black-green:   #000908; /* negro tonos verdes: fondo de la página/HUD, detrás de todo */
+  --rrp-bg-dark:        #001D19; /* background fondo oscuro: contenedor exterior / overlay */
+  --rrp-bg-primary:     #00352F; /* background principal: paneles, cajas de texto */
+  --rrp-bg-secondary:   #005A50; /* background secundario: cabeceras, títulos, botones normales */
+  --rrp-hover-btn-bg:   #019685; /* background hover botón: hover genérico de botones/filas */
+
+  /* ---- Color: acento -------------------------------------------- */
+  --rrp-accent:         #CEDC00; /* "hovers y cosas": hover de acción positiva/aceptar, selección destacada */
+
+  /* ---- Color: texto ----------------------------------------------- */
+  --rrp-white:          #FFFFFF; /* texto sobre fondos oscuros (uso por defecto) */
+  --rrp-text-on-accent: #00352F; /* texto sobre --rrp-accent, para mantener contraste (usar bg-primary oscuro) */
+
+  /* ---- Tipografía ------------------------------------------------- */
+  --rrp-font-family: "Montserrat", "Segoe UI", sans-serif;
+  --rrp-font-weight-regular:  400; /* texto básico / cuerpo */
+  --rrp-font-weight-semibold: 600; /* títulos 2, botones, desplegables */
+  --rrp-font-weight-bold:     700; /* título principal */
+
+  --rrp-font-size-title:    22px;
+  --rrp-font-size-subtitle: 13px;
+  --rrp-font-size-heading2: 17px;
+  --rrp-font-size-body:     14px;
+  --rrp-font-size-button:   14px;
+  --rrp-font-size-label:    12px;
+
+  /* ---- Espaciado y forma -------------------------------------------- */
+  --rrp-radius-sm: 4px;
+  --rrp-radius-md: 8px;
+  --rrp-radius-lg: 14px;
+
+  --rrp-space-xs: 4px;
+  --rrp-space-sm: 8px;
+  --rrp-space-md: 16px;
+  --rrp-space-lg: 24px;
+
+  --rrp-border-width: 1px;
+  --rrp-border-color: var(--rrp-white);
+
+  /* ---- Sombra / elevación --------------------------------------------- */
+  --rrp-shadow-panel: 0 8px 24px rgba(0, 0, 0, 0.45);
+
+  /* ---- Transiciones ------------------------------------------------------ */
+  --rrp-transition-fast: 120ms ease-out;
+
+  /* ---- Escala de degradado (siempre oscuro arriba -> claro abajo) --------- */
+  /* Usar SIEMPRE con: linear-gradient(180deg, <stop-oscuro>, <stop-claro>) */
+  --rrp-gradient-1-from: var(--rrp-bg-dark);      /* #001D19 */
+  --rrp-gradient-1-to:   var(--rrp-bg-primary);   /* #00352F */
+
+  --rrp-gradient-2-from: var(--rrp-bg-primary);   /* #00352F */
+  --rrp-gradient-2-to:   var(--rrp-bg-secondary); /* #005A50 */
+
+  --rrp-gradient-3-from: var(--rrp-bg-secondary); /* #005A50 */
+  --rrp-gradient-3-to:   var(--rrp-hover-btn-bg); /* #019685 */
+
+  --rrp-gradient-4-from: var(--rrp-hover-btn-bg); /* #019685 */
+  --rrp-gradient-4-to:   var(--rrp-white);        /* #FFFFFF */
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Los iconos son un sprite SVG local (js/icons.js). -->
+    <title>dwkemotes</title>
+    <!-- Montserrat empaquetada: el CEF de FiveM no suele tener salida a
+         internet, asi que la fuente que pide el sistema viaja con el recurso. -->
+    <link rel="stylesheet" href="css/fonts.css">
+    <!-- Sistema de diseno ResetRP: tokens y componentes antes del CSS del recurso. -->
+    <link rel="stylesheet" href="design-system/tokens.css">
+    <link rel="stylesheet" href="design-system/components.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="emote-menu" class="hidden" role="dialog" aria-label="dwkemotes">
+        <nav class="sidebar" id="sidebar" aria-label="Categorias"></nav>
+
+        <div class="menu-main">
+            <header class="menu-header">
+                <div class="drag-handle" id="drag-handle" title="Arrastrar (doble clic para restablecer)"></div>
+                <div class="search-row">
+                    <div class="search-container">
+                        <span id="search-icon-slot"></span>
+                        <input type="text" id="search-input" autocomplete="off" spellcheck="false" aria-label="Buscar" />
+                        <button id="search-clear" class="search-clear hidden" type="button" aria-label="Limpiar">&times;</button>
+                    </div>
+                    <button id="settings-btn" class="header-btn" type="button" aria-label="Ajustes"></button>
+                    <button id="close-btn" class="header-btn" type="button" aria-label="Cerrar"></button>
+                </div>
+            </header>
+
+            <div class="category-title" id="category-title"></div>
+            <div class="status-bar hidden" id="status-bar"></div>
+
+            <div class="content-area">
+                <div class="content-scroll" id="content-scroll">
+                    <div id="emote-grid" class="emote-grid" role="listbox"></div>
+                </div>
+            </div>
+
+            <footer class="menu-footer" id="menu-footer"></footer>
+        </div>
+
+        <!-- Panel de ajustes (se superpone al contenido) -->
+        <section id="settings-panel" class="settings-panel hidden" aria-label="Ajustes">
+            <div class="settings-header">
+                <h3 id="settings-title"></h3>
+                <button id="settings-close" class="header-btn" type="button" aria-label="Cerrar ajustes"></button>
+            </div>
+            <div class="settings-body" id="settings-body"></div>
+        </section>
+
+        <div id="keybind-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3 id="keybind-modal-title"></h3>
+                <div id="keybind-slots"></div>
+                <button id="keybind-cancel" class="modal-cancel" type="button"></button>
+            </div>
+        </div>
+
+        <div id="list-modal" class="modal hidden">
+            <div class="modal-content list-modal-content">
+                <div id="list-modal-form">
+                    <div class="list-modal-header">
+                        <div id="list-modal-icon" class="list-modal-icon"></div>
+                        <h3 id="list-modal-title"></h3>
+                    </div>
+                    <input type="text" id="list-name-input" class="list-name-input" maxlength="20" autocomplete="off" spellcheck="false" />
+                    <div id="list-color-picker" class="color-picker"></div>
+                    <div class="list-modal-actions">
+                        <button id="list-cancel-btn" class="list-btn list-btn-cancel" type="button"></button>
+                        <button id="list-save-btn" class="list-btn list-btn-save" type="button"></button>
+                    </div>
+                    <button id="list-delete-btn" class="list-btn-delete hidden" type="button"></button>
+                </div>
+                <div id="list-confirm-delete" class="list-confirm hidden">
+                    <div class="list-confirm-icon" id="list-confirm-icon"></div>
+                    <p class="list-confirm-title" id="list-confirm-title"></p>
+                    <p class="list-confirm-msg" id="list-confirm-msg"></p>
+                    <div class="list-modal-actions">
+                        <button id="list-confirm-back" class="list-btn list-btn-cancel" type="button"></button>
+                        <button id="list-confirm-yes" class="list-btn list-btn-danger" type="button"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast-container" aria-live="polite"></div>
+    </div>
+
+    <script src="js/icons.js"></script>
+    <script src="js/nui.js"></script>
+    <script src="js/fuzzy.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/smoothScroll.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/grid.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
