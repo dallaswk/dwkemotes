@@ -8,13 +8,23 @@
      las variables locales `--*` son solo alias semanticos sobre los tokens
      `--rrp-*`, para que el resto de la hoja siga leyendose igual.
 
-     Escala de fondo del sistema (oscuro -> claro), respetada en todo el panel:
-       black-green  -> barra lateral (queda detras de todo)
-       bg-dark      -> fondo exterior del panel
-       bg-primary   -> tarjetas, cajas de texto, superficies elevadas
-       bg-secondary -> botones, cabeceras
-       hover-btn-bg -> hover generico de botones y filas
-       accent       -> solo maximo enfasis (favoritos, seleccion, aceptar)
+     Regla principal: NEGRO PARA CONTENEDORES, VERDE PARA JERARQUIA.
+       surface-1  -> fondo exterior del panel y capa superpuesta
+       surface-2  -> tarjetas, cajas, cuerpo de menus flotantes
+       surface-3  -> campos de texto y teclas
+       El verde se reserva para lo que marca jerarquia o invita a actuar:
+       bg-secondary en los botones, hover-btn-bg en el hover de filas y
+       botones, y accent para el maximo enfasis (favoritos, seleccion).
+
+     Dos superficies contiguas se separan con `--rrp-border-subtle`, no
+     subiendo el verde.
+
+   Por que este archivo no usa las clases `.rrp-*` directamente:
+     Los componentes del sistema fijan tamaños en px. Este menu escala entera
+     la interfaz con `--panel-scale` cambiando el tamaño de fuente raiz, que es
+     un ajuste que el jugador controla; usar las clases px lo dejaria clavado.
+     Asi que las clases locales replican el aspecto de su equivalente del
+     sistema en rem. Cada bloque dice a que `.rrp-*` corresponde.
 
    Convenciones propias del recurso:
      - Todo el color pasa por variables para que el acento sea configurable.
@@ -36,59 +46,68 @@
     --panel-alpha: 0.92;
     --cols: 2;
 
-    /* Los mismos tokens de fondo, en triplete RGB.
+    /* Los mismos tokens, en triplete RGB.
        No son colores nuevos: son exactamente los valores de `tokens.css`
-         --rrp-black-green #000908   --rrp-bg-dark      #001D19
-         --rrp-bg-primary  #00352F   --rrp-bg-secondary #005A50
+         --rrp-black-green #000908   --rrp-surface-1 #0A100F
+         --rrp-surface-2   #121A19   --rrp-surface-3 #1B2523
+         --rrp-bg-secondary #005A50
        escritos asi porque el menu deja al jugador regular la opacidad del
        panel, y `rgba()` no puede tomar la alfa de un hex guardado en una
        variable (`color-mix()` no existe en el CEF de FiveM). Si cambia un
-       token de fondo del sistema, hay que actualizar tambien su triplete. */
+       token del sistema, hay que actualizar tambien su triplete. */
     --rrp-black-green-rgb: 0, 9, 8;
-    --rrp-bg-dark-rgb: 0, 29, 25;
-    --rrp-bg-primary-rgb: 0, 53, 47;
+    --rrp-surface-1-rgb: 10, 16, 15;
+    --rrp-surface-2-rgb: 18, 26, 25;
+    --rrp-surface-3-rgb: 27, 37, 35;
     --rrp-bg-secondary-rgb: 0, 90, 80;
 
-    /* El fondo del panel se compone con `rgba(var(--bg-panel), --panel-alpha)`. */
-    --bg-panel: var(--rrp-bg-dark-rgb);
+    /* Contenedores: escala neutra. El fondo del panel se compone con
+       `rgba(var(--bg-panel), --panel-alpha)`. */
+    --bg-panel: var(--rrp-surface-1-rgb);
     --bg-sidebar: rgba(var(--rrp-black-green-rgb), 0.55);
 
     /* Las superficies de dentro del panel van translucidas para que el ajuste
        de opacidad siga afectando al menu entero y no deje islas opacas. */
-    --bg-card: rgba(var(--rrp-bg-primary-rgb), 0.85);
-    --bg-input: rgba(var(--rrp-bg-primary-rgb), 0.85);
-    --bg-button: rgba(var(--rrp-bg-secondary-rgb), 0.9);
-    --bg-card-hover: var(--rrp-hover-btn-bg);   /* estado momentaneo: opaco */
-    --bg-elevated: var(--rrp-bg-primary);       /* flota sobre el panel: opaco */
+    --bg-card: rgba(var(--rrp-surface-2-rgb), 0.88);
+    --bg-input: rgba(var(--rrp-surface-3-rgb), 0.88);
+    --bg-elevated: var(--rrp-surface-2);        /* flota sobre el panel: opaco */
     --bg-scrim: rgba(var(--rrp-black-green-rgb), 0.72);
 
-    /* El borde del sistema es blanco; aqui solo se baja su opacidad. */
-    --border: rgba(255, 255, 255, 0.14);
-    --border-strong: rgba(255, 255, 255, 0.28);
-    --chip: rgba(255, 255, 255, 0.1);
+    /* Verde: solo jerarquia y accion. */
+    --bg-button: rgba(var(--rrp-bg-secondary-rgb), 0.9);
+    --bg-card-hover: var(--rrp-hover-btn-bg);   /* estado momentaneo: opaco */
+
+    /* Separacion por borde, no por color. */
+    --border: var(--rrp-border-subtle);
+    --border-strong: var(--rrp-border-teal);
+    --chip: var(--rrp-surface-3);
 
     --text: var(--rrp-white);
-    --text-secondary: rgba(255, 255, 255, 0.68);
-    --text-tertiary: rgba(255, 255, 255, 0.42);
+    --text-secondary: var(--rrp-text-muted);
+    --text-tertiary: var(--rrp-text-faint);
 
-    /* EXTENSION FUERA DEL SISTEMA
-       El sistema ResetRP no define colores de estado (error / aviso / exito) y
-       el menu los necesita para los toasts y para las acciones destructivas.
-       Se mantienen los del recurso hasta que el sistema los incorpore; no
-       usarlos para nada decorativo. */
-    --danger: #FF453A;
-    --warning: #FF9F0A;
-    --success: #30D158;
-    --danger-tint: rgba(255, 69, 58, 0.12);
+    /* Estados semanticos: dicen como ha ido una accion o que riesgo tiene,
+       nunca decoran. Si algo es solo "importante", eso es el acento. */
+    --danger: var(--rrp-danger);
+    --danger-hover: var(--rrp-danger-hover);
+    --warning: var(--rrp-warning);
+    --success: var(--rrp-success);
+    --danger-tint: var(--rrp-danger-soft);
+    --on-danger: var(--rrp-text-on-danger);
 
     --radius-sm: var(--rrp-radius-sm);
     --radius: var(--rrp-radius-md);
     --radius-lg: var(--rrp-radius-lg);
     --transition: var(--rrp-transition-fast);
+    --focus-ring: var(--rrp-focus-ring);   /* botones y filas: aro de acento */
+    --focus-glow: var(--rrp-focus-glow);   /* campos: halo teal sobre su borde */
 
     --nav-width: 3.25rem;
-    --nav-width-labels: 5.4rem;
-    --panel-width: calc(clamp(18rem, 22vw, 26rem) + (var(--cols) - 2) * 5rem);
+    --nav-width-labels: 6.4rem;
+    /* El panel crece el mismo rem que la barra de categorias: la barra es un
+       hijo de ancho fijo y la rejilla se queda con el resto, asi que sin esto
+       ensanchar las categorias se lo comeria a las tarjetas. */
+    --panel-width: calc(clamp(19rem, 23vw, 27rem) + (var(--cols) - 2) * 5rem);
 }
 
 html {
@@ -107,6 +126,51 @@ body {
 }
 
 .hidden { display: none !important; }
+
+/* Foco de teclado. El sistema lo pide explicitamente: una NUI tambien se
+   navega con el teclado y el foco nunca puede ser invisible. Solo
+   :focus-visible, para no dibujarlo en cada clic de raton.
+
+   Son DOS formas y no son intercambiables:
+     - Aro de acento para lo que no tiene borde propio (botones, filas).
+     - Halo teal para los campos, que ya marcan el foco con su borde. Un aro
+       lima de 2px sobre un input con borde queda como un doble marco. */
+.header-btn:focus-visible,
+.sidebar-item:focus-visible,
+.segment:focus-visible,
+.switch:focus-visible,
+.color-dot:focus-visible,
+.list-btn:focus-visible,
+.list-btn-delete:focus-visible,
+.modal-cancel:focus-visible,
+.settings-action:focus-visible,
+.keybind-slot-btn:focus-visible,
+.title-action:focus-visible,
+.search-clear:focus-visible,
+.emote-card:focus-visible,
+.ctx-item:focus-visible,
+.settings-slider input[type='range']:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+.search-container:focus-within,
+.settings-textarea:focus,
+.settings-textarea:focus-visible,
+.list-name-input:focus,
+.list-name-input:focus-visible {
+    outline: none;
+    border-color: var(--rrp-hover-btn-bg);
+    box-shadow: var(--focus-glow);
+}
+
+/* El input vive dentro de `.search-container`, que es quien lleva el borde: el
+   halo lo pinta el contenedor y el campo no dibuja nada propio. */
+#search-input:focus,
+#search-input:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
 
 .icon {
     width: 1em;
@@ -128,6 +192,18 @@ body.no-anim *::after {
     *, *::before, *::after {
         animation-duration: 0.001ms !important;
         transition-duration: 0.001ms !important;
+    }
+
+    /* Excepcion: el desplazamiento del pie no es decoracion. Es lo unico que
+       deja leer los atajos que no caben, asi que congelarlo no reduce
+       movimiento, esconde contenido. Quien no lo quiera tiene el interruptor
+       "Animaciones de la interfaz" del propio menu, que si lo apaga (ahi la
+       alternativa es recorrer el pie con la rueda).
+       Ojo: Windows manda esta preferencia con las animaciones del sistema
+       desactivadas (HKCU\Control Panel\Desktop\WindowMetrics\MinAnimate = 0), que
+       mucha gente apaga por rendimiento y no por accesibilidad. */
+    .footer-track.scrolling {
+        animation-duration: var(--marquee-duration, 6s) !important;
     }
 }
 
@@ -194,10 +270,10 @@ body.no-anim *::after {
 .sidebar::-webkit-scrollbar { width: 0.25rem; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
 .sidebar::-webkit-scrollbar-thumb {
-    background: var(--border-strong);
-    border-radius: 1rem;
+    background: var(--rrp-surface-3);
+    border-radius: 999px;
 }
-.sidebar::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+.sidebar::-webkit-scrollbar-thumb:hover { background: var(--rrp-hover-btn-bg); }
 
 .sidebar-item {
     display: flex;
@@ -213,17 +289,43 @@ body.no-anim *::after {
     cursor: pointer;
     transition: background var(--transition), color var(--transition);
     font: inherit;
+    position: relative;
 }
 
-.sidebar-item:hover { background: var(--bg-card-hover); }
-
-.sidebar-item.active {
-    background: var(--accent-dim);
+/* Hover: sube la superficie, no el color. */
+.sidebar-item:hover {
+    background: var(--rrp-surface-3);
     color: var(--text);
-    box-shadow: inset 0 0 0 1px var(--accent-border);
 }
 
-.sidebar-icon { font-size: 1.05rem; }
+/* Activo: tinte suave + barra de acento al costado, como `.rrp-nav__item`.
+   Rellenar el fondo de lima macizo hundiria el contraste justo del elemento
+   que se quiere destacar. */
+.sidebar-item.active {
+    background: var(--rrp-success-soft);
+    color: var(--text);
+}
+
+.sidebar-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.18rem;
+    height: 62%;
+    border-radius: 999px;
+    background: var(--accent);
+}
+
+/* El color por categoria llega como variable desde app.js, no en linea, para
+   que el estado activo pueda ganarle sin pelear con un style="". */
+.sidebar-icon {
+    font-size: 1.05rem;
+    color: var(--cat-color, var(--rrp-hover-btn-bg));
+}
+
+.sidebar-item.active .sidebar-icon { color: var(--accent); }
 
 /* Dos lineas como maximo y puntos suspensivos: los nombres de categoria varian
    mucho de largo y recortarlos por caracteres los volvia ambiguos. */
@@ -299,9 +401,10 @@ body.no-anim *::after {
     transition: border-color var(--transition), background var(--transition);
 }
 
+/* El resaltado del buscador enfocado lo da ahora el halo de foco del sistema
+   (mas arriba); aqui solo se mantiene el fondo. */
 .search-container:focus-within {
-    border-color: var(--accent-border);
-    background: var(--accent-subtle);
+    background: var(--bg-input);
 }
 
 .search-icon {
@@ -366,6 +469,13 @@ body.no-anim *::after {
     color: var(--text-secondary);
 }
 
+/* Mismo icono y mismo color que en la barra lateral. */
+.cat-icon {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    color: var(--cat-color, var(--rrp-hover-btn-bg));
+}
+
 .cat-count {
     padding: 0.05rem 0.35rem;
     border-radius: 1rem;
@@ -421,7 +531,7 @@ body.no-anim *::after {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 8rem;
+    max-width: 11rem;
     color: var(--text-secondary);
 }
 
@@ -438,7 +548,7 @@ body.no-anim *::after {
     cursor: pointer;
 }
 
-.status-item-reset:hover { background: var(--danger); color: var(--rrp-white); }
+.status-item-reset:hover { background: var(--danger); color: var(--on-danger); }
 
 /* ── Rejilla ───────────────────────────────────────────────────────────── */
 
@@ -455,13 +565,15 @@ body.no-anim *::after {
     padding-right: 0.35rem;
 }
 
+/* Equivalente de `.rrp-scroll`: la barra por defecto del CEF canta sobre el
+   negro de las superficies. */
 .content-scroll::-webkit-scrollbar { width: 0.35rem; }
 .content-scroll::-webkit-scrollbar-track { background: transparent; }
 .content-scroll::-webkit-scrollbar-thumb {
-    background: var(--border-strong);
-    border-radius: 1rem;
+    background: var(--rrp-surface-3);
+    border-radius: 999px;
 }
-.content-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+.content-scroll::-webkit-scrollbar-thumb:hover { background: var(--rrp-hover-btn-bg); }
 
 .emote-grid { position: relative; }
 
@@ -482,14 +594,19 @@ body.no-anim *::after {
 
 body.compact .emote-card { height: 1.5rem; }
 
+/* Hover: sube la superficie y ata el borde a la paleta, como `.rrp-slot`.
+   Rellenar la tarjeta de teal macizo hundia el contraste del texto justo en la
+   fila que se esta señalando. */
 .emote-card:hover {
-    background: var(--bg-card-hover);
-    border-color: var(--border-strong);
+    background: var(--rrp-surface-3);
+    border-color: var(--rrp-hover-btn-bg);
 }
 
+/* Seleccionada: misma superficie, borde de acento. Tinte + indicador, nunca un
+   bloque macizo (`.rrp-menu__item.is-active`). */
 .emote-card.selected {
-    background: var(--accent-dim);
-    border-color: var(--accent-border);
+    background: var(--rrp-surface-3);
+    border-color: var(--accent);
 }
 
 .emote-card.active {
@@ -609,14 +726,44 @@ body.compact .emote-card { height: 1.5rem; }
 
 .menu-footer {
     display: flex;
-    flex-wrap: nowrap;
-    gap: 0.6rem;
     overflow: hidden;
     padding: 0.4rem 0.85rem;
     border-top: 1px solid var(--border);
     font-size: 0.6rem;
     color: var(--text-tertiary);
 }
+
+/* Los atajos no siempre caben: depende del ancho del panel, de la escala y de
+   lo largas que sean las palabras del idioma. Cuando se salen, la pista se
+   desplaza sola de un extremo al otro y vuelve, con una pausa en cada punta
+   para poder leerla. `--marquee-shift` y `--marquee-duration` las calcula
+   app.js, que es quien puede medir cuanto sobra. */
+.footer-track {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.6rem;
+    min-width: max-content;
+}
+
+.footer-track.scrolling {
+    animation: footerMarquee var(--marquee-duration, 6s) ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes footerMarquee {
+    0%, 16%   { transform: translateX(0); }
+    84%, 100% { transform: translateX(calc(0px - var(--marquee-shift, 0px))); }
+}
+
+/* Sin animaciones no hay desplazamiento automatico (`body.no-anim` reduce
+   cualquier animacion a 0.001ms y dejaria la pista congelada en el extremo).
+   A cambio, el pie se puede recorrer con la rueda del raton. */
+.menu-footer.no-marquee {
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.menu-footer.no-marquee::-webkit-scrollbar { height: 0; }
 
 .footer-hint {
     display: inline-flex;
@@ -625,18 +772,25 @@ body.compact .emote-card { height: 1.5rem; }
     white-space: nowrap;
 }
 
+/* Equivalente de `.rrp-key`: fondo surface-3, borde sutil y el borde inferior
+   mas grueso, que es lo que le da el relieve de tecla. */
 .menu-footer kbd,
-.keybind-slot-btn kbd {
-    display: inline-block;
-    min-width: 1.1rem;
-    padding: 0.05rem 0.28rem;
-    border: 1px solid var(--border-strong);
-    border-radius: 0.25rem;
-    background: var(--chip);
+.keybind-slot-btn kbd,
+.hint-overlay kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.15rem;
+    padding: 0.08rem 0.3rem;
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-sm);
+    background: var(--rrp-surface-3);
     color: var(--text-secondary);
     font-family: inherit;
     font-size: 0.55rem;
-    font-weight: 700;
+    font-weight: 600;
+    line-height: 1;
     text-align: center;
 }
 
@@ -646,15 +800,15 @@ body.compact .emote-card { height: 1.5rem; }
     position: absolute;
     left: 0;
     top: 100%;
-    z-index: 40;
+    z-index: var(--rrp-z-tooltip);
     min-width: 100%;
     max-height: 11rem;
     overflow-y: auto;
     padding: 0.2rem;
     background: var(--bg-elevated);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    box-shadow: var(--rrp-shadow-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--rrp-shadow-float);
 }
 
 .variant-option {
@@ -665,19 +819,22 @@ body.compact .emote-card { height: 1.5rem; }
     cursor: pointer;
 }
 
-.variant-option:hover { background: var(--bg-card-hover); }
+.variant-option:hover {
+    background: var(--rrp-surface-3);
+    box-shadow: inset 3px 0 0 var(--rrp-hover-btn-bg);
+}
 
 /* ── Menu contextual ───────────────────────────────────────────────────── */
 
 .ctx-menu {
     position: absolute;
-    z-index: 60;
+    z-index: var(--rrp-z-tooltip);
     min-width: 10rem;
     padding: 0.25rem;
     background: var(--bg-elevated);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    box-shadow: var(--rrp-shadow-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--rrp-shadow-float);
     animation: fadeIn 0.12s ease;
 }
 
@@ -691,7 +848,10 @@ body.compact .emote-card { height: 1.5rem; }
     cursor: pointer;
 }
 
-.ctx-item:hover { background: var(--bg-card-hover); }
+.ctx-item:hover {
+    background: var(--rrp-surface-3);
+    box-shadow: inset 3px 0 0 var(--rrp-hover-btn-bg);
+}
 .ctx-icon { font-size: 0.75rem; color: var(--text-secondary); }
 .ctx-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ctx-check { font-size: 0.7rem; color: var(--accent); }
@@ -706,12 +866,13 @@ body.compact .emote-card { height: 1.5rem; }
 
 .cmd-tooltip {
     position: absolute;
-    z-index: 70;
+    z-index: var(--rrp-z-tooltip);
     transform: translateX(-50%);
     padding: 0.18rem 0.4rem;
-    background: var(--bg-scrim);
+    background: var(--rrp-surface-1);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
+    box-shadow: var(--rrp-shadow-float);
     font-size: 0.6rem;
     font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
     color: var(--text-secondary);
@@ -728,7 +889,7 @@ body.compact .emote-card { height: 1.5rem; }
 .settings-panel {
     position: absolute;
     inset: 0;
-    z-index: 80;
+    z-index: var(--rrp-z-modal);
     display: flex;
     flex-direction: column;
     background: rgba(var(--bg-panel), 0.99);
@@ -758,8 +919,8 @@ body.compact .emote-card { height: 1.5rem; }
 
 .settings-body::-webkit-scrollbar { width: 0.35rem; }
 .settings-body::-webkit-scrollbar-thumb {
-    background: var(--border-strong);
-    border-radius: 1rem;
+    background: var(--rrp-surface-3);
+    border-radius: 999px;
 }
 
 .settings-section { margin-bottom: 1.1rem; }
@@ -830,7 +991,13 @@ body.compact .emote-card { height: 1.5rem; }
     transition: background var(--transition), color var(--transition);
 }
 
-.segment.active { background: var(--accent); color: var(--on-accent); }
+/* Tinte suave + subrayado de acento: mismo motivo que la barra lateral. El
+   acento macizo se queda para los botones, donde el texto va a juego. */
+.segment.active {
+    background: var(--rrp-accent-soft);
+    color: var(--text);
+    box-shadow: inset 0 -2px 0 var(--accent);
+}
 
 .settings-slider {
     display: flex;
@@ -955,7 +1122,7 @@ body.compact .emote-card { height: 1.5rem; }
 .modal {
     position: absolute;
     inset: 0;
-    z-index: 90;
+    z-index: var(--rrp-z-modal);
     display: grid;
     place-items: center;
     padding: 1rem;
@@ -970,7 +1137,7 @@ body.compact .emote-card { height: 1.5rem; }
     overflow-y: auto;
     padding: 0.9rem;
     background: var(--bg-elevated);
-    border: 1px solid var(--border-strong);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--rrp-shadow-panel);
 }
@@ -1085,7 +1252,8 @@ body.compact .emote-card { height: 1.5rem; }
 .list-btn-cancel:hover { background: var(--bg-card-hover); }
 .list-btn-save { background: var(--bg-button); color: var(--text); }
 .list-btn-save:hover { background: var(--accent); color: var(--on-accent); }
-.list-btn-danger { background: var(--danger); color: var(--rrp-white); }
+.list-btn-danger { background: var(--danger); color: var(--on-danger); }
+.list-btn-danger:hover { background: var(--danger-hover); }
 
 .list-btn-delete {
     width: 100%;
@@ -1127,20 +1295,110 @@ body.compact .emote-card { height: 1.5rem; }
     color: var(--text-tertiary);
 }
 
-/* ── Avisos ────────────────────────────────────────────────────────────── */
+/* ── Atajos en pantalla ────────────────────────────────────────────────── */
 
-#toast-container {
-    position: absolute;
-    left: 0.6rem;
-    right: 0.6rem;
-    bottom: 2.6rem;
-    z-index: 100;
+/* El cuadro de ayuda nativo de GTA lo pinta el motor, no la pagina: no admite
+   CSS y por tanto no puede seguir el sistema de diseno. Los atajos de la
+   colocacion se dibujan aqui.
+   A diferencia del nativo, este panel no hay que repintarlo cada frame: Lua lo
+   manda cuando cambia y se queda. Nunca captura el raton — durante la
+   colocacion el foco NUI esta desactivado y el juego recibe las teclas. */
+/* Capa de superposicion: avisos y atajos, arriba a la izquierda y apilados en
+   una columna para que no se tapen entre si. Va fuera de #emote-menu porque
+   tiene que verse con el menu cerrado, y no captura el raton en ningun caso:
+   durante el juego no hay foco NUI y el jugador se mueve con normalidad. */
+.overlay-stack {
+    position: fixed;
+    top: 1.75rem;
+    left: 1.75rem;
+    z-index: var(--rrp-z-notify);
     display: flex;
-    flex-direction: column-reverse;
-    gap: 0.3rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    max-width: 22rem;
     pointer-events: none;
 }
 
+.hint-overlay {
+    min-width: 11rem;
+    padding: 0.7rem 0.9rem;
+    background: rgba(var(--rrp-surface-1-rgb), 0.94);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--rrp-shadow-float);
+    color: var(--text);
+    pointer-events: none;
+    animation: hintIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes hintIn {
+    from { opacity: 0; transform: translateY(-0.35rem); }
+    to   { opacity: 1; transform: none; }
+}
+
+.hint-warning {
+    margin-bottom: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--danger);
+}
+
+/* Rejilla de dos columnas para que todas las acciones queden alineadas entre
+   si por mucho que cambie el ancho del grupo de teclas ("D" frente a
+   "Backspace"). Las filas usan `display: contents` para ceder sus celdas a la
+   rejilla del contenedor. */
+#hint-rows {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    justify-content: start;
+    gap: 0.32rem 0.55rem;
+    font-size: 0.78rem;
+}
+
+.hint-row { display: contents; }
+
+.hint-keys {
+    display: flex;
+    align-items: center;
+    gap: 0.16rem;
+    flex-shrink: 0;
+}
+
+.hint-sep {
+    color: var(--text-tertiary);
+    font-size: 0.68rem;
+}
+
+/* El panel de atajos usa la misma tecla, un punto mas grande. */
+.hint-overlay kbd {
+    min-width: 1.45rem;
+    padding: 0.16rem 0.35rem;
+    font-size: 0.72rem;
+    color: var(--text);
+}
+
+.hint-label { color: var(--text-secondary); }
+
+/* ── Avisos ────────────────────────────────────────────────────────────── */
+
+/* Los avisos caen de arriba abajo (el mas nuevo primero, que es hacia donde
+   mira la vista al aparecer arriba a la izquierda). */
+#toast-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* Equivalente de `.rrp-notify`: surface-2, borde sutil y una banda de 3px a la
+   izquierda con el color del estado. El color macizo va en el borde, no en el
+   fondo. */
 .toast {
     display: flex;
     align-items: center;
@@ -1149,14 +1407,20 @@ body.compact .emote-card { height: 1.5rem; }
     padding: 0.45rem 0.55rem;
     overflow: hidden;
     background: var(--bg-elevated);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    box-shadow: var(--rrp-shadow-panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--rrp-shadow-float);
     font-size: 0.68rem;
     pointer-events: auto;
     cursor: pointer;
     animation: toastIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.toast-success { border-left-color: var(--success); }
+.toast-error   { border-left-color: var(--danger); }
+.toast-warning { border-left-color: var(--warning); }
+.toast-info    { border-left-color: var(--accent); }
 
 .toast-leaving { animation: toastOut 0.18s ease forwards; }
 
@@ -1180,6 +1444,15 @@ body.compact .emote-card { height: 1.5rem; }
     line-height: 1.35;
     overflow-wrap: anywhere;
 }
+
+/* Los mensajes de Lua llevan los codigos de color de GTA (~r~, ~g~, ~y~...).
+   El feed nativo los interpretaba; aqui se convierten a estas clases en vez de
+   escupirlos como texto. Ver Toast._richText en app.js. */
+.rt-r { color: var(--danger); }
+.rt-g { color: var(--success); }
+.rt-y { color: var(--warning); }
+.rt-b { color: var(--rrp-hover-btn-bg); }
+.rt-h { font-weight: 700; }
 
 .toast-bar {
     position: absolute;

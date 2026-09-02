@@ -27,11 +27,29 @@ RegisterNetEvent('dwkemotes:client:receivePermissions', function(manifest)
     end
 end)
 
+-- Emotes registradas en caliente por otros recursos (exports.dwkemotes:AddEmote).
+-- El manifiesto de permisos lo construye el servidor recorriendo SU cache de
+-- emotes, que solo contiene las de AnimationList.lua y custom_emotes/. Una
+-- emote que llega despues no esta en ninguna de las dos listas, y con el
+-- manifiesto en modo "allow" eso se leeria como "denegada" — el modo lo elige
+-- el servidor segun cual de las dos listas sea mas corta, asi que el mismo
+-- recurso funcionaria en un servidor y no en otro.
+-- Sobre algo que el ACL no conoce, el ACL no opina.
+local externalEmotes = {}
+
+---Marca una emote como registrada en caliente. La llama AddEmote.
+---@param emoteName string ya en minusculas
+function MarkEmoteAsExternal(emoteName)
+    externalEmotes[emoteName] = true
+end
+
 -- ACE Permission Helper
 ---@return boolean
 function HasEmotePermission(emoteName, emoteType)
     -- If manifest not loaded yet, allow by default (server will validate anyway)
     if not permissions.loaded then return true end
+
+    if externalEmotes[emoteName] then return true end
 
     local category = AceCategoryFromEmoteType[emoteType]
     local present = permissions.categories[category][emoteName]
@@ -51,16 +69,54 @@ local function StripRichText(msg)
     return string.gsub(msg, "~%a+~", "")
 end
 -- You can edit this function to add support for your favorite notification system
-function SimpleNotify(msg)
-    msg = StripRichText(tostring(msg))
+--
+-- Los avisos van a la capa de la NUI (arriba a la izquierda, con el sistema de
+-- diseno) y no al feed nativo del juego, que sale abajo a la izquierda encima
+-- del HUD y no se puede reestilizar.
+--
+-- La capa no pide foco NUI en ningun momento, asi que el jugador se sigue
+-- moviendo con normalidad mientras hay un aviso en pantalla.
+--
+-- Los codigos de color de GTA (~r~, ~g~...) NO se quitan aqui: la NUI los
+-- entiende y los pinta. Solo se limpian si el aviso acaba en el chat, que no
+-- los interpreta.
+function SimpleNotify(msg, notifyType, duration)
+    msg = tostring(msg)
 
     if Config.NotificationsAsChatMessage then
-        TriggerEvent("chat:addMessage", { color = { 255, 255, 255 }, args = { msg } })
-    else
-        BeginTextCommandThefeedPost("STRING")
-        AddTextComponentSubstringPlayerName(msg)
-        EndTextCommandThefeedPostTicker(true, true)
+        TriggerEvent("chat:addMessage", {
+            color = { 255, 255, 255 },
+            args = { (string.gsub(msg, "~%a+~", "")) }
+        })
+        return
     end
+
+    SendNUIMessage({
+        action    = "showToast",
+        msg       = msg,
+        toastType = notifyType or "info",
+        duration  = duration,
+    })
+end
+
+-- ─── Atajos en pantalla (NUI) ────────────────────────────────────────────────
+--
+-- Alternativa a SimpleHelpText para los flujos que tienen que seguir el sistema
+-- de diseno ResetRP: el cuadro de ayuda nativo lo pinta el motor del juego y no
+-- admite CSS, asi que no hay forma de darle el aspecto del resto del menu.
+--
+-- Al contrario que el nativo, esto NO hay que repintarlo cada frame: se manda
+-- cuando el contenido cambia y se queda hasta que se oculta. Quien lo use desde
+-- un bucle tiene que acordarse de no reenviarlo en cada vuelta.
+
+--- @param rows {keys: string[], label: string}[] filas de teclas y su accion
+--- @param warning? string linea de aviso que va encima, en rojo
+function ShowNuiHints(rows, warning)
+    SendNUIMessage({ action = 'showHints', rows = rows, warning = warning or false })
+end
+
+function HideNuiHints()
+    SendNUIMessage({ action = 'hideHints' })
 end
 
 -- You can also edit this function to add support for your favorite notification system

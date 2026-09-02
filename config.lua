@@ -157,6 +157,10 @@ Config = {
         showMostUsed = true,
         showLabels = true,    -- Nombres bajo los iconos de la barra lateral
         compact = false,      -- Modo compacto (filas mas bajas)
+        confirmPlay = true,   -- El clic izquierdo solo selecciona; para lanzar la
+                              -- animacion hace falta un segundo clic, doble clic
+                              -- o Enter. Evita dispararla sin querer.
+                              -- No afecta a formas de caminar ni animos.
         animations = true,    -- Animaciones de la interfaz
     },
 }

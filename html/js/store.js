@@ -18,6 +18,9 @@ const Store = {
     translations: {},
     activeWalk: '',
     activeWalkLabel: '',
+    /** "Caminar con la animacion": lo lleva Lua, aqui solo se refleja. */
+    walkLock: false,
+    walkLockAvailable: false,
     activeExpression: '',
     activeExpressionLabel: '',
 
@@ -65,6 +68,7 @@ const Store = {
         previewDelay: 500,
         compact: false,
         animations: true,
+        confirmPlay: true,
         showRecents: true,
         showMostUsed: true,
         showLabels: true,
@@ -97,6 +101,8 @@ const Store = {
         this.searchTerm = '';
         this.activeWalk = data.activeWalk || '';
         this.activeWalkLabel = data.activeWalkLabel || '';
+        this.walkLock = !!data.walkLock;
+        this.walkLockAvailable = !!data.walkLockAvailable;
         this.activeExpression = data.activeExpression || '';
         this.activeExpressionLabel = data.activeExpressionLabel || '';
 
@@ -139,6 +145,21 @@ const Store = {
     // ─────────────────────────────────────────────────────────────────────────
     // Almacenamiento local
     // ─────────────────────────────────────────────────────────────────────────
+
+    /** Scroll recordado de cada categoria. Lo usa Grid. */
+    loadScrollPositions() {
+        const raw = this._loadJson('scroll', {});
+        const clean = {};
+        for (const [cat, pos] of Object.entries(raw || {})) {
+            const n = Number(pos);
+            if (Number.isFinite(n) && n > 0) clean[cat] = n;
+        }
+        return clean;
+    },
+
+    saveScrollPositions(positions) {
+        this._saveJson('scroll', positions);
+    },
 
     _loadJson(key, fallback) {
         try {
@@ -197,7 +218,7 @@ const Store = {
         if (!this.ACCENTS.some(c => c.toLowerCase() === String(s.accent).toLowerCase())) {
             s.accent = this.DEFAULT_SETTINGS.accent;
         }
-        for (const flag of ['compact', 'animations', 'showRecents', 'showMostUsed', 'showLabels']) {
+        for (const flag of ['compact', 'animations', 'confirmPlay', 'showRecents', 'showMostUsed', 'showLabels']) {
             s[flag] = !!s[flag];
         }
         return s;

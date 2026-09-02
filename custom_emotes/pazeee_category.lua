@@ -1,7 +1,15 @@
 -- Pazeee Animation Pack - Custom Category
 -- Groups all pazeee emotes under a single menu category.
+--
+-- Desactivado: agrupaba las ~200 animaciones de pazeee en una seccion propia
+-- ("New Roleplay Emotes") en vez de dejarlas caer en la categoria que les toca
+-- por tipo. Con esto apagado, cada una va a su sitio:
+--   EmoteType.SHARED      -> Compartidas
+--   EmoteType.PROP_EMOTES -> Objetos
+--   EmoteType.EMOTES      -> Animaciones
+-- Ponlo en true para recuperar la seccion agrupada.
 
-local ENABLED = true -- Set to false to disable this category
+local ENABLED = false -- Set to false to disable this category
 if not ENABLED then return end
 
 Config.CustomCategories[('New Roleplay Emotes')] = {

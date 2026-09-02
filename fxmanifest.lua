@@ -114,3 +114,40 @@ data_file 'DLC_ITYP_REQUEST' 'stream/samnick_prop_lighter01.ytyp'
 data_file 'DLC_ITYP_REQUEST' 'stream/bzzz_murderpack.ytyp'
 
 data_file 'DLC_ITYP_REQUEST' 'stream/prop_protestsign_fh.ytyp'
+
+-- Props del pack de Pazeee. Sin estas dos lineas los .ytyp viajan en el stream
+-- pero el juego no registra sus arquetipos, asi que las emotes que los usan
+-- (pegranga/pegrangb y pkingchaira-e) salen sin objeto en la mano.
+data_file 'DLC_ITYP_REQUEST' 'stream/a3d_egrang1.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/paze_kingchair1.ytyp'
+
+-- Props del MLO Midnight (custom_emotes/newmidnight_props.lua).
+-- Los cuatro dwk_peluche_*.ydr los streamea el mapeado `newmidnight`; de aqui
+-- solo salen sus archetypes, que es lo que hace falta para poder crearlos como
+-- objeto en mano. Sin estas lineas el prop no aparece y no hay aviso ninguno.
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_dwk_peluche_01.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_dwk_peluche_02.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_dwk_peluche_03.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_dwk_peluche_04.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_can_black.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_can_gold.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_can_pink.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_can_c.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_can_m.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_can_n.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_can_z.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_shaker.ytyp'
+
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_pops.ytyp'

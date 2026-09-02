@@ -18,7 +18,7 @@ local MAX_ENTRIES <const> = 200 -- Tope duro para que el KVP no crezca sin contr
 ---@field label string
 ---@field emoteType EmoteType
 ---@field count integer
----@field last integer Marca de tiempo (os.time)
+---@field last integer Marca de tiempo POSIX (ver `now`)
 
 ---@type table<string, UsageEntry>
 local usage = {}
@@ -27,6 +27,28 @@ local loaded = false
 
 local function keyFor(name, emoteType)
     return ('%s_%s'):format(emoteType or '', name)
+end
+
+--- Marca de tiempo POSIX.
+---
+--- El sandbox de Lua del cliente en FiveM no trae la libreria `os`, asi que
+--- `os.time()` lanzaba "attempt to index a nil value" en cada uso registrado y
+--- el historial no llegaba a guardarse nunca. GetCloudTimeAsInt devuelve lo
+--- mismo (segundos desde epoch) y si existe en el cliente.
+---
+--- Puede devolver 0 si todavia no hay hora de red al arrancar la sesion; en ese
+--- caso se sigue contando desde la ultima buena para que el orden por recencia
+--- no se rompa entre entradas de la misma sesion.
+local lastTimestamp = 0
+
+local function now()
+    local t = GetCloudTimeAsInt()
+    if not t or t <= 0 then
+        lastTimestamp += 1
+        return lastTimestamp
+    end
+    lastTimestamp = t
+    return t
 end
 
 local function load()
@@ -104,7 +126,7 @@ function RegisterEmoteUsage(name, emoteType)
 
     if entry then
         entry.count += 1
-        entry.last = os.time()
+        entry.last = now()
         entry.label = resolveLabel(name, emoteType)
     else
         usage[key] = {
@@ -112,7 +134,7 @@ function RegisterEmoteUsage(name, emoteType)
             label = resolveLabel(name, emoteType),
             emoteType = emoteType,
             count = 1,
-            last = os.time(),
+            last = now(),
         }
     end
 
@@ -212,13 +234,24 @@ do
     end
 end
 
+--- Sincroniza a disco lo escrito con SetResourceKvpNoSync.
+---
+--- FLUSH_RESOURCE_KVP esta declarado como native de servidor, asi que en el
+--- cliente puede no existir segun la build. Llamarlo a pelo tumbaria el hilo con
+--- "attempt to call a nil value" justo despues de guardar. Se comprueba antes.
+--- Si no esta, no se pierde nada importante: el volcado del KVP acaba ocurriendo
+--- de todas formas, solo que sin garantia de cuando.
+local function flushKvp()
+    if FlushResourceKvp then FlushResourceKvp() end
+end
+
 -- Volcado periodico del KVP: agrupa las escrituras en vez de tocar disco en cada emote.
 CreateThread(function()
     while true do
         Wait(20000)
         if dirty then
             save()
-            FlushResourceKvp()
+            flushKvp()
         end
     end
 end)
@@ -226,7 +259,7 @@ end)
 AddEventHandler('onResourceStop', function(resource)
     if resource ~= GetCurrentResourceName() then return end
     save()
-    FlushResourceKvp()
+    flushKvp()
 end)
 
 CreateExport('getRecentEmotes', GetRecentEmotes)

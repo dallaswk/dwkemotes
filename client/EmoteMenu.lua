@@ -16,18 +16,10 @@ local isNuiMenuOpen = false
 ---@param msg string
 ---@param toastType? string "success"|"error"|"warning"|"info"
 ---@param duration? number milliseconds, default 3500
+-- Con el menu abierto o cerrado el aviso sale en el mismo sitio (la capa de
+-- arriba a la izquierda), asi que ya no hay dos caminos que mantener.
 function ShowToast(msg, toastType, duration)
-    local clean = string.gsub(tostring(msg), "~%a+~", "")
-    if isNuiMenuOpen then
-        SendNUIMessage({
-            action    = "showToast",
-            msg       = clean,
-            toastType = toastType or "info",
-            duration  = duration,
-        })
-    else
-        SimpleNotify(msg)
-    end
+    SimpleNotify(msg, toastType, duration)
 end
 local isWaitingForPed = false
 local cachedPayload = nil
@@ -608,7 +600,7 @@ local function getTranslations()
         'emotes', 'danceemotes', 'animalemotes', 'propemotes', 'shareemotes',
         'cancelemote', 'walkingstyles', 'moods', 'favorites', 'keybinds', 'emojis',
         'searchemotes', 'searchnoresult', 'normalreset', 'resetdef',
-        'btn_select', 'btn_back', 'btn_place',
+        'btn_select', 'btn_back', 'btn_place', 'btn_play',
         'btn_set_favorite', 'btn_remove_favorite', 'btn_setkeybind', 'btn_delkeybind',
         'btn_groupselect', 'cancelemoteinfo', 'favoritesinfo',
         'addedtofavorites', 'removedfromfavorites', 'btn_rightclick',
@@ -627,6 +619,7 @@ local function getTranslations()
         'hint_category', 'hint_favorite', 'hint_rightclick', 'hint_more',
         'hint_cancel', 'hint_place',
         'walklock', 'walklockhint',
+        'confirmplay', 'confirmplayhint', 'hint_play',
     }
     local t = {}
     for _, key in ipairs(keys) do
@@ -1103,6 +1096,148 @@ end)
 CreateExport('notify', function(message, notifyType, duration)
     ShowToast(message, notifyType, duration)
 end)
+
+-- ─── Registro de emotes desde otros recursos ─────────────────────────────────
+--
+-- Otros recursos (packs de props, tiendas, minijuegos) pueden anadir sus
+-- animaciones sin tocar AnimationList.lua ni duplicar el menu.
+--
+-- El formato de `emoteData` es el mismo que el de las entradas de
+-- AnimationList.lua, asi que copiar una y cambiarle el diccionario ya vale:
+--
+--   exports.dwkemotes:AddEmote('mi_emote', {
+--       'anim@dict', 'anim_name', 'Mi animacion',
+--       AnimationOptions = { EmoteLoop = true, Prop = 'prop_x' }
+--   }, 'PropEmotes')
+--
+-- Se puede llamar en cualquier momento: si el menu todavia no ha convertido su
+-- tabla de animaciones, la emote entra en la cola de conversion; si ya lo hizo,
+-- se convierte al vuelo. En ambos casos aparece la proxima vez que se abra el
+-- menu (las categorias se construyen en cada apertura).
+
+local EMOTE_TYPE_VALUES = {}
+for _, value in pairs(EmoteType) do EMOTE_TYPE_VALUES[value] = true end
+
+--- Tabla destino de cada tipo, ya convertido.
+---@param emoteType EmoteType
+---@return table?
+local function targetTableFor(emoteType)
+    if emoteType == EmoteType.EXPRESSIONS then return ExpressionData end
+    if emoteType == EmoteType.WALKS then return WalkData end
+    if emoteType == EmoteType.SHARED then return SharedEmoteData end
+    return EmoteData
+end
+
+--- Quien registro cada emote externa, para poder distinguir entre "este recurso
+--- se ha reiniciado y vuelve a registrar lo suyo" (se sobreescribe sin ruido) y
+--- "dos recursos pelean por el mismo nombre" (se rechaza y se avisa).
+local emoteOwners = {}
+
+--- Rechaza un registro dejando rastro en consola.
+---
+--- El valor devuelto no basta: el patron habitual en los recursos que registran
+--- emotes es `pcall(export, ...)`, y pcall devuelve true mientras no se lance un
+--- error — con lo que un `return false` se lee como exito y el fallo pasa
+--- desapercibido. Por eso se imprime tambien.
+---@return boolean, string
+local function rejectEmote(owner, name, reason)
+    print(('^3[dwkemotes]^7 registro de "%s" rechazado (%s): %s')
+        :format(tostring(name), tostring(owner), reason))
+    return false, reason
+end
+
+--- Registra una animacion venida de otro recurso.
+---@param emoteName string clave del emote (la de `/e <nombre>`)
+---@param emoteData table mismo formato que las entradas de AnimationList.lua
+---@param emoteType? EmoteType por defecto EmoteType.EMOTES
+---@return boolean ok
+---@return string? err motivo del rechazo
+function AddEmote(emoteName, emoteData, emoteType)
+    local owner = GetInvokingResource() or GetCurrentResourceName()
+
+    if type(emoteName) ~= 'string' or emoteName == '' then
+        return rejectEmote(owner, emoteName, 'emoteName tiene que ser una cadena no vacia')
+    end
+    if type(emoteData) ~= 'table' then
+        return rejectEmote(owner, emoteName, 'emoteData tiene que ser una tabla')
+    end
+
+    -- Las emotes se buscan siempre en minusculas (`/e` pasa el nombre por
+    -- string.lower), asi que la clave se normaliza aqui y no en cada consulta.
+    local name = string.lower(emoteName)
+
+    emoteType = emoteType or EmoteType.EMOTES
+    if not EMOTE_TYPE_VALUES[emoteType] then
+        return rejectEmote(owner, name, ('emoteType "%s" no existe'):format(tostring(emoteType)))
+    end
+
+    -- Un escenario solo necesita su nombre; una animacion necesita diccionario
+    -- y clip. Sin eso, la emote entraria en el menu y fallaria al pulsarla.
+    local isScenario = emoteData[1] == ScenarioType.MALE
+        or emoteData[1] == ScenarioType.SCENARIO
+        or emoteData[1] == ScenarioType.OBJECT
+    if not isScenario
+        and emoteType ~= EmoteType.EXPRESSIONS
+        and emoteType ~= EmoteType.WALKS
+        and (type(emoteData[1]) ~= 'string' or type(emoteData[2]) ~= 'string')
+    then
+        return rejectEmote(owner, name, 'faltan el diccionario y/o el nombre de la animacion')
+    end
+
+    local target = targetTableFor(emoteType)
+    local existing = (CONVERTED and target[name] ~= nil)
+        or (not CONVERTED and RP and RP[emoteType] and RP[emoteType][name] ~= nil)
+
+    if existing and emoteOwners[name] ~= owner then
+        return rejectEmote(owner, name,
+            ('ya existe una emote con ese nombre (la registro "%s")')
+                :format(tostring(emoteOwners[name] or 'dwkemotes')))
+    end
+    emoteOwners[name] = owner
+    MarkEmoteAsExternal(name)
+
+    -- Copia propia: el recurso que llama sigue siendo dueno de su tabla y no
+    -- queremos que un cambio suyo posterior se cuele en el menu.
+    local copy = {}
+    for k, v in pairs(emoteData) do copy[k] = v end
+
+    if not CONVERTED then
+        -- Todavia no se ha construido EmoteData: se deja en la cola de RP y
+        -- convertRP lo procesa junto con el resto.
+        RP[emoteType] = RP[emoteType] or {}
+        RP[emoteType][name] = copy
+        return true
+    end
+
+    copy.emoteType = emoteType
+
+    if emoteType == EmoteType.EXPRESSIONS or emoteType == EmoteType.WALKS then
+        copy.anim = copy[1]
+        copy.label = copy[2] or name
+        local translated = TranslateEmoteLabel(name)
+        if translated then copy.label = translated end
+    else
+        convertToEmoteData(name, copy)
+    end
+
+    target[name] = copy
+
+    -- Las categorias personalizadas (bailes, objetos, las de config.lua) se
+    -- resuelven contra EmoteData, asi que hay que rehacerlas para que la emote
+    -- nueva caiga en la suya.
+    categoryToEmotes = expandCustomCategories()
+
+    return true
+end
+
+CreateExport('AddEmote', AddEmote)
+-- Alias: cada fork de rpemotes expone esto con un nombre distinto y los
+-- recursos de terceros los prueban por turnos hasta que uno responde.
+CreateExport('addEmote', AddEmote)
+CreateExport('AddPropEmote', function(emoteName, emoteData, emoteType)
+    return AddEmote(emoteName, emoteData, emoteType or EmoteType.PROP_EMOTES)
+end)
+CreateExport('RegisterEmote', AddEmote)
 
 -- ─── Data initialization thread ───
 

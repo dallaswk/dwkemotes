@@ -41,10 +41,14 @@ const Grid = {
     _ctxCloser: null,
     _tooltip: null,
     _usageTimer: null,
+    _scrollByCategory: {},
+    _scrollSaveTimer: null,
+    _scrollRestoreTimer: null,
 
     init() {
         this._scrollEl = document.getElementById('content-scroll');
         this._gridEl = document.getElementById('emote-grid');
+        this._scrollByCategory = Store.loadScrollPositions();
 
         SmoothScroll.init(this._scrollEl);
 
@@ -58,6 +62,7 @@ const Grid = {
         });
 
         this._scrollEl.addEventListener('scroll', () => {
+            this._rememberScroll();
             if (this._scrollRAF) return;
             this._scrollRAF = requestAnimationFrame(() => {
                 this._scrollRAF = null;
@@ -94,7 +99,51 @@ const Grid = {
         SmoothScroll.reset();
         this._measureColumns();
         this._onScroll();
+        this._restoreScroll();
         requestAnimationFrame(() => this._measureItemHeight());
+    },
+
+    // ─── Memoria del scroll ───
+    //
+    // Cada categoria recuerda por donde iba, y se guarda en el cliente para que
+    // aguante entre sesiones. Es lo que hace usable una lista de 600 objetos:
+    // sin esto, salir al juego y volver a abrir el menu te devolvia al principio.
+
+    /** Guarda la posicion actual. Agrupado, que scroll dispara muchisimo. */
+    _rememberScroll() {
+        // Con una busqueda activa la lista es otra: su scroll no dice nada de
+        // la categoria y guardarlo pisaria el bueno.
+        if (Store.searchTerm) return;
+
+        const cat = Store.currentCategory;
+        if (!cat) return;
+
+        this._scrollByCategory[cat] = this._scrollEl.scrollTop;
+
+        clearTimeout(this._scrollSaveTimer);
+        this._scrollSaveTimer = setTimeout(() => {
+            Store.saveScrollPositions(this._scrollByCategory);
+        }, 400);
+    },
+
+    /** Devuelve el scroll a donde estaba en esta categoria. */
+    _restoreScroll() {
+        const cat = Store.currentCategory;
+        const pos = (!Store.searchTerm && cat) ? this._scrollByCategory[cat] : 0;
+
+        clearTimeout(this._scrollRestoreTimer);
+        if (!pos) return;
+
+        // La altura de la rejilla acaba de cambiar y el navegador todavia no la
+        // ha aplicado: si movemos el scroll ahora mismo lo recorta al rango
+        // viejo y acabamos en 0. Se aplaza con setTimeout y no con
+        // requestAnimationFrame, que no corre si la pagina no se esta pintando.
+        this._scrollRestoreTimer = setTimeout(() => {
+            SmoothScroll.jumpTo(pos);
+            this._lastStart = -1;
+            this._lastEnd = -1;
+            this._onScroll();
+        }, 0);
     },
 
     // ─── Geometria ───
@@ -258,7 +307,7 @@ const Grid = {
         if (Store.isFavorite(item.name, item.emoteType)) card.classList.add('favorited');
 
         if (item._isKeybind) {
-            this._buildKeybindCard(card, item);
+            this._buildKeybindCard(card, item, index);
             return;
         }
 
@@ -298,7 +347,9 @@ const Grid = {
                 this._showVariants(card, item);
                 return;
             }
-            this._activate(item, e);
+            if (!this._readyToActivate(item, index, e)) return;
+            // El doble clic es una decision tomada: lanza y sale del menu.
+            this._activate(item, e, { close: e.detail >= 2 });
         };
 
         card.oncontextmenu = (e) => {
@@ -324,7 +375,7 @@ const Grid = {
         };
     },
 
-    _buildKeybindCard(card, item) {
+    _buildKeybindCard(card, item, index) {
         card.classList.add('keybind-card');
         if (item._isEmpty) card.classList.add('empty-slot');
 
@@ -346,7 +397,9 @@ const Grid = {
         }
 
         card.onclick = (e) => {
-            if (!item._isEmpty) this._activate(item, e);
+            if (item._isEmpty) return;
+            if (!this._readyToActivate(item, index, e)) return;
+            this._activate(item, e, { close: e.detail >= 2 });
         };
         card.oncontextmenu = (e) => {
             e.preventDefault();
@@ -376,9 +429,60 @@ const Grid = {
 
     // ─── Acciones ───
 
-    _activate(item, e) {
+    /**
+     * Con "confirmar antes de reproducir" activo, el primer clic sobre una
+     * tarjeta solo la selecciona; hace falta un segundo clic sobre esa misma
+     * tarjeta, un doble clic o Enter para lanzarla. Asi no se dispara una
+     * animacion al recorrer la lista con el raton.
+     *
+     * Quedan fuera dos cosas a proposito:
+     *  - Las formas de caminar y los animos, que no son animaciones que se
+     *    "lancen" sino ajustes que se prueban uno detras de otro; obligar a dos
+     *    clics para cambiar de andar solo estorba, y cambiarlo sin querer no
+     *    tiene consecuencias.
+     *  - Los gestos que ya son deliberados: Shift+clic (colocar) y el doble
+     *    clic, que lanzan a la primera.
+     *
+     * @returns {boolean} true si hay que activar el elemento ya
+     */
+    _readyToActivate(item, index, e) {
+        if (!Store.settings.confirmPlay) return true;
+        if (!e) return true;                                  // vino del teclado
+        if (item._isWalk || item._isExpression) return true;
+        if (e.shiftKey || e.detail >= 2) return true;
+        if (this._selectedIndex === index) return true;       // ya estaba elegida
+
+        this._setSelected(index);
+        return false;
+    },
+
+    /** Mueve la seleccion visible a una tarjeta concreta. */
+    _setSelected(index) {
+        const prev = this._rendered.get(this._selectedIndex);
+        if (prev) prev.classList.remove('selected');
+
+        this._selectedIndex = index;
+
+        const next = this._rendered.get(index);
+        if (next) next.classList.add('selected');
+    },
+
+    /**
+     * Lanza lo que sea el elemento: animacion, forma de caminar, animo o emoji.
+     *
+     * @param {object} item
+     * @param {MouseEvent?} e evento que lo origino, o null si vino del teclado
+     * @param {{close?: boolean}} [opts] `close` cierra el menu despues de
+     *   lanzarlo, para los gestos que ya son una decision tomada (doble clic y
+     *   "Reproducir" del menu contextual). Cerrar el menu no corta la
+     *   animacion: en Lua solo se quita el foco y se retira el ped de vista
+     *   previa.
+     */
+    _activate(item, e, opts) {
         this.stopPreview();
 
+        // La colocacion se queda con el control de la interfaz por su cuenta,
+        // asi que aqui no se cierra nada.
         if (e && e.shiftKey && Store.config.placementEnabled
             && !item._isWalk && !item._isExpression && !item._isEmoji) {
             NUI.placeEmote(item.name);
@@ -388,17 +492,19 @@ const Grid = {
         if (item._isWalk) {
             NUI.setWalkStyle(item.name);
             this._scheduleUsageRefresh();
-            return;
-        }
-        if (item._isExpression) {
+        } else if (item._isExpression) {
             NUI.setExpression(item.name);
             this._scheduleUsageRefresh();
-            return;
+        } else if (item._isEmoji) {
+            NUI.showEmoji(item.name);
+        } else if (item.emoteType === 'Shared') {
+            NUI.playSharedEmote(item.name);
+        } else {
+            NUI.playEmote(item.name, item.emoteType);
+            this._scheduleUsageRefresh();
         }
-        if (item._isEmoji) return NUI.showEmoji(item.name);
-        if (item.emoteType === 'Shared') return NUI.playSharedEmote(item.name);
-        NUI.playEmote(item.name, item.emoteType);
-        this._scheduleUsageRefresh();
+
+        if (opts && opts.close) NUI.closeMenu();
     },
 
     /**
@@ -683,6 +789,17 @@ const Grid = {
         const emoteId = item.emoteType + '_' + item.name;
         const emoteData = { name: item.name, label: item.label || item.name, emoteType: item.emoteType };
 
+        // Reproducir y salir. Va la primera por ser la accion principal.
+        if (!item._isEmpty && item.hasPermission !== false) {
+            const playEntry = this._ctxItem('play', Store.t('btn_play'));
+            playEntry.onclick = () => {
+                this._closeContextMenu();
+                this._activate(item, null, { close: true });
+            };
+            menu.appendChild(playEntry);
+            menu.appendChild(this._ctxDivider());
+        }
+
         // Favorito
         const isFav = Store.isFavorite(item.name, item.emoteType);
         const favEntry = this._ctxItem(
@@ -842,21 +959,33 @@ const Grid = {
     },
 
     /** El portapapeles de la NUI no siempre esta disponible: dejamos un plan B. */
+    /**
+     * Copia al portapapeles.
+     *
+     * Se intenta primero con execCommand aunque este obsoleto: el CEF de FiveM
+     * bloquea la Clipboard API por permissions policy, y aunque la promesa se
+     * rechaza y caiamos igual al plan B, el navegador escupia un aviso en la
+     * consola en cada copia. Asi no hay ruido.
+     */
     copyText(text) {
+        if (this._copyWithTextarea(text)) return;
         if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).catch(() => this._copyFallback(text));
-        } else {
-            this._copyFallback(text);
+            navigator.clipboard.writeText(text).catch(() => {});
         }
     },
 
-    _copyFallback(text) {
+    /** @returns {boolean} si la copia salio bien */
+    _copyWithTextarea(text) {
         const ta = document.createElement('textarea');
         ta.value = text;
         ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
         document.body.appendChild(ta);
         ta.select();
-        try { document.execCommand('copy'); } catch {}
+
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch { ok = false; }
+
         ta.remove();
+        return ok;
     }
 };

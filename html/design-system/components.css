@@ -10,12 +10,21 @@
 }
 
 /* ---------- Panel contenedor ---------- */
+/* Los contenedores usan la escala neutra (negros): el verde se reserva
+   para jerarquía y acción — títulos, cabeceras, botones y hovers. */
 .rrp-panel {
-  background: var(--rrp-bg-dark);
+  background: var(--rrp-surface-1);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
   border-radius: var(--rrp-radius-lg);
   box-shadow: var(--rrp-shadow-panel);
   padding: var(--rrp-space-lg);
   color: var(--rrp-white);
+}
+/* Variante verde: panel sobre la escala de fondo, como antes de la
+   escala neutra. Úsala solo si el HUD ya está sobre un fondo negro. */
+.rrp-panel--green {
+  background: var(--rrp-bg-dark);
+  border-color: transparent;
 }
 
 /* ---------- Título principal ---------- */
@@ -49,11 +58,24 @@
 
 /* ---------- Caja de texto básico ---------- */
 .rrp-textbox {
-  background: var(--rrp-bg-primary);
-  border: var(--rrp-border-width) solid var(--rrp-border-color);
+  background: var(--rrp-surface-2);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
   border-radius: var(--rrp-radius-sm);
   padding: var(--rrp-space-md);
   margin-bottom: var(--rrp-space-md);
+}
+/* Caja destacada: mismo negro, borde teal para atarla a la paleta. */
+.rrp-textbox--teal {
+  border-color: var(--rrp-border-teal);
+}
+/* Caja con el borde blanco duro del sistema original. */
+.rrp-textbox--outline {
+  border-color: var(--rrp-border-color);
+}
+/* Variante verde de la caja (fondo bg-primary + borde blanco). */
+.rrp-textbox--green {
+  background: var(--rrp-bg-primary);
+  border-color: var(--rrp-border-color);
 }
 .rrp-textbox .rrp-textbox__title {
   font-weight: var(--rrp-font-weight-semibold);
@@ -70,7 +92,8 @@
 
 /* ---------- Desplegable / dropdown ---------- */
 .rrp-dropdown {
-  background: var(--rrp-bg-dark);
+  background: var(--rrp-surface-2);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
   border-radius: var(--rrp-radius-sm);
   overflow: hidden;
 }
@@ -90,6 +113,10 @@
   padding: var(--rrp-space-sm) var(--rrp-space-md);
   cursor: pointer;
   transition: background var(--rrp-transition-fast);
+}
+/* Separador entre filas: sobre negro hace falta para que la lista respire. */
+.rrp-dropdown__option + .rrp-dropdown__option {
+  border-top: var(--rrp-border-width) solid var(--rrp-border-subtle);
 }
 .rrp-dropdown__option:hover,
 .rrp-dropdown__option.is-hover {
@@ -127,14 +154,1266 @@
   background: var(--rrp-accent);
   color: var(--rrp-text-on-accent);
 }
+/* Botón destructivo: borrar, expulsar, romper un contrato. */
+.rrp-btn--danger {
+  background: var(--rrp-danger);
+  color: var(--rrp-text-on-danger);
+}
+.rrp-btn--danger:hover {
+  background: var(--rrp-danger-hover);
+}
+/* Botón secundario sobre negro: solo borde, sin peso de color. */
+.rrp-btn--ghost {
+  background: transparent;
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+}
+.rrp-btn--ghost:hover {
+  background: var(--rrp-surface-3);
+}
+/* Tamaño y ocupación */
+.rrp-btn--sm    { padding: var(--rrp-space-xs) var(--rrp-space-sm); font-size: var(--rrp-font-size-label); }
+.rrp-btn--block { display: flex; width: 100%; }
+.rrp-btn--icon  { padding: var(--rrp-space-sm); aspect-ratio: 1; }
+
 .rrp-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
+/* ---------- Superficies neutras (utilidades) ---------- */
+/* Para contenedores propios de un recurso que no encajen en un
+   componente concreto, sin inventar colores nuevos. */
+.rrp-surface-1 { background: var(--rrp-surface-1); color: var(--rrp-white); }
+.rrp-surface-2 { background: var(--rrp-surface-2); color: var(--rrp-white); }
+.rrp-surface-3 { background: var(--rrp-surface-3); color: var(--rrp-white); }
+.rrp-divider   { border: none; border-top: var(--rrp-border-width) solid var(--rrp-border-subtle); margin: var(--rrp-space-md) 0; }
+
 /* ---------- Degradados ---------- */
 /* Siempre oscuro arriba -> claro abajo (180deg) */
+.rrp-gradient-0 { background: linear-gradient(180deg, var(--rrp-gradient-0-from), var(--rrp-gradient-0-to)); }
 .rrp-gradient-1 { background: linear-gradient(180deg, var(--rrp-gradient-1-from), var(--rrp-gradient-1-to)); }
 .rrp-gradient-2 { background: linear-gradient(180deg, var(--rrp-gradient-2-from), var(--rrp-gradient-2-to)); }
 .rrp-gradient-3 { background: linear-gradient(180deg, var(--rrp-gradient-3-from), var(--rrp-gradient-3-to)); }
 .rrp-gradient-4 { background: linear-gradient(180deg, var(--rrp-gradient-4-from), var(--rrp-gradient-4-to)); }
+
+
+/* ============================================================
+   COMPONENTES NUI
+   Patrones habituales de una interfaz de recurso FiveM.
+   Todos se apoyan en los tokens: aquí no hay ningún color suelto.
+   ============================================================ */
+
+/* ---------- Foco de teclado ---------- */
+/* Una NUI también se navega con teclado: el foco nunca es invisible. */
+/* Elementos sin borde propio: aro de acento, separado del elemento. */
+.rrp-btn:focus-visible,
+.rrp-slider:focus-visible,
+.rrp-tab:focus-visible,
+.rrp-menu__item:focus-visible,
+.rrp-nav__item:focus-visible,
+.rrp-slot:focus-visible {
+  outline: none;
+  box-shadow: var(--rrp-focus-ring);
+}
+/* Campos: el borde ya dice dónde está el foco; el halo solo lo refuerza. */
+.rrp-input:focus,
+.rrp-input:focus-visible,
+.rrp-textarea:focus,
+.rrp-textarea:focus-visible,
+.rrp-select:focus,
+.rrp-select:focus-visible,
+.rrp-input-group:focus-within {
+  outline: none;
+  border-color: var(--rrp-hover-btn-bg);
+  box-shadow: var(--rrp-focus-glow);
+}
+/* Un campo inválido conserva su rojo al enfocarse: el estado manda. */
+.rrp-input.is-invalid:focus,
+.rrp-textarea.is-invalid:focus,
+.rrp-select.is-invalid:focus {
+  border-color: var(--rrp-danger);
+  box-shadow: 0 0 0 3px var(--rrp-danger-soft);
+}
+
+/* ---------- Campos de formulario ---------- */
+.rrp-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rrp-space-xs);
+  margin-bottom: var(--rrp-space-md);
+}
+.rrp-label {
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-label);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--rrp-text-muted);
+}
+.rrp-input,
+.rrp-textarea,
+.rrp-select {
+  width: 100%;
+  height: var(--rrp-control-height);
+  background: var(--rrp-surface-3);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  color: var(--rrp-white);
+  font-size: var(--rrp-font-size-body);
+  font-weight: var(--rrp-font-weight-regular);
+  padding: 0 var(--rrp-space-md);
+  transition: border-color var(--rrp-transition-fast);
+}
+.rrp-textarea {
+  height: auto;
+  min-height: 84px;
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  line-height: 1.5;
+  resize: vertical;
+}
+.rrp-input::placeholder,
+.rrp-textarea::placeholder {
+  color: var(--rrp-text-faint);
+}
+.rrp-input:hover,
+.rrp-textarea:hover,
+.rrp-select:hover {
+  border-color: var(--rrp-border-teal);
+}
+.rrp-input:disabled,
+.rrp-textarea:disabled,
+.rrp-select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+/* Validación */
+.rrp-input.is-invalid,
+.rrp-textarea.is-invalid,
+.rrp-select.is-invalid {
+  border-color: var(--rrp-danger);
+}
+.rrp-hint  { font-size: var(--rrp-font-size-label); color: var(--rrp-text-muted); }
+.rrp-error { font-size: var(--rrp-font-size-label); color: var(--rrp-danger); font-weight: var(--rrp-font-weight-semibold); }
+
+/* Select: flecha propia, para no depender del widget del sistema */
+.rrp-select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: var(--rrp-space-lg);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23ffffff' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--rrp-space-md) center;
+}
+.rrp-select option {
+  background: var(--rrp-surface-2);
+  color: var(--rrp-white);
+}
+
+/* Campo con icono o afijo (buscadores, cantidades, precios) */
+.rrp-input-group {
+  display: flex;
+  align-items: center;
+  gap: var(--rrp-space-sm);
+  height: var(--rrp-control-height);
+  background: var(--rrp-surface-3);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  padding: 0 var(--rrp-space-md);
+}
+.rrp-input-group .rrp-input {
+  height: auto;
+  border: none;
+  background: none;
+  padding: 0;
+}
+.rrp-input-group .rrp-input:focus,
+.rrp-input-group .rrp-input:focus-visible { box-shadow: none; }
+.rrp-input-group__affix { color: var(--rrp-text-muted); font-size: var(--rrp-font-size-label); }
+
+/* ---------- Checkbox y radio ---------- */
+.rrp-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rrp-space-sm);
+  font-size: var(--rrp-font-size-body);
+  cursor: pointer;
+  user-select: none;
+}
+.rrp-check input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  margin: 0;
+  display: grid;
+  place-content: center;
+  background: var(--rrp-surface-3);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  cursor: pointer;
+  transition: background var(--rrp-transition-fast), border-color var(--rrp-transition-fast);
+}
+.rrp-check input[type="radio"] { border-radius: 50%; }
+.rrp-check input:hover { border-color: var(--rrp-hover-btn-bg); }
+.rrp-check input:checked {
+  background: var(--rrp-accent);
+  border-color: var(--rrp-accent);
+}
+.rrp-check input[type="checkbox"]:checked::after {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid var(--rrp-text-on-accent);
+  border-bottom: 2px solid var(--rrp-text-on-accent);
+  transform: translateY(-1px) rotate(-45deg);
+}
+.rrp-check input[type="radio"]:checked::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rrp-text-on-accent);
+}
+.rrp-check input:focus-visible { outline: none; box-shadow: var(--rrp-focus-ring); }
+.rrp-check input:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---------- Interruptor (toggle) ---------- */
+.rrp-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rrp-space-sm);
+  font-size: var(--rrp-font-size-body);
+  cursor: pointer;
+  user-select: none;
+}
+.rrp-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.rrp-switch__track {
+  position: relative;
+  width: 38px;
+  height: 20px;
+  flex: none;
+  background: var(--rrp-surface-3);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: 999px;
+  transition: background var(--rrp-transition-fast), border-color var(--rrp-transition-fast);
+}
+.rrp-switch__track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--rrp-white);
+  transition: transform var(--rrp-transition-fast);
+}
+.rrp-switch input:checked + .rrp-switch__track {
+  background: var(--rrp-hover-btn-bg);
+  border-color: var(--rrp-hover-btn-bg);
+}
+.rrp-switch input:checked + .rrp-switch__track::after { transform: translateX(18px); }
+.rrp-switch input:focus-visible + .rrp-switch__track { box-shadow: var(--rrp-focus-ring); }
+.rrp-switch input:disabled + .rrp-switch__track { opacity: 0.4; }
+
+/* ---------- Slider ---------- */
+.rrp-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--rrp-surface-3);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.rrp-slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: var(--rrp-accent);
+  cursor: pointer;
+  transition: transform var(--rrp-transition-fast);
+}
+.rrp-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.rrp-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: var(--rrp-accent);
+  cursor: pointer;
+}
+.rrp-slider:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---------- Barra de progreso ---------- */
+.rrp-progress {
+  width: 100%;
+  height: 8px;
+  background: var(--rrp-surface-3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.rrp-progress__fill {
+  height: 100%;
+  width: 0;
+  background: var(--rrp-hover-btn-bg);
+  border-radius: inherit;
+  transition: width 200ms linear;
+}
+.rrp-progress--lg { height: 14px; }
+.rrp-progress--success .rrp-progress__fill { background: var(--rrp-success); }
+.rrp-progress--warning .rrp-progress__fill { background: var(--rrp-warning); }
+.rrp-progress--danger  .rrp-progress__fill { background: var(--rrp-danger); }
+.rrp-progress--accent  .rrp-progress__fill { background: var(--rrp-accent); }
+
+/* Medidor de HUD: barra fina con etiqueta (vida, sed, hambre, estrés) */
+.rrp-meter {
+  display: flex;
+  align-items: center;
+  gap: var(--rrp-space-sm);
+  font-size: var(--rrp-font-size-label);
+}
+.rrp-meter__label { min-width: 56px; color: var(--rrp-text-muted); }
+.rrp-meter .rrp-progress { height: 6px; }
+.rrp-meter__value { min-width: 34px; text-align: right; font-weight: var(--rrp-font-weight-semibold); }
+
+/* ---------- Progreso animado ---------- */
+/* Tres formas de animar una barra, según lo que sepas del proceso:
+   - --timed  : sabes cuánto dura (una acción de N segundos). Se llena sola.
+   - --indeterminate : no sabes cuánto falta (esperando al servidor).
+   - width por JS   : sabes el porcentaje real (descarga, peso, vida).
+   La duración se pasa por variable, no por CSS nuevo:
+     <div class="rrp-progress rrp-progress--timed" style="--rrp-progress-duration: 6s"> */
+
+/* Barra temporizada: la acción de FiveM de toda la vida (forzar, reparar,
+   registrar). Anima transform en vez de width porque en CEF es mucho más
+   barato: no provoca relayout en cada frame. */
+.rrp-progress--timed .rrp-progress__fill {
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: none;
+  animation: rrp-progress-run var(--rrp-progress-duration, 5s) linear forwards;
+}
+/* Cuenta atrás: el mismo reloj, pero vaciándose (tiempo restante). */
+.rrp-progress--countdown .rrp-progress__fill {
+  width: 100%;
+  transform: scaleX(1);
+  transform-origin: left center;
+  transition: none;
+  animation: rrp-progress-drain var(--rrp-progress-duration, 5s) linear forwards;
+}
+/* Pausar y cancelar sin tocar el DOM: solo cambia la clase. */
+.rrp-progress.is-paused .rrp-progress__fill { animation-play-state: paused; }
+.rrp-progress.is-cancelled .rrp-progress__fill {
+  animation-play-state: paused;
+  background: var(--rrp-danger);
+}
+.rrp-progress.is-done .rrp-progress__fill { background: var(--rrp-success); }
+
+/* Rayas en movimiento: "esto está trabajando". Combínalo con --timed. */
+.rrp-progress--striped .rrp-progress__fill {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.14) 0 8px,
+    transparent 8px 16px
+  );
+  background-size: 22px 22px;
+  animation-name: rrp-progress-run, rrp-progress-stripes;
+  animation-duration: var(--rrp-progress-duration, 5s), 600ms;
+  animation-timing-function: linear, linear;
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: forwards, none;
+}
+/* Rayas sobre una barra controlada por JS (sin --timed): solo el desfile. */
+.rrp-progress--striped:not(.rrp-progress--timed):not(.rrp-progress--countdown) .rrp-progress__fill {
+  animation: rrp-progress-stripes 600ms linear infinite;
+}
+
+/* Indeterminada: no hay porcentaje que enseñar, solo actividad. */
+.rrp-progress--indeterminate .rrp-progress__fill {
+  width: 35%;
+  transition: none;
+  animation: rrp-progress-sweep 1100ms ease-in-out infinite;
+}
+
+/* Destello al recorrer: refuerza que la barra está viva. Va aparte del
+   relleno para no pelearse con su animación. */
+.rrp-progress--shine { position: relative; }
+.rrp-progress--shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  transform: translateX(-100%);
+  animation: rrp-progress-shine 1400ms ease-in-out infinite;
+}
+
+/* ---------- Barra de acción (patrón qb-progressbar) ---------- */
+/* El bloque completo: etiqueta, tiempo y barra. Con --bottom queda fijo
+   en la parte inferior de la pantalla, como el de un recurso real. */
+.rrp-progressbar {
+  width: 320px;
+  max-width: 100%;
+  background: var(--rrp-surface-1);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-md);
+  box-shadow: var(--rrp-shadow-float);
+  padding: var(--rrp-space-sm) var(--rrp-space-md) var(--rrp-space-md);
+}
+.rrp-progressbar--bottom {
+  position: fixed;
+  left: 50%;
+  bottom: 12%;
+  transform: translateX(-50%);
+  z-index: var(--rrp-z-notify);
+  /* Keyframe propio: rrp-pop-in anima transform y borraría el
+     translateX(-50%) que centra la barra al terminar. */
+  animation: rrp-rise-in 160ms ease-out;
+}
+@keyframes rrp-rise-in {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+.rrp-progressbar__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--rrp-space-sm);
+  margin-bottom: var(--rrp-space-sm);
+}
+.rrp-progressbar__label {
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-button);
+}
+.rrp-progressbar__time {
+  font-size: var(--rrp-font-size-label);
+  color: var(--rrp-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.rrp-progressbar.is-cancelled .rrp-progressbar__label { color: var(--rrp-danger); }
+
+/* ---------- Anillo de progreso (HUD) ---------- */
+/* Para los indicadores redondos junto al minimapa. El valor es 0-100 y se
+   escribe desde JS: ring.style.setProperty('--rrp-ring-value', 72). */
+@property --rrp-ring-value {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+.rrp-ring {
+  position: relative;
+  /* Alto explícito y flex:none: dentro de un flex con align-items:stretch
+     el aspect-ratio cede al estirado y el anillo sale ovalado. */
+  width: var(--rrp-ring-size, 44px);
+  height: var(--rrp-ring-size, 44px);
+  flex: none;
+  display: grid;
+  place-content: center;
+  border-radius: 50%;
+  background: conic-gradient(
+    from -90deg,
+    var(--rrp-ring-color, var(--rrp-hover-btn-bg)) calc(var(--rrp-ring-value, 0) * 1%),
+    var(--rrp-surface-3) 0
+  );
+  transition: --rrp-ring-value 400ms linear;
+}
+.rrp-ring::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--rrp-surface-1);
+}
+.rrp-ring__value {
+  position: relative;
+  font-size: 11px;
+  font-weight: var(--rrp-font-weight-semibold);
+  line-height: 1;
+}
+.rrp-ring--lg { --rrp-ring-size: 64px; }
+.rrp-ring--lg .rrp-ring__value { font-size: var(--rrp-font-size-body); }
+.rrp-ring--success { --rrp-ring-color: var(--rrp-success); }
+.rrp-ring--warning { --rrp-ring-color: var(--rrp-warning); }
+.rrp-ring--danger  { --rrp-ring-color: var(--rrp-danger); }
+.rrp-ring--accent  { --rrp-ring-color: var(--rrp-accent); }
+/* Anillo temporizado: se llena solo, como la barra --timed. */
+.rrp-ring--timed { animation: rrp-ring-run var(--rrp-progress-duration, 5s) linear forwards; }
+
+@keyframes rrp-progress-run    { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes rrp-progress-drain  { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@keyframes rrp-progress-stripes{ from { background-position: 0 0; } to { background-position: 22px 0; } }
+@keyframes rrp-progress-sweep  { 0% { transform: translateX(-110%); } 100% { transform: translateX(320%); } }
+@keyframes rrp-progress-shine  { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
+@keyframes rrp-ring-run        { from { --rrp-ring-value: 0; } to { --rrp-ring-value: 100; } }
+
+/* ---------- Notificaciones (toasts) ---------- */
+.rrp-notify-stack {
+  position: fixed;
+  top: var(--rrp-space-lg);
+  right: var(--rrp-space-lg);
+  z-index: var(--rrp-z-notify);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rrp-space-sm);
+  width: 320px;
+  max-width: calc(100vw - var(--rrp-space-lg) * 2);
+  pointer-events: none;
+}
+.rrp-notify {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rrp-space-sm);
+  background: var(--rrp-surface-2);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-left: 3px solid var(--rrp-hover-btn-bg);
+  border-radius: var(--rrp-radius-sm);
+  box-shadow: var(--rrp-shadow-float);
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  color: var(--rrp-white);
+  pointer-events: auto;
+  animation: rrp-slide-in 160ms ease-out;
+}
+.rrp-notify__icon {
+  flex: none;
+  font-size: var(--rrp-font-size-heading2);
+  line-height: 1.2;
+  color: var(--rrp-hover-btn-bg);
+}
+.rrp-notify__title {
+  margin: 0 0 2px;
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-body);
+}
+.rrp-notify__text {
+  margin: 0;
+  font-size: var(--rrp-font-size-label);
+  color: var(--rrp-text-muted);
+  line-height: 1.45;
+}
+.rrp-notify--success { border-left-color: var(--rrp-success); }
+.rrp-notify--success .rrp-notify__icon { color: var(--rrp-success); }
+.rrp-notify--warning { border-left-color: var(--rrp-warning); }
+.rrp-notify--warning .rrp-notify__icon { color: var(--rrp-warning); }
+.rrp-notify--danger  { border-left-color: var(--rrp-danger); }
+.rrp-notify--danger  .rrp-notify__icon { color: var(--rrp-danger); }
+.rrp-notify--info    { border-left-color: var(--rrp-accent); }
+.rrp-notify--info    .rrp-notify__icon { color: var(--rrp-accent); }
+.rrp-notify.is-leaving { animation: rrp-slide-out 160ms ease-in forwards; }
+
+/* Aviso en línea, dentro del panel (no flotante) */
+.rrp-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rrp-space-sm);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  margin-bottom: var(--rrp-space-md);
+  font-size: var(--rrp-font-size-body);
+}
+.rrp-alert--success { background: var(--rrp-success-soft); border-color: var(--rrp-success); }
+.rrp-alert--warning { background: var(--rrp-warning-soft); border-color: var(--rrp-warning); }
+.rrp-alert--danger  { background: var(--rrp-danger-soft);  border-color: var(--rrp-danger); }
+.rrp-alert--info    { background: var(--rrp-accent-soft);  border-color: var(--rrp-accent); }
+
+/* ---------- Menú de opciones (patrón qb-menu / ox_lib) ---------- */
+.rrp-menu {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden auto;
+  min-height: 0;
+  background: var(--rrp-surface-2);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  overflow: hidden;
+}
+.rrp-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--rrp-space-md);
+  width: 100%;
+  background: none;
+  border: none;
+  border-top: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  color: var(--rrp-white);
+  text-align: left;
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  cursor: pointer;
+  transition: background var(--rrp-transition-fast), box-shadow var(--rrp-transition-fast);
+}
+.rrp-menu__item:first-child { border-top: none; }
+.rrp-menu__item:hover {
+  background: var(--rrp-surface-3);
+  box-shadow: inset 3px 0 0 var(--rrp-hover-btn-bg);
+}
+.rrp-menu__item.is-active {
+  background: var(--rrp-surface-3);
+  box-shadow: inset 3px 0 0 var(--rrp-accent);
+}
+.rrp-menu__item.is-disabled,
+.rrp-menu__item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.rrp-menu__icon {
+  flex: none;
+  width: 22px;
+  text-align: center;
+  font-size: var(--rrp-font-size-heading2);
+  color: var(--rrp-text-muted);
+}
+.rrp-menu__body  { flex: 1; min-width: 0; }
+.rrp-menu__title {
+  margin: 0;
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-button);
+}
+.rrp-menu__desc {
+  margin: 2px 0 0;
+  font-size: var(--rrp-font-size-label);
+  color: var(--rrp-text-muted);
+  line-height: 1.4;
+}
+.rrp-menu__meta {
+  flex: none;
+  font-size: var(--rrp-font-size-label);
+  color: var(--rrp-text-muted);
+}
+
+/* ---------- Navegación lateral / pestañas de sección ---------- */
+/* La barra de categorías de una NUI (Animaciones, Objetos, Bailes…).
+   Regla del componente: el estado activo NUNCA se marca con un bloque
+   macizo de color bajo el texto — eso hunde el contraste y la etiqueta
+   deja de leerse. Se marca con tinte suave + indicador lateral, y el
+   texto sube a blanco. El color macizo se queda para los botones. */
+.rrp-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--rrp-space-sm);
+  /* La lista de categorías casi siempre acaba siendo más larga que la
+     pantalla: se desplaza ella, no la NUI entera. Los dos ejes van
+     declarados: con overflow-y:auto y overflow-x:visible el navegador
+     convierte el eje libre en auto y aparece una barra horizontal
+     fantasma bajo la lista. */
+  overflow: hidden auto;
+  min-height: 0;
+  scrollbar-gutter: stable;
+  background: var(--rrp-surface-1);
+  border-right: var(--rrp-border-width) solid var(--rrp-border-subtle);
+}
+.rrp-nav__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rrp-space-xs);
+  width: 100%;
+  padding: var(--rrp-space-sm) var(--rrp-space-xs);
+  background: none;
+  border: none;
+  border-radius: var(--rrp-radius-md);
+  color: var(--rrp-text-muted);
+  font-family: inherit;
+  font-size: var(--rrp-font-size-label);
+  font-weight: var(--rrp-font-weight-semibold);
+  text-align: center;
+  cursor: pointer;
+  transition: background var(--rrp-transition-fast), color var(--rrp-transition-fast);
+}
+.rrp-nav__icon {
+  font-size: 18px;
+  line-height: 1;
+  color: var(--rrp-hover-btn-bg);
+  transition: color var(--rrp-transition-fast);
+}
+.rrp-nav__label {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Hover: sube la superficie, no el color. El texto pasa a blanco. */
+.rrp-nav__item:hover {
+  background: var(--rrp-surface-3);
+  color: var(--rrp-white);
+}
+/* Activo: tinte suave + barra de acento al costado. Sigue legible. */
+.rrp-nav__item.is-active {
+  background: var(--rrp-success-soft);
+  color: var(--rrp-white);
+}
+.rrp-nav__item.is-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 62%;
+  border-radius: 999px;
+  background: var(--rrp-accent);
+}
+.rrp-nav__item.is-active .rrp-nav__icon { color: var(--rrp-accent); }
+.rrp-nav__item:disabled,
+.rrp-nav__item.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Solo icono: la etiqueta se va al tooltip (usa data-rrp-tip). */
+.rrp-nav--rail .rrp-nav__item { padding: var(--rrp-space-sm); }
+.rrp-nav--rail .rrp-nav__label { display: none; }
+
+/* Horizontal: la misma barra como fila de secciones. */
+.rrp-nav--row {
+  flex-direction: row;
+  border-right: none;
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
+}
+.rrp-nav--row .rrp-nav__item { width: auto; flex: 1; }
+.rrp-nav--row .rrp-nav__item.is-active::before {
+  left: 50%;
+  top: auto;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 62%;
+  height: 3px;
+}
+
+/* Encabezado de grupo dentro de la navegación */
+.rrp-nav__group {
+  padding: var(--rrp-space-sm) var(--rrp-space-xs) var(--rrp-space-xs);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--rrp-text-faint);
+  text-align: center;
+}
+
+/* ---------- Tooltip por atributo ---------- */
+/* Para un botón de icono no hace falta envolverlo en .rrp-tooltip:
+   basta con data-rrp-tip="Caminar". Un icono sin etiqueta visible
+   siempre debe llevar tooltip y aria-label. */
+[data-rrp-tip] { position: relative; }
+[data-rrp-tip]::after {
+  content: attr(data-rrp-tip);
+  position: absolute;
+  z-index: var(--rrp-z-tooltip);
+  left: 50%;
+  bottom: calc(100% + var(--rrp-space-xs));
+  transform: translateX(-50%);
+  background: var(--rrp-surface-3);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  box-shadow: var(--rrp-shadow-float);
+  padding: var(--rrp-space-xs) var(--rrp-space-sm);
+  color: var(--rrp-white);
+  font-size: var(--rrp-font-size-label);
+  font-weight: var(--rrp-font-weight-regular);
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--rrp-transition-fast), visibility var(--rrp-transition-fast);
+}
+[data-rrp-tip]:hover::after,
+[data-rrp-tip]:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+}
+[data-rrp-tip][data-rrp-tip-pos="right"]::after {
+  left: calc(100% + var(--rrp-space-xs));
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+[data-rrp-tip][data-rrp-tip-pos="left"]::after {
+  left: auto;
+  right: calc(100% + var(--rrp-space-xs));
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+[data-rrp-tip][data-rrp-tip-pos="bottom"]::after {
+  top: calc(100% + var(--rrp-space-xs));
+  bottom: auto;
+}
+
+/* ---------- Pestañas ---------- */
+.rrp-tabs {
+  display: flex;
+  gap: var(--rrp-space-sm);
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  margin-bottom: var(--rrp-space-md);
+}
+.rrp-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  color: var(--rrp-text-muted);
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-button);
+  padding: var(--rrp-space-sm) var(--rrp-space-xs);
+  cursor: pointer;
+  transition: color var(--rrp-transition-fast), border-color var(--rrp-transition-fast);
+}
+.rrp-tab:hover { color: var(--rrp-white); }
+.rrp-tab.is-active {
+  color: var(--rrp-white);
+  border-bottom-color: var(--rrp-accent);
+}
+
+/* ---------- Badge / etiqueta de estado ---------- */
+.rrp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rrp-space-xs);
+  background: var(--rrp-surface-3);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: 999px;
+  padding: 2px var(--rrp-space-sm);
+  font-size: var(--rrp-font-size-label);
+  font-weight: var(--rrp-font-weight-semibold);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.rrp-badge--success { background: var(--rrp-success-soft); border-color: var(--rrp-success); }
+.rrp-badge--warning { background: var(--rrp-warning-soft); border-color: var(--rrp-warning); }
+.rrp-badge--danger  { background: var(--rrp-danger-soft);  border-color: var(--rrp-danger); }
+.rrp-badge--accent  { background: var(--rrp-accent); border-color: var(--rrp-accent); color: var(--rrp-text-on-accent); }
+
+/* Punto de estado: en servicio, conectado, buscado */
+.rrp-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--rrp-success);
+}
+.rrp-dot--warning { background: var(--rrp-warning); }
+.rrp-dot--danger  { background: var(--rrp-danger); }
+.rrp-dot--muted   { background: var(--rrp-text-faint); }
+
+/* ---------- Modal / confirmación ---------- */
+.rrp-modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--rrp-z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--rrp-space-lg);
+  background: rgba(0, 9, 8, 0.72);
+  animation: rrp-fade-in 120ms ease-out;
+}
+/* [hidden] debe ganar al display:flex de arriba; si no, el modal nace abierto. */
+.rrp-modal[hidden] { display: none; }
+.rrp-modal__box {
+  width: 380px;
+  max-width: 100%;
+  background: var(--rrp-surface-1);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-lg);
+  box-shadow: var(--rrp-shadow-panel);
+  overflow: hidden;
+  animation: rrp-pop-in 140ms ease-out;
+}
+.rrp-modal__header {
+  background: var(--rrp-bg-secondary);
+  padding: var(--rrp-space-md);
+  font-weight: var(--rrp-font-weight-bold);
+  font-size: var(--rrp-font-size-heading2);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.rrp-modal__body {
+  padding: var(--rrp-space-lg);
+  font-size: var(--rrp-font-size-body);
+  line-height: 1.5;
+}
+.rrp-modal__footer {
+  display: flex;
+  gap: var(--rrp-space-sm);
+  padding: 0 var(--rrp-space-lg) var(--rrp-space-lg);
+}
+.rrp-modal__footer .rrp-btn { flex: 1; }
+
+/* ---------- Ayuda de tecla (prompt de interacción) ---------- */
+.rrp-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--rrp-space-xs);
+  background: var(--rrp-surface-3);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-bottom-width: 2px;
+  border-radius: var(--rrp-radius-sm);
+  font-size: var(--rrp-font-size-label);
+  font-weight: var(--rrp-font-weight-semibold);
+  line-height: 1;
+}
+.rrp-keyhint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rrp-space-sm);
+  background: var(--rrp-surface-1);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-md);
+  box-shadow: var(--rrp-shadow-float);
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  font-size: var(--rrp-font-size-body);
+}
+
+/* ---------- Lista clave / valor ---------- */
+.rrp-list {
+  background: var(--rrp-surface-2);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  overflow: hidden;
+}
+.rrp-list__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rrp-space-md);
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  border-top: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  font-size: var(--rrp-font-size-body);
+}
+.rrp-list__row:first-child { border-top: none; }
+.rrp-list__key   { color: var(--rrp-text-muted); }
+.rrp-list__value { font-weight: var(--rrp-font-weight-semibold); text-align: right; }
+
+/* ---------- Tabla ---------- */
+.rrp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--rrp-font-size-body);
+}
+.rrp-table th {
+  text-align: left;
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  font-weight: var(--rrp-font-weight-semibold);
+  font-size: var(--rrp-font-size-label);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--rrp-text-muted);
+}
+.rrp-table td {
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
+}
+.rrp-table tbody tr { transition: background var(--rrp-transition-fast); }
+.rrp-table tbody tr:hover { background: var(--rrp-surface-3); }
+
+/* ---------- Rejilla de slots (inventario, tienda, armería) ---------- */
+.rrp-slots {
+  display: grid;
+  grid-template-columns: repeat(var(--rrp-slots-columns, 5), 1fr);
+  gap: var(--rrp-space-sm);
+}
+.rrp-slot {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rrp-surface-2);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  overflow: hidden;
+  cursor: pointer;
+  transition: background var(--rrp-transition-fast), border-color var(--rrp-transition-fast);
+}
+.rrp-slot:hover {
+  background: var(--rrp-surface-3);
+  border-color: var(--rrp-hover-btn-bg);
+}
+.rrp-slot.is-selected {
+  border-color: var(--rrp-accent);
+  box-shadow: inset 0 0 0 1px var(--rrp-accent);
+}
+.rrp-slot.is-empty { opacity: 0.45; cursor: default; }
+.rrp-slot.is-empty:hover { background: var(--rrp-surface-2); border-color: var(--rrp-border-subtle); }
+.rrp-slot img { max-width: 60%; max-height: 60%; }
+.rrp-slot__count {
+  position: absolute;
+  top: var(--rrp-space-xs);
+  right: var(--rrp-space-xs);
+  font-size: 11px;
+  font-weight: var(--rrp-font-weight-semibold);
+}
+.rrp-slot__label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--rrp-space-xs);
+  padding: 0 var(--rrp-space-xs);
+  font-size: 10px;
+  text-align: center;
+  color: var(--rrp-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Tooltip ---------- */
+.rrp-tooltip { position: relative; display: inline-flex; }
+.rrp-tooltip__content {
+  position: absolute;
+  bottom: calc(100% + var(--rrp-space-xs));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--rrp-z-tooltip);
+  background: var(--rrp-surface-3);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  box-shadow: var(--rrp-shadow-float);
+  padding: var(--rrp-space-xs) var(--rrp-space-sm);
+  font-size: var(--rrp-font-size-label);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--rrp-transition-fast), visibility var(--rrp-transition-fast);
+}
+.rrp-tooltip:hover .rrp-tooltip__content,
+.rrp-tooltip:focus-within .rrp-tooltip__content {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---------- Avatar ---------- */
+.rrp-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  background: var(--rrp-surface-3);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: 50%;
+  font-weight: var(--rrp-font-weight-semibold);
+  overflow: hidden;
+}
+.rrp-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.rrp-avatar--lg { width: 56px; height: 56px; font-size: var(--rrp-font-size-heading2); }
+
+/* ---------- Tarjeta de estadística ---------- */
+.rrp-stat {
+  background: var(--rrp-surface-2);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-md);
+  padding: var(--rrp-space-md);
+}
+.rrp-stat__label {
+  margin: 0 0 var(--rrp-space-xs);
+  font-size: var(--rrp-font-size-label);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--rrp-text-muted);
+}
+.rrp-stat__value {
+  margin: 0;
+  font-size: var(--rrp-font-size-title);
+  font-weight: var(--rrp-font-weight-bold);
+  line-height: 1.1;
+}
+
+/* ---------- Estado vacío ---------- */
+.rrp-empty {
+  padding: var(--rrp-space-lg);
+  text-align: center;
+  color: var(--rrp-text-muted);
+  font-size: var(--rrp-font-size-body);
+}
+.rrp-empty__icon {
+  font-size: 28px;
+  opacity: 0.5;
+  margin-bottom: var(--rrp-space-sm);
+}
+
+/* ---------- Carga ---------- */
+.rrp-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--rrp-border-subtle);
+  border-top-color: var(--rrp-accent);
+  border-radius: 50%;
+  animation: rrp-spin 700ms linear infinite;
+}
+.rrp-skeleton {
+  background: linear-gradient(90deg, var(--rrp-surface-2), var(--rrp-surface-3), var(--rrp-surface-2));
+  background-size: 200% 100%;
+  border-radius: var(--rrp-radius-sm);
+  animation: rrp-shimmer 1200ms linear infinite;
+}
+
+/* ---------- Scroll ---------- */
+/* La NUI vive dentro de CEF: la barra por defecto es clara y ancha, y
+   sobre el negro canta muchísimo. Estos estilos se aplican de oficio a
+   los contenedores del sistema que pueden desbordar, para que ninguno
+   se quede con la barra nativa por olvido. */
+.rrp-scroll,
+.rrp-nav,
+.rrp-menu,
+.rrp-dropdown,
+.rrp-list,
+.rrp-textarea,
+.rrp-modal__body,
+.rrp-table-wrap {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rrp-surface-3) transparent;
+}
+.rrp-scroll::-webkit-scrollbar,
+.rrp-nav::-webkit-scrollbar,
+.rrp-menu::-webkit-scrollbar,
+.rrp-dropdown::-webkit-scrollbar,
+.rrp-list::-webkit-scrollbar,
+.rrp-textarea::-webkit-scrollbar,
+.rrp-modal__body::-webkit-scrollbar,
+.rrp-table-wrap::-webkit-scrollbar {
+  width: var(--rrp-scroll-size, 6px);
+  height: var(--rrp-scroll-size, 6px);
+}
+.rrp-scroll::-webkit-scrollbar-track,
+.rrp-nav::-webkit-scrollbar-track,
+.rrp-menu::-webkit-scrollbar-track,
+.rrp-dropdown::-webkit-scrollbar-track,
+.rrp-list::-webkit-scrollbar-track,
+.rrp-textarea::-webkit-scrollbar-track,
+.rrp-modal__body::-webkit-scrollbar-track,
+.rrp-table-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+.rrp-scroll::-webkit-scrollbar-thumb,
+.rrp-nav::-webkit-scrollbar-thumb,
+.rrp-menu::-webkit-scrollbar-thumb,
+.rrp-dropdown::-webkit-scrollbar-thumb,
+.rrp-list::-webkit-scrollbar-thumb,
+.rrp-textarea::-webkit-scrollbar-thumb,
+.rrp-modal__body::-webkit-scrollbar-thumb,
+.rrp-table-wrap::-webkit-scrollbar-thumb {
+  background: var(--rrp-surface-3);
+  border-radius: 999px;
+}
+.rrp-scroll::-webkit-scrollbar-thumb:hover,
+.rrp-nav::-webkit-scrollbar-thumb:hover,
+.rrp-menu::-webkit-scrollbar-thumb:hover,
+.rrp-dropdown::-webkit-scrollbar-thumb:hover,
+.rrp-list::-webkit-scrollbar-thumb:hover,
+.rrp-modal__body::-webkit-scrollbar-thumb:hover,
+.rrp-table-wrap::-webkit-scrollbar-thumb:hover {
+  background: var(--rrp-hover-btn-bg);
+}
+/* Las esquinas de un contenedor con scroll en los dos ejes */
+.rrp-scroll::-webkit-scrollbar-corner { background: transparent; }
+
+.rrp-scroll {
+  /* Los dos ejes declarados: dejar uno en visible hace que el navegador
+     lo pase a auto y salga una barra fantasma en el otro eje. */
+  overflow: hidden auto;
+  /* Reserva el hueco de la barra: sin esto el contenido da un salto
+     lateral en cuanto la lista crece lo justo para desbordar. */
+  scrollbar-gutter: stable;
+  /* Un contenedor con scroll dentro de un flex/grid necesita esto o se
+     estira hasta su contenido y nunca llega a desbordar. */
+  min-height: 0;
+}
+.rrp-scroll--x {
+  overflow: auto hidden;
+  scrollbar-gutter: auto;
+  min-width: 0;
+}
+/* Sin barra visible, pero se sigue pudiendo desplazar (rueda, arrastre,
+   teclado). Solo para carruseles o tiras donde la barra estorba. */
+.rrp-scroll--hidden { scrollbar-width: none; }
+.rrp-scroll--hidden::-webkit-scrollbar { width: 0; height: 0; }
+
+/* La barra solo aparece al pasar el ratón por encima. Deja la lista
+   limpia en reposo sin perder el desplazamiento. */
+.rrp-scroll--overlay { scrollbar-gutter: auto; }
+.rrp-scroll--overlay::-webkit-scrollbar-thumb { background: transparent; }
+.rrp-scroll--overlay:hover::-webkit-scrollbar-thumb { background: var(--rrp-surface-3); }
+
+/* Sombras de desbordamiento: aparecen solo cuando queda contenido por
+   ese lado, y se van al llegar al final. Es la pista de "hay más" que
+   una barra fina de 6 px no da por sí sola. El fondo del contenedor se
+   pasa en --rrp-scroll-bg para que el degradado case. */
+.rrp-scroll--shadow {
+  background:
+    linear-gradient(var(--rrp-scroll-bg, var(--rrp-surface-2)) 30%, transparent) top    / 100% 24px no-repeat local,
+    linear-gradient(transparent, var(--rrp-scroll-bg, var(--rrp-surface-2)) 70%) bottom / 100% 24px no-repeat local,
+    radial-gradient(farthest-side at 50% 0,    rgba(0, 0, 0, 0.55), transparent) top    / 100% 10px no-repeat scroll,
+    radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.55), transparent) bottom / 100% 10px no-repeat scroll;
+  background-color: var(--rrp-scroll-bg, var(--rrp-surface-2));
+}
+
+/* Tabla ancha: el scroll horizontal va en el envoltorio, nunca en la
+   página — una NUI jamás debe hacer scroll lateral entera. */
+.rrp-table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* ---------- Animaciones ---------- */
+@keyframes rrp-fade-in   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rrp-pop-in    { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes rrp-slide-in  { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+@keyframes rrp-slide-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(16px); } }
+@keyframes rrp-spin      { to { transform: rotate(360deg); } }
+@keyframes rrp-shimmer   { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+.rrp-anim-fade { animation: rrp-fade-in 140ms ease-out; }
+.rrp-anim-pop  { animation: rrp-pop-in 140ms ease-out; }
+
+/* Abrir/cerrar la NUI sin parpadeo: el JS del recurso alterna .is-open */
+.rrp-fade { opacity: 0; transition: opacity 140ms ease-out; }
+.rrp-fade.is-open { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Excepciones: esto no es decoración, es información. Una barra o un
+     anillo temporizado son el reloj de la acción; si se aplastan a 0 ms
+     el jugador se queda sin saber cuánto le falta. Se conservan; lo que
+     se apaga es el adorno (rayas, destello). */
+  .rrp-progress--timed .rrp-progress__fill,
+  .rrp-progress--countdown .rrp-progress__fill,
+  .rrp-ring--timed {
+    animation-duration: var(--rrp-progress-duration, 5s) !important;
+  }
+  .rrp-progress--indeterminate .rrp-progress__fill,
+  .rrp-spinner {
+    animation-duration: 2200ms !important;
+    animation-iteration-count: infinite !important;
+  }
+  .rrp-progress--striped .rrp-progress__fill { background-image: none; }
+  .rrp-progress--shine::after { display: none; }
+}

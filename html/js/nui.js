@@ -33,6 +33,8 @@ const NUI = {
     clearKeybind(slot)                               { return this.callback('clearKeybind', { slot }); },
     setWalkStyle(name)                               { return this.callback('setWalkStyle', { name }); },
     resetWalkStyle()                                 { return this.callback('setWalkStyle', { reset: true }); },
+    setWalkLock(value)                               { return this.callback('setWalkLock', { value }); },
+    toggleWalkLock()                                 { return this.callback('setWalkLock'); },
     setExpression(name)                              { return this.callback('setExpression', { name }); },
     resetExpression()                                { return this.callback('setExpression', { reset: true }); },
     showEmoji(name)                                  { return this.callback('showEmoji', { name }); },

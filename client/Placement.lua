@@ -135,15 +135,44 @@ local function disableControls()
     DisableControlAction(0, 201, true)
 end
 
-local function drawControlHelpText()
-    if placementOptions and placementOptions.suppressHelpText then return end
-    SimpleHelpText(
-        "~INPUT_MOVE_UP_ONLY~/~INPUT_MOVE_DOWN_ONLY~/~INPUT_MOVE_LEFT_ONLY~/~INPUT_MOVE_RIGHT_ONLY~ " .. Translate('position') .. '\n' ..
-        "~INPUT_COVER~/~INPUT_TALK~ " .. Translate('rotate') .. '\n' ..
-        "~INPUT_RELOAD~/~INPUT_ARREST~ " .. Translate('height') .. '\n' ..
-        "~INPUT_FRONTEND_ACCEPT~ " .. Translate('btn_select') .. '\n' ..
-        "~INPUT_FRONTEND_RRIGHT~ " .. Translate('btn_back')
-    )
+-- Los atajos de la colocacion se dibujan en la NUI (ShowNuiHints) en vez de con
+-- el cuadro de ayuda nativo, que lo pinta el motor y no admite el sistema de
+-- diseno. Las teclas van escritas porque el panel es HTML y no puede resolver
+-- los glifos `~INPUT_*~`; corresponden a los controles que lee el bucle de
+-- colocacion mas abajo (32/33/34/35, 44/46, 45/49, 18 y 194).
+local PLACEMENT_HINTS <const> = {
+    { keys = { 'W', 'S', 'A', 'D' }, label = 'position' },
+    { keys = { 'Q', 'E' },           label = 'rotate' },
+    { keys = { 'R', 'F' },           label = 'height' },
+    { keys = { 'Enter' },            label = 'btn_select', onlyWhenValid = true },
+    { keys = { 'Backspace' },        label = 'btn_back' },
+}
+
+--- Ultimo estado enviado a la NUI. El bucle de colocacion corre a Wait(0), pero
+--- el panel no necesita repintarse en cada vuelta: solo se manda si cambia.
+local lastHintState = nil
+
+--- @param state 'valid'|'invalid'|nil  nil oculta el panel
+local function setPlacementHints(state)
+    if placementOptions and placementOptions.suppressHelpText then state = nil end
+    if state == lastHintState then return end
+    lastHintState = state
+
+    if not state then
+        HideNuiHints()
+        return
+    end
+
+    local valid = state == 'valid'
+    local rows = {}
+    for _, hint in ipairs(PLACEMENT_HINTS) do
+        -- Sin una posicion valida no se puede confirmar: no se ofrece la tecla.
+        if valid or not hint.onlyWhenValid then
+            rows[#rows + 1] = { keys = hint.keys, label = Translate(hint.label) }
+        end
+    end
+
+    ShowNuiHints(rows, not valid and Translate('invalidposition') or nil)
 end
 
 local distanceWarningShown = false
@@ -357,6 +386,7 @@ local function positionPreviewPed(emoteName)
                 end
             elseif IsDisabledControlJustPressed(0, 194) then -- Backspace/ESC
                 placementState = PlacementState.NONE
+                setPlacementHints(nil)
                 DeleteEntity(previewPed)
                 -- Prevent double backspace from affecting menu navigation
                 Wait(100)
@@ -375,22 +405,12 @@ local function positionPreviewPed(emoteName)
                 return
             end
 
-            -- Show different help text based on validity
-            if isPlacementValid then
-                drawControlHelpText()
-            elseif not (placementOptions and placementOptions.suppressHelpText) then
-                SimpleHelpText(
-                    "~r~INVALID POSITION~s~\n" ..
-                    "~INPUT_MOVE_UP_ONLY~/~INPUT_MOVE_DOWN_ONLY~/~INPUT_MOVE_LEFT_ONLY~/~INPUT_MOVE_RIGHT_ONLY~ " .. Translate('position') .. '\n' ..
-                    "~INPUT_COVER~/~INPUT_TALK~ " .. Translate('rotate') .. '\n' ..
-                    "~INPUT_RELOAD~/~INPUT_ARREST~ " .. Translate('height') .. '\n' ..
-                    "~INPUT_FRONTEND_RRIGHT~ " .. Translate('btn_back')
-                )
-            end
+            setPlacementHints(isPlacementValid and 'valid' or 'invalid')
 
             Wait(0)
         end
 
+        setPlacementHints(nil)
         DestroyAllProps(true)
         DeleteEntity(previewPed)
         walkPedToPlacementPosition(emoteName)
@@ -456,6 +476,10 @@ function CleanUpPlacement(ped)
 
     TriggerServerEvent("dwkemotes:server:syncHeading", nil)
     resetStoredPlacementValues()
+
+    -- Red de seguridad: si la colocacion termina por una via que no pasa por el
+    -- bucle (muerte, reinicio del recurso), el panel no puede quedarse colgado.
+    setPlacementHints(nil)
 
     if DoesEntityExist(previewPed) then DeleteEntity(previewPed) end
 end

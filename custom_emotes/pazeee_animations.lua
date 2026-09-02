@@ -1,7 +1,7 @@
 -- Pazeee Animation Pack
 -- Drop-in addon for custom_emotes/ auto-loading
 
-local ENABLED = false -- Set to false to disable this pack
+local ENABLED = true -- Set to false to disable this pack
 
 if not ENABLED then return end
 

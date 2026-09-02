@@ -163,7 +163,41 @@ exports.dwkemotes:notify(msg, tipo, ms) -- Aviso en el menú ('success'|'error'|
 exports.dwkemotes:getRecentEmotes()     -- { {name, label, emoteType, count}, ... }
 exports.dwkemotes:getMostUsedEmotes()
 exports.dwkemotes:clearEmoteUsage()
+
+exports.dwkemotes:IsWalkLockEnabled()   -- boolean: caminar con la animación
+exports.dwkemotes:SetWalkLock(bool)     -- fíjalo (aplica a la animación en curso)
+exports.dwkemotes:ToggleWalkLock()      -- altérnalo
 ```
+
+### Registrar animaciones desde otro recurso
+
+`AddEmote` deja que un pack de props, una tienda o un minijuego metan sus
+animaciones en el menú sin tocar `AnimationList.lua`.
+
+```lua
+exports.dwkemotes:AddEmote('mi_emote', {
+    'anim@dict', 'anim_name', 'Mi animación',
+    AnimationOptions = { EmoteLoop = true, Prop = 'prop_x' }
+}, 'PropEmotes')   -- tipo opcional; por defecto 'Emotes'
+```
+
+El formato de la tabla es el mismo que el de las entradas de
+`AnimationList.lua`, así que copiar una y cambiarle el diccionario ya vale.
+Se puede llamar en cualquier momento del arranque: si el menú todavía no ha
+construido su tabla, la animación entra en la cola de conversión. Aparece la
+próxima vez que se abra el menú.
+
+Devuelve `ok, error`. Rechaza los nombres duplicados de otro dueño y lo imprime
+en consola, porque muchos recursos llaman con `pcall` y se tragan el valor
+devuelto. Existen los alias `addEmote`, `AddPropEmote` y `RegisterEmote`, que
+son los nombres que prueban los recursos escritos contra otros forks de
+rpemotes.
+
+Las animaciones registradas así quedan fuera del sistema de permisos ACE: el
+manifiesto lo construye el servidor recorriendo su caché de emotes, que solo
+contiene las de `AnimationList.lua` y `custom_emotes/`, así que sobre una
+animación que llega después no puede opinar. Si necesitas restringirlas, hazlo
+en el recurso que las registra.
 
 Heredados y todavía disponibles: `EmoteCommandStart`, `EmoteCancel`,
 `CanCancelEmote`, `IsPlayerInAnim`, `getCurrentEmote`, `IsPlayerCrouched`,

@@ -588,7 +588,7 @@ function SetWalkLock(enabled, replay)
     WalkLock = enabled
 
     if Config.WalkLockPersistent then
-        SetResourceKvpString(WalkLockKvp, enabled and "1" or "0")
+        SetResourceKvp(WalkLockKvp, enabled and "1" or "0")
     end
 
     if replay then replayCurrentAnimation() end
@@ -612,6 +612,8 @@ end
 -- proposito: GetResourceKvpInt devuelve 0 tanto para "apagado" como para
 -- "nunca guardado", y hay que poder distinguirlos para que Config.WalkLockDefault
 -- solo mande la primera vez.
+-- Ojo con el par de natives: se escribe con SetResourceKvp (no existe ningun
+-- SetResourceKvpString) y se lee con GetResourceKvpString.
 CreateThread(function()
     if not Config.WalkLockEnabled then return end
 

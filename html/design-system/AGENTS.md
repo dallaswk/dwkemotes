@@ -33,7 +33,7 @@ Antes de escribir un solo `<style>` o archivo `.css` para una NUI nueva:
 |---|---|
 | `tokens.css` | Variables CSS (`--rrp-*`): colores, tipografía, espaciado, radios, degradados. |
 | `tokens.json` | Los mismos tokens en JSON, para JS/Lua o cualquier consumidor no-CSS. |
-| `components.css` | Clases listas para usar (`.rrp-title`, `.rrp-textbox`, `.rrp-dropdown`, `.rrp-btn`, `.rrp-gradient-N`) que ya aplican los tokens correctamente. |
+| `components.css` | Clases listas para usar que ya aplican los tokens: la base (`.rrp-panel`, `.rrp-title`, `.rrp-textbox`, `.rrp-dropdown`, `.rrp-btn`, `.rrp-gradient-N`) y los componentes NUI (formularios, `.rrp-notify`, `.rrp-menu`, `.rrp-modal`, `.rrp-progress`, `.rrp-slots`, `.rrp-table`, `.rrp-keyhint`…). |
 | `components.md` | Referencia visual: qué clase usar para cada patrón del mockup, con ejemplos de HTML. |
 
 ## Principios
@@ -42,17 +42,49 @@ Antes de escribir un solo `<style>` o archivo `.css` para una NUI nueva:
   principal del panel. Montserrat SemiBold para subtítulos, títulos de
   sección, botones y cabeceras de desplegable. Montserrat Regular para
   todo el texto de cuerpo/opciones.
-- **Escala de fondo consistente**: de más oscuro a más claro, el fondo
-  de un panel siempre sigue `bg-dark → bg-primary → bg-secondary`. No
+- **Negro para contenedores, verde para jerarquía**: las superficies
+  grandes (panel, cajas, cuerpo de listas) van sobre la escala neutra
+  `surface-1 → surface-2 → surface-3`. El verde de `backgroundScale`
+  se reserva para lo que marca jerarquía o invita a actuar: título
+  principal, cabeceras de desplegable, botones y hovers. Así una NUI
+  no se lee como un bloque verde uniforme.
+- **Escala de fondo consistente**: cuando sí uses verde, de más oscuro
+  a más claro el orden es `bg-dark → bg-primary → bg-secondary`. No
   uses `bg-secondary` como fondo exterior ni `bg-dark` como fondo de un
   botón.
+- **Separación por borde, no por color**: sobre negro, dos superficies
+  contiguas se distinguen con `--rrp-border-subtle`, no subiendo el
+  verde. `--rrp-border-teal` es para la caja que debe destacar; el
+  borde blanco duro es ahora opt-in (`.rrp-textbox--outline`).
 - **El color accent (`#CEDC00`) es para llamar la atención**, no para
   decorar: hover de "Aceptar", filas seleccionadas que deben destacar
   al máximo. Si todo es amarillo, nada lo es.
+- **Los estados semánticos comunican, no decoran**: `--rrp-success`,
+  `--rrp-warning` y `--rrp-danger` dicen cómo ha ido una acción o qué
+  riesgo tiene. Un botón es `--danger` cuando destruye algo, no cuando
+  es importante — para eso está accent. Sobre negro, el color va en el
+  borde y el texto, y el fondo usa el tinte `--rrp-*-soft`.
+- **El estado activo no se pinta con un bloque macizo**: en pestañas y
+  navegación, rellenar el fondo de teal o lima bajo el texto hunde el
+  contraste justo del elemento que querías destacar. Se marca con tinte
+  suave (`--rrp-*-soft`) más un indicador de acento al costado. El color
+  macizo se reserva a los botones, donde el texto se elige a juego
+  (`--rrp-text-on-accent`, `--rrp-text-on-danger`).
+- **Un icono sin etiqueta lleva tooltip y `aria-label`**: `data-rrp-tip`
+  resuelve el tooltip sin envolver el botón. Si la única forma de saber
+  qué hace un botón es pulsarlo, el botón está mal.
+- **Ninguna lista se queda con la barra nativa**: los contenedores del
+  sistema ya la llevan estilizada; para uno propio, `.rrp-scroll`. Y el
+  scroll lateral vive dentro de su contenedor (`.rrp-table-wrap`), nunca
+  en la página: una NUI no debe desplazarse entera de lado.
+- **Mira el catálogo antes de construir**: `components.md` cubre ya los
+  patrones habituales de una NUI (formularios, toasts, menú de opciones,
+  modal, progreso, slots de inventario, tabla, tooltip, key hint). Si el
+  patrón existe, úsalo; no rehagas uno equivalente con otro nombre.
 - **Degradados**: siempre el stop más oscuro arriba y el más claro
-  abajo (`linear-gradient(180deg, oscuro, claro)`). Usa las 4 clases
-  `.rrp-gradient-1` a `.rrp-gradient-4` ya definidas en vez de crear
-  degradados sueltos.
+  abajo (`linear-gradient(180deg, oscuro, claro)`). Usa las 5 clases
+  `.rrp-gradient-0` a `.rrp-gradient-4` ya definidas en vez de crear
+  degradados sueltos; la 0 es la neutra (negro → `surface-2`).
 - **Coherencia entre recursos**: dos NUIs distintas de ResetRP deben
   poder ponerse una al lado de la otra y parecer de la misma familia.
   Si un recurso necesita algo que el sistema no cubre (un componente

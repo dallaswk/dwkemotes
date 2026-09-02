@@ -79,10 +79,23 @@ const SmoothScroll = {
     },
 
     reset() {
-        this._target = 0;
-        this._current = 0;
+        this.jumpTo(0);
+    },
+
+    /**
+     * Salta a una posicion sin interpolar y deja el estado interno coherente.
+     *
+     * Escribir `scrollTop` a pelo no basta: `_target` se quedaria en el valor
+     * viejo y la primera vuelta de rueda despues del salto tiraria hacia alli.
+     */
+    jumpTo(pos) {
         this._animating = false;
-        if (this._el) this._el.scrollTop = 0;
+        if (!this._el) return;
+
+        const clamped = Math.max(0, Math.min(this._max(), pos || 0));
+        this._el.scrollTop = clamped;
+        this._current = clamped;
+        this._target = clamped;
     },
 
     scrollTo(pos) {

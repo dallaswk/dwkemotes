@@ -13,12 +13,46 @@
   --rrp-bg-secondary:   #005A50; /* background secundario: cabeceras, títulos, botones normales */
   --rrp-hover-btn-bg:   #019685; /* background hover botón: hover genérico de botones/filas */
 
+  /* ---- Color: escala neutra (negros) ----------------------------- */
+  /* Superficies de contenedor. Bajan el peso del verde en pantalla:
+     el verde queda para jerarquía y acción (títulos, cabeceras,
+     botones, hovers); el negro es el "papel" sobre el que se apoya
+     el contenido. Llevan un tinte verdoso mínimo para que convivan
+     con la paleta sin leerse como gris neutro ajeno. */
+  --rrp-surface-1:      #0A100F; /* contenedor exterior: panel, ventana, HUD */
+  --rrp-surface-2:      #121A19; /* cajas internas: textbox, cuerpo de desplegable */
+  --rrp-surface-3:      #1B2523; /* elevación sobre surface-2: filas, estados neutros */
+
+  --rrp-border-subtle:  rgba(255, 255, 255, 0.10); /* separar superficies negras entre sí */
+  --rrp-border-teal:    rgba(1, 150, 133, 0.35);   /* borde tenue que ata el negro a la paleta */
+
+  /* ---- Color: estados semánticos ---------------------------------- */
+  /* Uso restringido: comunican el resultado de una acción o el riesgo de
+     una acción, nunca decoran. Si algo es solo "importante", eso es
+     --rrp-accent, no --rrp-danger. */
+  --rrp-success:        #019685; /* confirmación: reutiliza el teal de la paleta */
+  --rrp-warning:        #F2A93B; /* aviso: combustible bajo, tiempo agotándose */
+  --rrp-danger:         #E4483F; /* error o acción destructiva/irreversible */
+  --rrp-danger-hover:   #F4695F; /* hover de un botón de peligro */
+
+  /* Tintes suaves de los mismos estados, para fondos de alerta/badge
+     sobre las superficies negras (el color macizo se deja al borde). */
+  --rrp-success-soft:   rgba(1, 150, 133, 0.18);
+  --rrp-warning-soft:   rgba(242, 169, 59, 0.18);
+  --rrp-danger-soft:    rgba(228, 72, 63, 0.18);
+  --rrp-accent-soft:    rgba(206, 220, 0, 0.18);
+
+  --rrp-text-on-warning: #000908; /* texto sobre --rrp-warning macizo */
+  --rrp-text-on-danger:  #FFFFFF; /* texto sobre --rrp-danger macizo */
+
   /* ---- Color: acento -------------------------------------------- */
   --rrp-accent:         #CEDC00; /* "hovers y cosas": hover de acción positiva/aceptar, selección destacada */
 
   /* ---- Color: texto ----------------------------------------------- */
   --rrp-white:          #FFFFFF; /* texto sobre fondos oscuros (uso por defecto) */
   --rrp-text-on-accent: #00352F; /* texto sobre --rrp-accent, para mantener contraste (usar bg-primary oscuro) */
+  --rrp-text-muted:     rgba(255, 255, 255, 0.60); /* descripciones, etiquetas, valores secundarios */
+  --rrp-text-faint:     rgba(255, 255, 255, 0.38); /* placeholders, texto deshabilitado */
 
   /* ---- Tipografía ------------------------------------------------- */
   --rrp-font-family: "Montserrat", "Segoe UI", sans-serif;
@@ -46,14 +80,35 @@
   --rrp-border-width: 1px;
   --rrp-border-color: var(--rrp-white);
 
+  /* ---- Capas (z-index) ---------------------------------------------- */
+  --rrp-z-panel:   1;
+  --rrp-z-tooltip: 50;
+  --rrp-z-notify:  100;
+  --rrp-z-modal:   200;
+
+  /* ---- Alto de controles (mantiene alineados input/select/botón) ------ */
+  --rrp-control-height: 34px;
+
   /* ---- Sombra / elevación --------------------------------------------- */
   --rrp-shadow-panel: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --rrp-shadow-float: 0 4px 12px rgba(0, 0, 0, 0.55); /* toasts, tooltips, menús flotantes */
+  /* Foco. Dos formas, y no son intercambiables:
+     - ring: aro de acento para lo que NO tiene borde propio (botones,
+       filas, slots). Va con outline-offset para no comerse el elemento.
+     - glow: halo teal para los campos, que ya marcan el foco con su
+       propio borde. Un aro lima de 2px sobre un input con borde queda
+       como un doble marco chillón. */
+  --rrp-focus-ring:   0 0 0 2px var(--rrp-accent);
+  --rrp-focus-glow:   0 0 0 3px rgba(1, 150, 133, 0.30);
 
   /* ---- Transiciones ------------------------------------------------------ */
   --rrp-transition-fast: 120ms ease-out;
 
   /* ---- Escala de degradado (siempre oscuro arriba -> claro abajo) --------- */
   /* Usar SIEMPRE con: linear-gradient(180deg, <stop-oscuro>, <stop-claro>) */
+  --rrp-gradient-0-from: var(--rrp-black-green);  /* #000908 */
+  --rrp-gradient-0-to:   var(--rrp-surface-2);    /* #121A19 */
+
   --rrp-gradient-1-from: var(--rrp-bg-dark);      /* #001D19 */
   --rrp-gradient-1-to:   var(--rrp-bg-primary);   /* #00352F */
 

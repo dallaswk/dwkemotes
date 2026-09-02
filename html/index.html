@@ -26,6 +26,7 @@
                         <input type="text" id="search-input" autocomplete="off" spellcheck="false" aria-label="Buscar" />
                         <button id="search-clear" class="search-clear hidden" type="button" aria-label="Limpiar">&times;</button>
                     </div>
+                    <button id="walklock-btn" class="header-btn hidden" type="button" role="switch" aria-checked="false"></button>
                     <button id="settings-btn" class="header-btn" type="button" aria-label="Ajustes"></button>
                     <button id="close-btn" class="header-btn" type="button" aria-label="Cerrar"></button>
                 </div>
@@ -87,7 +88,19 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Capa de superposicion: arriba a la izquierda, fuera de #emote-menu a
+         proposito, porque tiene que verse tambien con el menu cerrado. Nunca
+         pide foco NUI, asi que el jugador se sigue moviendo con normalidad. -->
+    <div id="overlay-stack" class="overlay-stack">
         <div id="toast-container" aria-live="polite"></div>
+
+        <!-- Atajos en pantalla (colocacion de animaciones) -->
+        <aside id="hint-overlay" class="hint-overlay hidden" aria-hidden="true">
+            <p id="hint-warning" class="hint-warning hidden"></p>
+            <div id="hint-rows"></div>
+        </aside>
     </div>
 
     <script src="js/icons.js"></script>

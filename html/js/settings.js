@@ -6,6 +6,8 @@
  * de partida para quien nunca ha tocado nada.
  */
 const Settings = {
+    WALKLOCK_SWITCH_ID: 'walklock-switch',
+
     _panel: null,
     _bodyEl: null,
     _open: false,
@@ -38,6 +40,20 @@ const Settings = {
 
     isOpen() {
         return this._open;
+    },
+
+    /**
+     * Pone el interruptor de "caminar con la animacion" en el estado que dice
+     * Lua. Se toca solo ese control en vez de repintar el panel entero porque
+     * un repintado devolveria el scroll de los ajustes al principio cada vez
+     * que alguien pulsa /emotewalk.
+     */
+    syncWalkLock() {
+        if (!this._open) return;
+        const btn = document.getElementById(this.WALKLOCK_SWITCH_ID);
+        if (!btn) return;
+        btn.classList.toggle('on', Store.walkLock);
+        btn.setAttribute('aria-checked', String(Store.walkLock));
     },
 
     // ─── Construccion de controles ───
@@ -79,7 +95,7 @@ const Settings = {
             }),
         ]));
 
-        this._bodyEl.appendChild(this._section(Store.t('behaviour'), [
+        const behaviour = [
             this._sliderRow(Store.t('previewdelay'), s.previewDelay, 0, 1500, 50, 'ms', (value) => {
                 Store.setSetting('previewDelay', value);
             }, (value) => (value === 0 ? Store.t('disabled') : value + ' ms')),
@@ -91,7 +107,25 @@ const Settings = {
                 Store.setSetting('showMostUsed', value);
                 App.applySettings({ sidebar: true, order: true });
             }),
-        ]));
+            this._toggleRow(Store.t('confirmplay'), s.confirmPlay, (value) => {
+                Store.setSetting('confirmPlay', value);
+                App.applySettings();   // el pie gana o pierde el atajo de Enter
+            }),
+            this._hint(Store.t('confirmplayhint')),
+        ];
+
+        // "Caminar con la animacion" no es un ajuste de la interfaz: el estado
+        // vive en Lua (se guarda en el cliente y sobrevive al cierre del menu),
+        // asi que no pasa por Store.setSetting. La barra de estado y el chip se
+        // actualizan solos cuando Lua responde con el estado nuevo.
+        if (Store.walkLockAvailable) {
+            behaviour.push(this._toggleRow(Store.t('walklock'), Store.walkLock, (value) => {
+                NUI.setWalkLock(value);
+            }, this.WALKLOCK_SWITCH_ID));
+            behaviour.push(this._hint(Store.t('walklockhint')));
+        }
+
+        this._bodyEl.appendChild(this._section(Store.t('behaviour'), behaviour));
 
         this._bodyEl.appendChild(this._section(Store.t('data'), [
             this._buttonRow('download', Store.t('exportprofile'), () => this._export()),
@@ -117,6 +151,14 @@ const Settings = {
 
         for (const row of rows) section.appendChild(row);
         return section;
+    },
+
+    /** Nota explicativa bajo una fila de ajustes. */
+    _hint(text) {
+        const p = document.createElement('p');
+        p.className = 'settings-hint';
+        p.textContent = text;
+        return p;
     },
 
     _row(label) {
@@ -203,11 +245,12 @@ const Settings = {
         return row;
     },
 
-    _toggleRow(label, current, onChange) {
+    _toggleRow(label, current, onChange, id) {
         const row = this._row(label);
 
         const btn = document.createElement('button');
         btn.type = 'button';
+        if (id) btn.id = id;
         btn.className = 'switch' + (current ? ' on' : '');
         btn.setAttribute('role', 'switch');
         btn.setAttribute('aria-checked', String(!!current));

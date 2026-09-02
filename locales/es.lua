@@ -53,6 +53,7 @@ return {
     ['puke'] = "Pulsa ~y~G~w~ para vomitar",
     ['cut'] = "Pulsa ~y~G~w~ para cortar",
     ['btn_select'] = "Seleccionar",
+    ['btn_play'] = "Reproducir",
     ['btn_back'] = "Atrás",
     ['btn_place'] = "Colocar en el mundo",
     ['btn_increment'] = "Incrementar",
@@ -98,6 +99,7 @@ return {
     ['position'] = "Posición",
     ['rotate'] = "Rotar",
     ['height'] = "Altura",
+    ['invalidposition'] = "Posición no válida",
     ['toofar'] = "~r~¡Demasiado lejos!~w~~s~",
     -- Animaciones en grupo
     ['notvalidgroupemote'] = "¡No es una animación de grupo válida!",
@@ -171,4 +173,16 @@ return {
     ['hint_place'] = "Colocar",
     ['hint_rightclick'] = "Clic dcho.",
     ['hint_more'] = "Más",
+
+    -- Caminar con la animacion
+    ['walklock'] = "Caminar con la animación",
+    ['walklockhint'] = "La animación pasa a la parte superior del cuerpo: puedes andar, correr y girar mientras suena. No funciona con escenarios ni con animaciones colocadas.",
+    ['walklockdesc'] = "Alternar caminar con la animación",
+    ['walklockon'] = "Caminar con la animación: ~g~activado~w~.",
+    ['walklockoff'] = "Caminar con la animación: ~r~desactivado~w~.",
+    ['walklockscenario'] = "Esta animación es un escenario: no se puede caminar con ella.",
+    ['register_walklock'] = "Caminar con la animación",
+    ['confirmplay'] = "Confirmar antes de reproducir",
+    ['confirmplayhint'] = "El clic izquierdo solo selecciona la animación; para lanzarla, haz un segundo clic sobre ella, doble clic o pulsa Enter. No afecta a las formas de caminar ni a los ánimos.",
+    ['hint_play'] = "Reproducir",
 }

@@ -38,7 +38,7 @@ const Toast = {
 
         const span = document.createElement('span');
         span.className = 'toast-msg';
-        span.textContent = msg;
+        this._richText(span, msg);
         toast.appendChild(span);
 
         const bar = document.createElement('div');
@@ -50,6 +50,41 @@ const Toast = {
         toast._timer = setTimeout(() => this._drop(toast), duration);
 
         this._el.prepend(toast);
+    },
+
+    /**
+     * Vuelca un mensaje de Lua respetando los codigos de color de GTA.
+     *
+     * Los avisos del recurso vienen con `~r~`, `~g~`, `~y~`, `~b~`, `~h~` y los
+     * de vuelta a normal `~w~`/`~s~`, porque estaban escritos para el feed
+     * nativo del juego. Aqui se traducen a `<span class="rt-*">` en vez de
+     * mostrarse como texto suelto. Se construye con textContent, nunca con
+     * innerHTML: el mensaje puede llevar el nombre de otro jugador.
+     */
+    _richText(host, msg) {
+        const KNOWN = { r: 'rt-r', g: 'rt-g', y: 'rt-y', b: 'rt-b', h: 'rt-h' };
+        let cls = null;
+
+        for (const chunk of String(msg).split(/(~[a-z]~)/i)) {
+            if (!chunk) continue;
+
+            const code = /^~([a-z])~$/i.exec(chunk);
+            if (code) {
+                const letter = code[1].toLowerCase();
+                // ~w~ y ~s~ vuelven al color normal; el resto abre un tramo.
+                cls = KNOWN[letter] || null;
+                continue;
+            }
+
+            if (cls) {
+                const span = document.createElement('span');
+                span.className = cls;
+                span.textContent = chunk;
+                host.appendChild(span);
+            } else {
+                host.appendChild(document.createTextNode(chunk));
+            }
+        }
     },
 
     _drop(el) {
@@ -77,6 +112,8 @@ const App = {
     _footerEl: null,
     _titleEl: null,
     _statusEl: null,
+    _hintEl: null,
+    _marqueeTimer: null,
     _drag: { active: false, startX: 0, startY: 0, startLeft: 0, startTop: 0 },
 
     init() {
@@ -89,6 +126,7 @@ const App = {
         this._footerEl = document.getElementById('menu-footer');
         this._titleEl = document.getElementById('category-title');
         this._statusEl = document.getElementById('status-bar');
+        this._hintEl = document.getElementById('hint-overlay');
 
         Toast.init();
         Grid.init();
@@ -99,13 +137,31 @@ const App = {
         this.applySettings();
 
         window.addEventListener('message', (e) => this._onMessage(e));
+        window.addEventListener('resize', () => this._syncFooterMarquee());
         document.addEventListener('keydown', (e) => this._onKeyDown(e));
         document.addEventListener('contextmenu', (e) => e.preventDefault());
 
         document.getElementById('close-btn').addEventListener('click', () => NUI.closeMenu());
+        document.getElementById('walklock-btn')
+            .addEventListener('click', () => NUI.setWalkLock(!Store.walkLock));
         document.getElementById('keybind-cancel').addEventListener('click', () => this.hideKeybindModal());
 
         this._initDrag();
+    },
+
+    /**
+     * Nombre accesible + tooltip de un boton que solo lleva icono.
+     *
+     * Se queda en el `title` nativo a proposito: el `data-rrp-tip` del sistema
+     * pinta el globo con ::after dentro del elemento, y `#emote-menu` recorta
+     * con `overflow: hidden` para redondear las esquinas — el globo de los
+     * botones del borde derecho saldria cortado por la mitad.
+     */
+    _tipFor(id, label) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.setAttribute('aria-label', label);
+        el.title = label;
     },
 
     _mountStaticIcons() {
@@ -114,6 +170,7 @@ const App = {
             if (host) host.replaceChildren(Icons.el(name, cls));
         };
         put('search-icon-slot', 'search', 'search-icon');
+        put('walklock-btn', 'walk', 'header-icon');
         put('settings-btn', 'sliders', 'header-icon');
         put('close-btn', 'close', 'header-icon');
         put('settings-close', 'close', 'header-icon');
@@ -139,6 +196,12 @@ const App = {
             case 'showToast':
                 Toast.show(d.msg, d.toastType, d.duration);
                 break;
+            case 'showHints':
+                this._showHints(d.rows, d.warning);
+                break;
+            case 'hideHints':
+                this._hideHints();
+                break;
             case 'updateKeybinds':
                 Store.updateKeybinds(d.keybinds);
                 this.refreshCurrentView();
@@ -152,7 +215,11 @@ const App = {
                 Store.activeWalkLabel = d.activeWalkLabel || '';
                 Store.activeExpression = d.activeExpression || '';
                 Store.activeExpressionLabel = d.activeExpressionLabel || '';
+                Store.walkLock = !!d.walkLock;
+                Store.walkLockAvailable = !!d.walkLockAvailable;
                 this._updateStatusBar();
+                this._syncWalkLockButton();
+                Settings.syncWalkLock();
                 if (Store.currentCategory === Store.WALKS || Store.currentCategory === Store.EXPRESSIONS) {
                     this.refreshCurrentView();
                 }
@@ -172,13 +239,15 @@ const App = {
             input.value = '';
         }
         document.getElementById('search-clear').classList.add('hidden');
-        document.getElementById('settings-btn').title = Store.t('settings');
-        document.getElementById('close-btn').title = Store.t('btn_back');
+        // Iconos sin etiqueta: tooltip del sistema, no el nativo del navegador.
+        this._tipFor('settings-btn', Store.t('settings'));
+        this._tipFor('close-btn', Store.t('btn_back'));
 
         this._buildSidebar();
         this._buildFooter();
         this._updateCategoryTitle();
         this._updateStatusBar();
+        this._syncWalkLockButton();
         this.applySettings();
 
         this._applyPanelPosition();
@@ -194,7 +263,9 @@ const App = {
         Settings.close();
         Grid.stopPreview();
         SmoothScroll.stop();
-        Toast.clear();
+        // Los avisos NO se limpian aqui: ahora viven en la capa de arriba a la
+        // izquierda, fuera del menu, y tienen que seguir viendose al cerrarlo.
+        // Se van solos cuando expiran.
     },
 
     refreshCurrentView() {
@@ -257,6 +328,11 @@ const App = {
         if (opts.order) {
             this.refreshCurrentView();
         }
+
+        // El pie depende de los ajustes (atajo de Enter) y su ancho util depende
+        // de la escala, las columnas y el modo compacto.
+        if (this._footerEl && this._footerEl.firstElementChild) this._buildFooter();
+        else this._syncFooterMarquee();
     },
 
     /** #RRGGBB -> rgba() con la opacidad pedida. */
@@ -283,17 +359,30 @@ const App = {
             item.className = 'sidebar-item';
             if (cat === Store.currentCategory) item.classList.add('active');
             item.dataset.category = cat;
-            item.title = Store.getCategoryLabel(cat);
 
+            // Sin etiqueta debajo, el icono solo no dice que categoria es, asi
+            // que siempre lleva nombre accesible y tooltip.
+            //
+            // Aqui NO se usa `data-rrp-tip` del sistema: lo dibuja con ::after
+            // dentro del propio elemento, y la barra lateral es un contenedor
+            // con `overflow-x: hidden` (y el panel entero con `overflow:
+            // hidden`, por las esquinas redondeadas), asi que el globo se
+            // recortaria contra el borde. El title nativo no se recorta.
+            const label = Store.getCategoryLabel(cat);
+            item.setAttribute('aria-label', label);
+            item.title = label;
+
+            // El color va como variable y no en linea: asi la regla del estado
+            // activo (icono en acento) puede ganarle sin pelear con un style="".
             const icon = Icons.el(Store.getCategoryIcon(cat), 'sidebar-icon');
-            icon.style.color = Store.getCategoryColor(cat);
+            item.style.setProperty('--cat-color', Store.getCategoryColor(cat));
             item.appendChild(icon);
 
             if (Store.settings.showLabels) {
-                const label = document.createElement('span');
-                label.className = 'sidebar-label';
-                label.textContent = this._shortLabel(cat);
-                item.appendChild(label);
+                const labelEl = document.createElement('span');
+                labelEl.className = 'sidebar-label';
+                labelEl.textContent = this._shortLabel(cat);
+                item.appendChild(labelEl);
             }
 
             item.onclick = () => this.selectCategory(cat);
@@ -386,7 +475,16 @@ const App = {
         }
 
         const cat = Store.currentCategory;
-        this._titleEl.appendChild(document.createTextNode(Store.getCategoryLabel(cat)));
+
+        // Mismo icono del sprite que en la barra lateral, en vez del emoji que
+        // viene dentro de la etiqueta traducida: los emojis los pinta la fuente
+        // del sistema y no siguen ni el color ni el trazo del resto del menu.
+        const icon = Icons.el(Store.getCategoryIcon(cat), 'cat-icon');
+        icon.style.setProperty('--cat-color', Store.getCategoryColor(cat));
+        this._titleEl.appendChild(icon);
+
+        // `_shortLabel` quita el emoji del principio y del final de la etiqueta.
+        this._titleEl.appendChild(document.createTextNode(this._shortLabel(cat)));
 
         const count = Store.getCategoryCount(cat);
         if (count > 0) {
@@ -419,6 +517,11 @@ const App = {
     _buildFooter() {
         this._footerEl.replaceChildren();
 
+        // Los atajos van dentro de una pista propia para poder desplazarla
+        // cuando no caben: ver _syncFooterMarquee.
+        const track = document.createElement('div');
+        track.className = 'footer-track';
+
         // Solo lo que no es evidente por la propia interfaz: el resto vive en el
         // menu contextual y en los tooltips.
         const hints = [
@@ -426,6 +529,9 @@ const App = {
             ['F', Store.t('hint_favorite')],
             ['Supr', Store.t('hint_cancel')],
         ];
+        // Con la confirmacion activa, el clic solo elige: hay que decir con que
+        // se lanza.
+        if (Store.settings.confirmPlay) hints.splice(0, 0, ['Enter', Store.t('hint_play')]);
         if (Store.config.placementEnabled) hints.push(['Shift', Store.t('hint_place')]);
 
         for (const [key, label] of hints) {
@@ -440,8 +546,170 @@ const App = {
             text.textContent = label;
             chunk.appendChild(text);
 
-            this._footerEl.appendChild(chunk);
+            track.appendChild(chunk);
         }
+
+        this._footerEl.appendChild(track);
+        this._syncFooterMarquee();
+    },
+
+    /** Velocidad del desplazamiento del pie, en px por segundo. */
+    _FOOTER_SPEED: 42,
+
+    /**
+     * Decide si los atajos del pie tienen que desplazarse solos.
+     *
+     * No siempre caben: el ancho depende del panel, de la escala de la interfaz
+     * y de lo largas que sean las palabras del idioma. Cuando sobra ancho, la
+     * pista se anima de una punta a la otra; la velocidad es constante, asi que
+     * la duracion sale de cuanto sobra y un pie muy lleno no se lee mas deprisa
+     * que uno que casi cabe.
+     *
+     * Con las animaciones desactivadas desde los ajustes del menu no se anima
+     * nada: `body.no-anim` recorta cualquier animacion a 0.001ms y dejaria la
+     * pista clavada en el extremo. En ese caso el pie se vuelve desplazable
+     * con la rueda.
+     *
+     * Aqui NO se mira `prefers-reduced-motion`. Windows la activa en cuanto se
+     * desactivan las animaciones del sistema, algo que mucha gente hace por
+     * rendimiento, y el CEF de FiveM la hereda: el pie se quedaba cortado sin
+     * forma de leerlo. Quien quiera pararlo tiene el interruptor del menu, que
+     * es una decision explicita sobre esta interfaz. La hoja de estilos hace la
+     * misma excepcion para `.footer-track.scrolling`.
+     */
+    _syncFooterMarquee() {
+        const footer = this._footerEl;
+        const track = footer && footer.firstElementChild;
+        if (!track) return;
+
+        // Medir sin la animacion puesta: si no, se mide la posicion desplazada.
+        track.classList.remove('scrolling');
+        footer.classList.remove('no-marquee');
+
+        // La medida va en un temporizador y NO en requestAnimationFrame: rAF
+        // solo corre si la pagina se esta pintando, y si no lo esta en ese
+        // momento el callback no llega a ejecutarse nunca — el pie se quedaba
+        // cortado y quieto para siempre. Un timeout se ejecuta igual.
+        // Un unico temporizador compartido: _buildFooter puede encadenarse
+        // varias veces al abrir el menu, y asi solo se mide la ultima pista en
+        // lugar de una que ya se ha quedado fuera del arbol.
+        clearTimeout(this._marqueeTimer);
+        this._marqueeTimer = setTimeout(() => this._applyFooterMarquee(0), 0);
+    },
+
+    /**
+     * Mide el pie y arranca (o no) el desplazamiento.
+     * @param {number} attempt reintentos gastados; el menu puede estar todavia
+     *   oculto (`display: none`) cuando llega la primera medida.
+     */
+    _applyFooterMarquee(attempt) {
+        const footer = this._footerEl;
+        const track = footer && footer.firstElementChild;
+        if (!track || !track.isConnected) return;
+
+        // Con el menu cerrado no hay nada que medir.
+        if (!footer.clientWidth) {
+            if (attempt < 5) {
+                this._marqueeTimer = setTimeout(() => this._applyFooterMarquee(attempt + 1), 60);
+            }
+            return;
+        }
+
+        const style = getComputedStyle(footer);
+        const available = footer.clientWidth
+            - (parseFloat(style.paddingLeft) || 0)
+            - (parseFloat(style.paddingRight) || 0);
+        const overflow = Math.ceil(track.scrollWidth - available);
+        if (overflow <= 1) return;
+
+        if (!Store.settings.animations) {
+            footer.classList.add('no-marquee');
+            return;
+        }
+
+        // El recorrido ocupa el 68% del ciclo (16%-84% de los keyframes); el
+        // resto son las pausas de cada extremo.
+        const travel = overflow + 2;
+        const duration = Math.max(3, travel / this._FOOTER_SPEED / 0.68);
+
+        track.style.setProperty('--marquee-shift', travel + 'px');
+        track.style.setProperty('--marquee-duration', duration.toFixed(2) + 's');
+        track.classList.add('scrolling');
+    },
+
+    /**
+     * Pinta el panel de atajos en pantalla.
+     *
+     * Es el sustituto del cuadro de ayuda nativo de GTA, que lo dibuja el motor
+     * y no se puede llevar al sistema de diseno. Se muestra con el menu cerrado
+     * (colocacion de animaciones), asi que no depende de #emote-menu.
+     *
+     * @param {{keys: string[], label: string}[]} rows
+     * @param {string} [warning] linea de aviso que va encima, en rojo
+     */
+    _showHints(rows, warning) {
+        if (!this._hintEl || !Array.isArray(rows) || !rows.length) return this._hideHints();
+
+        const warnEl = document.getElementById('hint-warning');
+        warnEl.textContent = warning || '';
+        warnEl.classList.toggle('hidden', !warning);
+
+        const list = document.getElementById('hint-rows');
+        list.replaceChildren();
+
+        for (const row of rows) {
+            if (!row || !Array.isArray(row.keys)) continue;
+
+            const line = document.createElement('div');
+            line.className = 'hint-row';
+
+            const keys = document.createElement('span');
+            keys.className = 'hint-keys';
+            row.keys.forEach((key, i) => {
+                if (i > 0) {
+                    const sep = document.createElement('span');
+                    sep.className = 'hint-sep';
+                    sep.textContent = '/';
+                    keys.appendChild(sep);
+                }
+                const kbd = document.createElement('kbd');
+                kbd.textContent = key;
+                keys.appendChild(kbd);
+            });
+            line.appendChild(keys);
+
+            const label = document.createElement('span');
+            label.className = 'hint-label';
+            label.textContent = row.label || '';
+            line.appendChild(label);
+
+            list.appendChild(line);
+        }
+
+        this._hintEl.classList.remove('hidden');
+    },
+
+    _hideHints() {
+        if (this._hintEl) this._hintEl.classList.add('hidden');
+    },
+
+    /**
+     * Pone el boton de "caminar con la animacion" de la cabecera al dia.
+     *
+     * Vive arriba y no solo en los ajustes porque es un modo que se enciende y
+     * se apaga a menudo, y bajar a Ajustes cada vez para algo asi sobra. El
+     * estado se ve en el propio boton (encendido = acento), asi que la barra de
+     * estado ya no lo repite.
+     */
+    _syncWalkLockButton() {
+        const btn = document.getElementById('walklock-btn');
+        if (!btn) return;
+
+        btn.classList.toggle('hidden', !Store.walkLockAvailable);
+        btn.classList.toggle('active', !!Store.walkLock);
+        btn.setAttribute('aria-checked', String(!!Store.walkLock));
+
+        this._tipFor('walklock-btn', Store.t('walklock'));
     },
 
     _updateStatusBar() {
@@ -450,6 +718,8 @@ const App = {
 
         const hasWalk = !!Store.activeWalk;
         const hasExpr = !!Store.activeExpression;
+        // "Caminar con la animacion" ya no tiene ficha aqui: lo dice el boton de
+        // la cabecera, que ademas esta siempre visible.
         if (!hasWalk && !hasExpr) {
             this._statusEl.classList.add('hidden');
             return;

@@ -53,6 +53,7 @@ return {
     ['puke'] = "Press ~y~G~w~ to puke",
     ['cut'] = "Press ~y~G~w~ to cut",
     ['btn_select'] = "Select",
+    ['btn_play'] = "Play",
     ['btn_back'] = "Back",
     ['btn_place'] = "Place in world",
     ['btn_increment'] = "Increment",
@@ -98,6 +99,7 @@ return {
     ['position'] = 'Position',
     ['rotate'] = "Rotate",
     ['height'] = "Height",
+    ['invalidposition'] = "Invalid position",
     ['toofar'] = "~r~Too far away!~w~~s~",
     -- Group emotes
     ['notvalidgroupemote'] = "Not a valid group emote!",
@@ -171,4 +173,16 @@ return {
     ['hint_place'] = "Place",
     ['hint_rightclick'] = "Right click",
     ['hint_more'] = "More",
+
+    -- Walk while the animation plays
+    ['walklock'] = "Walk with the animation",
+    ['walklockhint'] = "The animation moves to the upper body, so you can walk, run and turn while it plays. Scenarios and placed animations are not supported.",
+    ['walklockdesc'] = "Toggle walking with the animation",
+    ['walklockon'] = "Walk with the animation: ~g~on~w~.",
+    ['walklockoff'] = "Walk with the animation: ~r~off~w~.",
+    ['walklockscenario'] = "This animation is a scenario: you cannot walk with it.",
+    ['register_walklock'] = "Walk with the animation",
+    ['confirmplay'] = "Confirm before playing",
+    ['confirmplayhint'] = "Left click only selects the animation; to play it, click it again, double click, or press Enter. Walking styles and moods are not affected.",
+    ['hint_play'] = "Play",
 }
