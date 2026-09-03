@@ -12,14 +12,11 @@ return {
     -- ═══ Pazeee (custom_emotes/pazeee_animations.lua) ═══
 
     -- Moto
-    ["pmotoraa"] = "En moto A (conductor)",
-    ["pmotora"] = "En moto A (pasajero)",
     ["pmotorb"] = "En moto B",
     ["pmotorc"] = "En moto C",
     ["pmotord"] = "Moto D",
     ["pmotore"] = "Moto E",
     ["pmotorf"] = "Moto F",
-    ["pmotorg"] = "Moto G",
 
     -- Piernas
     ["pholdlega"] = "Levantar la pierna A",
@@ -28,25 +25,16 @@ return {
     ["pstucklegb"] = "Pierna atascada B",
 
     -- Trabajo y objetos
-    ["pcartcementa"] = "Carretilla de cemento A",
-    ["pcartcementb"] = "Carretilla de cemento B",
-    ["pcartcementc"] = "Carretilla de cemento C",
     ["pegranga"] = "Andar con zancos A",
     ["pegrangb"] = "Andar con zancos B",
     ["ppickupa"] = "Recoger del suelo A",
     ["ppickupb"] = "Recoger del suelo B",
-    ["ppickupc"] = "Recoger del suelo C",
     ["ppickupd"] = "Recoger del suelo D",
     ["ppickupe"] = "Recoger del suelo E",
-    ["ppickupf"] = "Recoger del suelo F",
-    ["ppickupg"] = "Recoger del suelo G",
     ["ppickuph"] = "Recoger del suelo H",
     ["ppickupi"] = "Recoger del suelo I",
     ["ppickupj"] = "Recoger del suelo J",
-    ["ppickupk"] = "Recoger del suelo K",
-    ["ppickupl"] = "Recoger del suelo L",
     ["ppickupm"] = "Recoger del suelo M",
-    ["ppickupn"] = "Recoger del suelo N",
 
     -- Pelea
     ["pfunnypuncha"] = "Puñetazo gracioso A",
@@ -62,10 +50,7 @@ return {
     ["pmonkeya"] = "Mono A",
     ["pmonkeyb"] = "Mono B",
     ["pmonkeyc"] = "Mono C",
-    ["pexcusemewalka"] = "Abrirse paso A",
-    ["pexcusemewalkb"] = "Abrirse paso B",
     ["pfakeblinda"] = "Hacerse el ciego",
-    ["pmastera"] = "Maestro",
 
     -- Váter
     ["ppoopa"] = "En el váter A",
@@ -75,8 +60,6 @@ return {
 
     -- Sentarse
     ["psitgrounda"] = "Sentado en el suelo A",
-    ["psitgroundb"] = "Sentado en el suelo B",
-    ["psitgroundc"] = "Sentado en el suelo C",
     ["psitgroundd"] = "Sentado en el suelo D",
     ["psitgrounde"] = "Sentado en el suelo E",
     ["psitgroundf"] = "Sentado en el suelo F",
@@ -92,8 +75,6 @@ return {
     ["parroganta"] = "Chulería A",
     ["parrogantb"] = "Chulería B",
     ["parrogantc"] = "Chulería C",
-    ["parrogantd"] = "Chulería D",
-    ["parrogante"] = "Chulería E",
     ["pbravea"] = "Valiente A",
     ["pbraveb"] = "Valiente B",
     ["pbravec"] = "Valiente C",
@@ -115,9 +96,7 @@ return {
     ["penjoyviewd"] = "Contemplar el paisaje D",
 
     -- En el suelo
-    ["pdeada"] = "En el suelo A (resistiéndose)",
     ["pdeadb"] = "En el suelo B (ausente)",
-    ["pdeadc"] = "En el suelo C (por los aires)",
 
     -- Interacción
     ["pcheckpocketsa"] = "Mirarse los bolsillos A",
@@ -126,10 +105,6 @@ return {
     ["pgamehandb"] = "Piedra, papel o tijera B",
     ["phideandseeka"] = "Escondite A",
     ["phideandseekb"] = "Escondite B",
-    ["phideandseekc"] = "Escondite C",
-    ["phideandseekd"] = "Escondite D",
-    ["pteamdisc1a"] = "Reunión de equipo 1A",
-    ["pteamdisc1b"] = "Reunión de equipo 1B",
     ["pteamdisc2a"] = "Reunión de equipo 2A",
     ["pteamdisc2b"] = "Reunión de equipo 2B",
     ["pteamdisc2c"] = "Reunión de equipo 2C",

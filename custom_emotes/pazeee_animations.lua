@@ -12,31 +12,6 @@ local CustomDP = {}
 CustomDP.Expressions = {}
 CustomDP.Walks = {}
 CustomDP.Shared = {
-    ["pmotoraa"] = {
-        "pazeee@motoraa@animations",
-        "pazeee@motoraa@clip",
-        "骑摩托 A 驾驶",
-        "pmotora",
-        AnimationOptions = {
-        }
-    },
-    ["pmotora"] = {
-        "pazeee@motora@animations",
-        "pazeee@motora@clip",
-        "骑摩托 A 乘客",
-        "pmotoraa",
-        AnimationOptions = {
-            EmoteLoop = true,
-            Attachto = true,
-            bone = 11816,
-            xPos = 0.5500,
-            yPos = 0.1500,
-            zPos = -0.1200,
-            xRot = 0.000,
-            yRot = 0.000,
-            zRot = -14.000
-        }
-    },
     ["pmotorb"] = {
         "pazeee@motorb@animations",
         "pazeee@motorb@clip",
@@ -114,38 +89,6 @@ CustomDP.Shared = {
             xRot = 0.000,
             yRot = 0.000,
             zRot = 0.000
-        }
-    },
-    ["pcartcementb"] = {
-        "pazeee@cartcementb@animations",
-        "pazeee@cartcementb@clip",
-        "推水泥车 B",
-        "pcartcementc",
-        AnimationOptions = {
-            Prop = 'prop_wheelbarrow01a',
-            PropBone = 28422,
-            PropPlacement = {
-                0.8500, 0.62, 0.0,
-                -36.633, -51.309, 60.93
-            },
-            Flag = 33
-        }
-    },
-    ["pcartcementc"] = {
-        "pazeee@cartcementc@animations",
-        "pazeee@cartcementc@clip",
-        "推水泥车 C",
-        "pcartcementb",
-        AnimationOptions = {
-            EmoteLoop = true,
-            Attachto = true,
-            bone = 28422,
-            xPos = 0.1800,
-            yPos = 0.7100,
-            zPos = -0.0500,
-            xRot = 0.000,
-            yRot = 0.000,
-            zRot = -10.000
         }
     },
     ["pfunnypuncha"] = {
@@ -247,22 +190,6 @@ CustomDP.Emotes = {
             Flag = 2
         }
     },
-    ["pexcusemewalka"] = {
-        "pazeee@excusemewalka@animations",
-        "pazeee@excusemewalka@clip",
-        "借过走路 A",
-        AnimationOptions = {
-            Flag = 33
-        }
-    },
-    ["pexcusemewalkb"] = {
-        "pazeee@excusemewalkb@animations",
-        "pazeee@excusemewalkb@clip",
-        "借过走路 B",
-        AnimationOptions = {
-            Flag = 33
-        }
-    },
     ["ppoopa"] = {
         "pazeee@poopa@animations",
         "pazeee@poopa@clip",
@@ -275,22 +202,6 @@ CustomDP.Emotes = {
         "pazeee@sitgrounda@animations",
         "pazeee@sitgrounda@clip",
         "坐地上 A",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
-    ["psitgroundb"] = {
-        "pazeee@sitgroundb@animations",
-        "pazeee@sitgroundb@clip",
-        "坐地上 B",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
-    ["psitgroundc"] = {
-        "pazeee@sitgroundc@animations",
-        "pazeee@sitgroundc@clip",
-        "坐地上 C",
         AnimationOptions = {
             EmoteLoop = true
         }
@@ -338,22 +249,6 @@ CustomDP.Emotes = {
             EmoteMoving = true
         }
     },
-    ["parrogantd"] = {
-        "pazeee@arrogantd@animations",
-        "pazeee@arrogantd@clip",
-        "傲慢 D",
-        AnimationOptions = {
-            Flag = 33
-        }
-    },
-    ["parrogante"] = {
-        "pazeee@arrogante@animations",
-        "pazeee@arrogante@clip",
-        "傲慢 E",
-        AnimationOptions = {
-            Flag = 33
-        }
-    },
     ["pbravea"] = {
         "pazeee@bravea@animations",
         "pazeee@bravea@clip",
@@ -393,27 +288,12 @@ CustomDP.Emotes = {
         AnimationOptions = {
         }
     },
-    ["pdeada"] = {
-        "pazeee@deada@animations",
-        "pazeee@deada@clip",
-        "倒地 A 不想死",
-        AnimationOptions = {
-        }
-    },
     ["pdeadb"] = {
         "pazeee@deadb@animations",
         "pazeee@deadb@clip",
         "倒地 B 发呆",
         AnimationOptions = {
             EmoteLoop = true
-        }
-    },
-    ["pdeadc"] = {
-        "pazeee@deadc@animations",
-        "pazeee@deadc@clip",
-        "倒地 C 飞天",
-        AnimationOptions = {
-            Flag = 2
         }
     },
     ["penjoyviewa"] = {
@@ -480,20 +360,6 @@ CustomDP.Emotes = {
         AnimationOptions = {
         }
     },
-    ["phideandseekc"] = {
-        "pazeee@hideandseekc@animations",
-        "pazeee@hideandseekc@clip",
-        "躲猫猫 C",
-        AnimationOptions = {
-        }
-    },
-    ["phideandseekd"] = {
-        "pazeee@hideandseekd@animations",
-        "pazeee@hideandseekd@clip",
-        "躲猫猫 D",
-        AnimationOptions = {
-        }
-    },
     ["pinhalea"] = {
         "pazeee@inhalea@animations",
         "pazeee@inhalea@clip",
@@ -523,14 +389,6 @@ CustomDP.Emotes = {
         "pazeee@motorf@animations",
         "pazeee@motorf@clip",
         "摩托 F",
-        AnimationOptions = {
-            Flag = 1
-        }
-    },
-    ["pmotorg"] = {
-        "pazeee@motorg@animations",
-        "pazeee@motorg@clip",
-        "摩托 G",
         AnimationOptions = {
             Flag = 1
         }
@@ -567,14 +425,6 @@ CustomDP.Emotes = {
             EmoteLoop = true
         }
     },
-    ["ppickupc"] = {
-        "pazeee@pickupc@animations",
-        "pazeee@pickupc@clip",
-        "捡东西 C",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
     ["ppickupd"] = {
         "pazeee@pickupd@animations",
         "pazeee@pickupd@clip",
@@ -587,22 +437,6 @@ CustomDP.Emotes = {
         "pazeee@pickupe@animations",
         "pazeee@pickupe@clip",
         "捡东西 E",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
-    ["ppickupf"] = {
-        "pazeee@pickupf@animations",
-        "pazeee@pickupf@clip",
-        "捡东西 F",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
-    ["ppickupg"] = {
-        "pazeee@pickupg@animations",
-        "pazeee@pickupg@clip",
-        "捡东西 G",
         AnimationOptions = {
             EmoteLoop = true
         }
@@ -631,34 +465,10 @@ CustomDP.Emotes = {
             EmoteLoop = true
         }
     },
-    ["ppickupk"] = {
-        "pazeee@pickupk@animations",
-        "pazeee@pickupk@clip",
-        "捡东西 K",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
-    ["ppickupl"] = {
-        "pazeee@pickupl@animations",
-        "pazeee@pickupl@clip",
-        "捡东西 L",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
     ["ppickupm"] = {
         "pazeee@pickupm@animations",
         "pazeee@pickupm@clip",
         "捡东西 M",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
-    ["ppickupn"] = {
-        "pazeee@pickupn@animations",
-        "pazeee@pickupn@clip",
-        "捡东西 N",
         AnimationOptions = {
             EmoteLoop = true
         }
@@ -691,22 +501,6 @@ CustomDP.Emotes = {
         "pazeee@sadd@animations",
         "pazeee@sadd@clip",
         "伤心 D",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
-    ["pteamdisc1a"] = {
-        "pazeee@teamdisc1a@animations",
-        "pazeee@teamdisc1a@clip",
-        "团队讨论 1A",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
-    ["pteamdisc1b"] = {
-        "pazeee@teamdisc1b@animations",
-        "pazeee@teamdisc1b@clip",
-        "团队讨论 1B",
         AnimationOptions = {
             EmoteLoop = true
         }
@@ -1045,35 +839,6 @@ CustomDP.PropEmotes = {
             PropPlacement = {
                 0.5600, -1.7, -0.490,
                 -108.37, 93.757, 11.404
-            },
-        }
-    },
-    ["pmastera"] = {
-        "pazeee@mastera@animations",
-        "pazeee@mastera@clip",
-        "大师 A",
-        AnimationOptions = {
-            EmoteLoop = true,
-            Prop = 'a3d_egrang1',
-            PropBone = 57005,
-            PropPlacement = {
-                0.0200, -0.26, -0.18,
-                109.68, 70.768, 25.407
-            },
-        }
-    },
-    ["pcartcementa"] = {
-        "pazeee@cartcementa@animations",
-        "pazeee@cartcementa@clip",
-        "推水泥车 A",
-        AnimationOptions = {
-            EmoteLoop = true,
-            Flag = 33,
-            Prop = 'prop_wheelbarrow01a',
-            PropBone = 28422,
-            PropPlacement = {
-                0.8500, 0.62, 0.0,
-                -36.633, -51.309, 60.93
             },
         }
     },

@@ -652,9 +652,6 @@ RP.Walks = {
     ["Wide"] = {
         "move_m@bag"
     },
-    ["Zombie"] = {
-        "clipset@anim@ingame@move_m@zombie@core"
-    },
 }
 
 
@@ -2541,14 +2538,6 @@ RP.Dances = {
         "dancing_wave_part_one@anim",
         "uprock_dance_1",
         "Wave Dance 15 - Rock Up Dance",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["zompopdance"] = { -- Custom Emote By BoringNeptune
-        "zompop@danceanim",
-        "zompop_clip",
-        "Dance - Zombie",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
         }
@@ -5702,30 +5691,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
         }
     },
-    ["femalestandcutefinger"] = {
-        "anim@female_model_15",
-        "f_model_15_clip",
-        "Female Stand Cute Pose Finger",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femalestandcute4"] = {
-        "anim@female_model_17",
-        "f_model_17_clip",
-        "Female Stand Cute Pose 4",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["malestandpose"] = {
-        "anim@male_model_11",
-        "m_model_11_clip",
-        "Male Stand Pose",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
     ["femalesitcute"] = {
         "sit_cute_1@dark",
         "sit_cute_1_clip",
@@ -5762,15 +5727,6 @@ RP.Emotes = {
             ExitEmote = "standup",
         }
     },
-    ["femaleonknees1"] = {
-        "on_the_knees@darksj",
-        "on_the_knees_clip",
-        "Female On Knees Pose 1",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-            ExitEmote = "standup",
-        }
-    },
     ["femaleonknees2"] = {
         "anim@female_model_21",
         "f_model_21_clip",
@@ -5788,15 +5744,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP
         }
     },
-	["fashionpose2"] = { -- Custom Emote Provided To RpEmotes By Prue颜
-        "lunyxco@dresstoimpress",
-        "deathdrop",
-        "Fashion Pose Pose 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-            ExitEmote = "standup",
-        }
-    },
 	["fashionpose3"] = { -- Custom Emote Provided To RpEmotes By Prue颜
         "lunyxco@dresstoimpress",
         "magica",
@@ -5811,47 +5758,6 @@ RP.Emotes = {
         "Fashion Pose Pose 4",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
-        }
-    },
-	["fashionpose5"] = { -- Custom Emote Provided To RpEmotes By Prue颜
-        "lunyxco@dresstoimpress",
-        "pose8",
-        "Fashion Pose Pose 5",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-	["fashionpose6"] = { -- Custom Emote Provided To RpEmotes By Prue颜
-        "lunyxco@dresstoimpress",
-        "pose20",
-        "Fashion Pose Pose 6",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-	["fashionpose7"] = { -- Custom Emote Provided To RpEmotes By Prue颜
-        "lunyxco@dresstoimpress",
-        "pose28",
-        "Fashion Pose Pose 7",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-	["fashionpose8"] = { -- Custom Emote Provided To RpEmotes By Prue颜
-        "lunyxco@dresstoimpress",
-        "runoutofposes",
-        "Fashion Pose Pose 8",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-	["fashionpose9"] = { -- Custom Emote Provided To RpEmotes By Prue颜
-        "lunyxco@dresstoimpress",
-        "split",
-        "Fashion Pose Pose 9",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-            ExitEmote = "standup",
         }
     },
     ["beast"] = {
@@ -5941,14 +5847,6 @@ RP.Emotes = {
         "Stop",
         AnimationOptions = {
             onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["sassy"] = { -- Custom Emote By EnchantedBrwny
-        "ebrwny_pack000",
-        "ebrwny_sass",
-        "Sassy",
-        AnimationOptions = {
-			onFootFlag = AnimFlag.MOVING,
         }
     },
     ["sitsad3"] = { -- Custom Emote By EnchantedBrwny
@@ -6744,14 +6642,6 @@ RP.Emotes = {
         "misshair_shop@hair_dressers",
         "keeper_base",
         "Wait 11",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["wait12"] = {
-        "rcmjosh1",
-        "keeper_base",
-        "Wait 12",
         AnimationOptions = {
             onFootFlag = AnimFlag.MOVING,
         }
@@ -8334,22 +8224,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.MOVING,
         }
     },
-    ["gangsign2"] = {
-        "mp_player_int_uppergang_sign_b",
-        "mp_player_int_gang_sign_b",
-        "Gang Sign 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["gangsign3"] = {
-        "amb@code_human_in_car_mp_actions@gang_sign_b@low@ps@base",
-        "idle_a",
-        "Gang Sign 3",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
     ["gangsign4"] = {
         "amb@code_human_in_car_mp_actions@v_sign@std@rds@base",
         "idle_a",
@@ -8831,14 +8705,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.MOVING,
         }
     },
-    ["clown5"] = {
-        "rcm_barry2",
-        "clown_idle_6",
-        "Clown 5",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
     ["tryclothes"] = {
         "mp_clothing@female@trousers",
         "try_trousers_neutral_a",
@@ -8936,14 +8802,6 @@ RP.Emotes = {
         "cellphone@",
         "cellphone_call_listen_base",
         "Earpiece",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["pull"] = {
-        "random@mugging4",
-        "struggle_loop_b_thief",
-        "Pull",
         AnimationOptions = {
             onFootFlag = AnimFlag.MOVING,
         }
@@ -9084,25 +8942,6 @@ RP.Emotes = {
         "missfam5_yoga",
         "c2_pose",
         "F Sex Pose",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        },
-        AdultAnimation = true
-    },
-    ["fspose2"] = {
-        "missfam5_yoga",
-        "c6_pose",
-        "F Sex Pose 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-            vehicleRequirement = VehicleRequirement.NOT_ALLOWED
-        },
-        AdultAnimation = true
-    },
-    ["fspose3"] = {
-        "anim@amb@carmeet@checkout_car@",
-        "female_c_idle_d",
-        "F Sex Pose 3",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
         },
@@ -9512,24 +9351,6 @@ RP.Emotes = {
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
         }
-    },
-    ["snot"] = {
-        "move_p_m_two_idles@generic",
-        "fidget_blow_snot",
-        "Blow Snot",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-            EmoteDuration = 4500
-        }
-    },
-    ["scratch"] = {
-        "move_p_m_two_idles@generic",
-        "fidget_scratch_balls",
-        "Scratch Balls",
-        AnimationOptions = {
-            EmoteDuration = 4000
-        },
-        AdultAnimation = true
     },
 	["cartaunt"] = {
         "missarmenian1driving_taunts@lamar_1",
@@ -9999,30 +9820,6 @@ RP.Emotes = {
             ExitEmote = "getup",
         }
     },
-    ["model"] = { -- Custom emote by Struggleville
-        "anim@female_model_showoff",
-        "model_showoff_clip",
-        "Model Pose Sexy",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["model2"] = { -- Custom Emote By QueenSistersAnimations
-        "sitdownonknees@queensisters",
-        "sitdown_clip",
-        "Model Pose 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["model3"] = { -- Custom emote by Struggleville
-        "anim@female_model_photo_cute",
-        "photo_cute_clip",
-        "Model Pose 3",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
     ["layncry"] = {
         "anim@amb@nightclub@lazlow@lo_sofa@",
         "lowsofa_dlg_fuckedup_laz",
@@ -10183,85 +9980,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
         }
     },
-    ["zombiewalk"] = { -- Custom Emote By BoringNeptune
-        "zombies_animations",
-        "zombi_walk_01",
-        "Zombie Walk",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["zombiewalk2"] = { -- Custom Emote By BoringNeptune
-        "zombies_animations",
-        "zombi_walk_02",
-        "Zombie Walk 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["zombiewalk3"] = {
-        "anim@ingame@move_m@zombie@core",
-        "walk_up",
-        "Zombie Walk 3",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["zombiewalk4"] = {
-        "anim@ingame@move_m@zombie@core",
-        "run_turn_r3",
-        "Zombie Run - Circle",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["zombieagony"] = { -- Custom Emote By BoringNeptune
-        "zombies_animations",
-        "agony",
-        "Zombie Agony",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["zombiescream"] = { -- Custom Emote By BoringNeptune
-        "zombies_animations",
-        "scream",
-        "Zombie Scream",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["zombiecrawl"] = { -- Custom Emote By BoringNeptune
-        "zombies_animations",
-        "crawl_01",
-        "Zombie Crawl",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-            StartDelay = 700,
-            ExitEmote = "meditateup",
-        }
-    },
-    ["zombieswipe"] = {
-        "anim@ingame@melee@unarmed@streamed_core_zombie",
-        "short_-180_punch",
-        "Zombie Swipe",
-        AnimationOptions = {
-        }
-    },
-    ["zombieswipe2"] = {
-        "anim@ingame@melee@unarmed@streamed_variations_zombie",
-        "heavy_punch_b_var_2",
-        "Zombie Swipe 2",
-        AnimationOptions = {
-        }
-    },
-    ["zombieswipe3"] = {
-        "anim@ingame@melee@unarmed@streamed_core_zombie",
-        "short_90_punch",
-        "Zombie Swipe 3",
-        AnimationOptions = {
-        }
-    },
     ["laysexy"] = { -- Custom Emote By Amnilka
         "amnilka@photopose@female@homepack001",
         "amnilka_femalehome_photopose_004",
@@ -10413,14 +10131,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.MOVING,
         }
     },
-    ["femaleposea"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@femalepose_10",
-        "mrwitt",
-        "Female Pose A",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
     ["femaleadorable1"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
         "mrwitt@adorable_style",
         "mrwitt",
@@ -10453,70 +10163,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
         }
     },
-    ["femaleposed"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@femalepose_03",
-        "mrwitt",
-        "Female Pose D",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposee"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@femalepose_04",
-        "mrwitt",
-        "Female Pose E",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposef"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@femalepose_05",
-        "mrwitt",
-        "Female Pose F",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposeg"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@femalepose_06",
-        "mrwitt",
-        "Female Pose G",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposeh"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@femalepose_07",
-        "mrwitt",
-        "Female Pose H",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposei"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@femalepose_09",
-        "mrwitt",
-        "Female Pose I",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposej"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@femalepose_10",
-        "mrwitt",
-        "Female Pose J",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposek"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@femalepose_11",
-        "mrwitt",
-        "Female Pose K",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
     ["femaleposel"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
         "mrwitt@finger_gun_pose",
         "mrwitt",
@@ -10533,34 +10179,10 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
         }
     },
-    ["femaleposen"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@photo_session_posing",
-        "mrwitt",
-        "Female Pose N",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposeo"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
-        "mrwitt@school_uniform_expression",
-        "mrwitt",
-        "Female Pose O",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
     ["femaleposep"] = { -- Custom Emotes By MrWhitt Provided To RPEmotes 01/08/2023
         "mrwitt@urban_posing",
         "mrwitt",
         "Female Pose P",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposer"] = { -- Custom Emote By DRX Animations
-        "drx@femalestand14",
-        "xrd",
-        "Female Pose R",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
         }
@@ -10598,30 +10220,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
         }
     },
-    ["femaleposew"] = { -- Custom Emote By DRX Animations
-        "drx@f_standcasual2",
-        "drx",
-        "Female Pose W",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposex"] = { -- Custom Emote By DRX Animations
-    "drx@femalestand7",
-    "xrd",
-    "Female Pose X",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["femaleposey"] = { -- Custom Emote By DRX Animations
-    "drx@femalestand8",
-    "xrd",
-    "Female Pose Y",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
     ["femaleposez"] = { -- Custom Emote By DRX Animations
         "drx@femalestand9",
         "xrd",
@@ -10638,14 +10236,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
        }
     },
-    ["maleposeb"] = { -- Custom Emote By DRX Animations
-        "drx@singlemale2",
-        "drx",
-        "Male Pose B",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
     ["maleposec"] = { -- Custom Emote By DRX Animations
         "drx@singlemalestand1",
         "drx",
@@ -10654,34 +10244,10 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
         }
     },
-    ["maleposed"] = { -- Custom Emote By DRX Animations
-        "drx@singlemalestand2",
-        "drx",
-        "Male Pose D",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
     ["maleposee"] = { -- Custom Emote By DRX Animations
         "drx@m_doublehands",
         "drx",
         "Male Pose E",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["maleposef"] = { -- Custom Emote By DRX Animations
-        "drx@m_standhide",
-        "drx",
-        "Male Pose F",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["maleposee1"] = { -- Custom Emote By DRX Animations
-        "drx@malestand2",
-        "xrd",
-        "Male Pose E1",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
         }
@@ -10738,14 +10304,6 @@ RP.Emotes = {
         "stand_middlefinger@dark",
         "stand_middlefinger_clip",
         "Male Middle Finger",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["malefistface"] = { -- Custom Emotes By Darks Animations Provided To RPEmotes 01/08/2023
-        "fist_face@darksj",
-        "fist_face_clip",
-        "Male Fist Face",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
         }
@@ -10812,30 +10370,6 @@ RP.Emotes = {
         "Male Gang Pose",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["illuminati"] = { -- Custom Emote By EnchantedBrwny
-        "ebrwny_illum",
-        "ebrwny_illum003",
-        "Illuminati Hand Sign",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["illuminati2"] = { -- Custom Emote By EnchantedBrwny
-        "ebrwny_illum",
-        "ebrwny_illum001",
-        "Illuminati Hand Sign 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["illuminati3"] = { -- Custom Emote By EnchantedBrwny
-        "ebrwny_illum",
-        "ebrwny_illum002",
-        "Illuminati Hand Sign 3",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
         }
     },
     ["gunpoint"] = { -- Custom Emote Provided To RPEmotes Courtesy Of Darks Animations
@@ -10942,139 +10476,7 @@ RP.Emotes = {
             EmoteLoop = true
         }
     },
-    ["islampray1"] = { -- Made by Struggleville
-        "smo@prayer_posepack_01",
-        "prayer_posepack_01_clip",
-        "Islam Pray - Qiyam Sadl",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray2"] = { -- Made by Struggleville
-        "smo@prayer_posepack_02",
-        "prayer_posepack_02_clip",
-        "Islam Pray - Takbir",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray3"] = { -- Made by Struggleville
-        "smo@prayer_posepack_03",
-        "prayer_posepack_03_clip",
-        "Islam Pray - Qiyam Qabd",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray4"] = { -- Made by Struggleville
-        "smo@prayer_posepack_04",
-        "prayer_posepack_04_clip",
-        "Islam Pray - Ruku",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray5"] = { -- Made by Struggleville
-        "smo@prayer_posepack_05",
-        "prayer_posepack_05_clip",
-        "Islam Pray - Sujud 1",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray6"] = { -- Made by Struggleville
-        "smo@prayer_posepack_06",
-        "prayer_posepack_06_clip",
-        "Islam Pray - Julus",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray7"] = { -- Made by Struggleville
-        "smo@prayer_posepack_07",
-        "prayer_posepack_07_clip",
-        "Islam Pray - Tasleem",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray8"] = { -- Made by Struggleville
-        "smo@prayer_posepack_08",
-        "prayer_posepack_08_clip",
-        "Islam Pray - Tasleem 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray9"] = { -- Made by Struggleville
-        "smo@prayer_posepack_09",
-        "prayer_posepack_09_clip",
-        "Islam Pray - tashahhud",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray10"] = { -- Made by Struggleville
-        "smo@prayer_posepack_10",
-        "prayer_posepack_10_clip",
-        "Islam Pray - Tasleem 3",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
 
-    ["islampray11"] = { -- Made by Struggleville
-        "smo@prayer_posepack_11",
-        "prayer_posepack_11_clip",
-        "Islam Pray - Julus 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray12"] = { -- Made by Struggleville
-        "smo@prayer_posepack_12",
-        "prayer_posepack_12_clip",
-        "Islam Pray - Julus 3",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["islampray13"] = { -- Made by Struggleville
-        "smo@prayer_posepack_13",
-        "prayer_posepack_13_clip",
-        "Islam Pray - Sujud 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-
-    },
-    ["jewishpray"] = { -- Made by Struggleville
-        "smo@prayer_posepack_14",
-        "prayer_posepack_14_clip",
-        "Jewish Pray",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-
-    },
-    ["jewishpray2"] = { -- Made by Struggleville
-        "smo@prayer_posepack_15",
-        "prayer_posepack_15_clip",
-        "Jewish Pray 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-
-    },
-    ["christianpray"] = { -- Made by Struggleville
-        "smo@prayer_posepack_16",
-        "prayer_posepack_16_clip",
-        "Christian Pray",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-
-    },
     ["christianpray2"] = { -- Made by Struggleville
         "smo@prayer_posepack_17",
         "prayer_posepack_17_clip",
@@ -11092,32 +10494,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
         }
 
-    },
-    ["christianpray4"] = { -- Made by Struggleville
-        "smo@prayer_posepack_19",
-        "prayer_posepack_19_clip",
-        "Christian Pray 4",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-
-    },
-    ["christianpray5"] = { -- Made by Struggleville
-        "smo@prayer_posepack_20",
-        "prayer_posepack_20_clip",
-        "Christian Pray 5",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-
-    },
-    ["christianpray6"] = { -- Made by Struggleville
-        "smo@prayer_posepack_21",
-        "prayer_posepack_21_clip",
-        "Christian Pray 6",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
     },
 }
 
@@ -11317,24 +10693,6 @@ RP.PropEmotes = {
                 0.00,
                 0.05,
                 90.00,
-                0.00,
-                90.00
-            },
-            onFootFlag = AnimFlag.MOVING
-        }
-    },
-    ["nailgun"] = {
-        "anim@heists@fleeca_bank@drilling",
-        "drill_straight_end",
-        "Nail Gun",
-        AnimationOptions = {
-            Prop = 'prop_tool_nailgun',
-            PropBone = 28422,
-            PropPlacement = {
-                0.00,
-                0.00,
-                0.00,
-                0.00,
                 0.00,
                 90.00
             },
@@ -11772,24 +11130,6 @@ RP.PropEmotes = {
                 0.0,
                 180.0,
                 -10.0
-            },
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["vulture"] = {
-        "anim@heists@humane_labs@finale@keycards",
-        "ped_a_enter_loop",
-        "Vulture",
-        AnimationOptions = {
-            Prop = "ch_prop_arcade_gun_bird_01a",
-            PropBone = 18905,
-            PropPlacement = {
-                0.65,
-                -1.65,
-                0.55,
-                -65.00,
-                180.00,
-                0.0
             },
             onFootFlag = AnimFlag.MOVING,
         }
@@ -19491,47 +18831,6 @@ RP.PropEmotes = {
             PtfxWait = 200
         }
     },
-    ["selfiehigh"] = { -- Custom Emote By Darks Animations
-        "girl_groupe_b@darksj",
-        "girl_groupe_b_clip",
-        "Selfie High",
-        AnimationOptions = {
-            Prop = "prop_phone_ing",
-            PropTextureVariations = {
-                {Name = "<font color=\"#00A0F4\">Blue", Value = 0},
-                {Name = "<font color=\"#1AA20E\">Green", Value = 1},
-                {Name = "<font color=\"#800B0B\">Dark Red", Value = 2},
-                {Name = "<font color=\"#FF7B00\">Orange", Value = 3},
-                {Name = "<font color=\"#5F5F5F\">Grey", Value = 4},
-                {Name = "<font color=\"#a356fa\">Purple", Value = 5},
-                {Name = "<font color=\"#FF0099\">Pink", Value = 6},
-                {Name = "Black", Value = 7}
-            },
-            PropBone = 26611,
-            PropPlacement = {
-                0.0620,
-               -0.0400,
-                0.0080,
-              -17.1672,
-                9.8904,
-              -18.1951
-            },
-            onFootFlag = AnimFlag.MOVING,
-            PtfxAsset = "scr_tn_meet",
-            PtfxName = "scr_tn_meet_phone_camera_flash",
-            PtfxPlacement = {
-                -0.015,
-                0.0,
-                0.041,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('camera'),
-            PtfxWait = 200
-        }
-    },
     ["selfiepeace"] = { -- MissSnowie Custom Emote
         "mirror_selfie@peace_sign",
         "base",
@@ -20241,174 +19540,10 @@ RP.PropEmotes = {
             ExitEmote = "getup",
         }
     },
-    ["selfiesexy"] = { -- Custom Emote By Little Spoon, designed for a custom iFruit phone model, however I am sticking with default game props for now
-        "littlespoon@selfie001",
-        "selfie001",
-        "Selfie Sexy",
-        AnimationOptions = {
-            Prop = "prop_phone_ing",
-            PropTextureVariations = {
-                {Name = "<font color=\"#00A0F4\">Blue", Value = 0},
-                {Name = "<font color=\"#1AA20E\">Green", Value = 1},
-                {Name = "<font color=\"#800B0B\">Dark Red", Value = 2},
-                {Name = "<font color=\"#FF7B00\">Orange", Value = 3},
-                {Name = "<font color=\"#5F5F5F\">Grey", Value = 4},
-                {Name = "<font color=\"#a356fa\">Purple", Value = 5},
-                {Name = "<font color=\"#FF0099\">Pink", Value = 6},
-                {Name = "Black", Value = 7}
-            },
-            PropBone = 58870, -- Right Finger 40 Bone
-            PropPlacement = {
-                0.0150,
-                0.0230,
-                0.0700,
-                0.0,
-                0.0,
-                170.0000
-            },
-            onFootFlag = AnimFlag.LOOP,
-            PtfxAsset = "scr_tn_meet",
-            PtfxName = "scr_tn_meet_phone_camera_flash",
-            PtfxPlacement = {
-                -0.015,
-                0.0,
-                0.041,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('camera'),
-            PtfxWait = 200
-        }
-    },
     ["selfiesexy2"] = { -- Custom Emote By Little Spoon, designed for a custom iFruit phone model, however I am sticking with default game props for now
         "littlespoon@selfie002",
         "selfie002",
         "Selfie Sexy 2",
-        AnimationOptions = {
-            Prop = "prop_phone_ing",
-            PropTextureVariations = {
-                {Name = "<font color=\"#00A0F4\">Blue", Value = 0},
-                {Name = "<font color=\"#1AA20E\">Green", Value = 1},
-                {Name = "<font color=\"#800B0B\">Dark Red", Value = 2},
-                {Name = "<font color=\"#FF7B00\">Orange", Value = 3},
-                {Name = "<font color=\"#5F5F5F\">Grey", Value = 4},
-                {Name = "<font color=\"#a356fa\">Purple", Value = 5},
-                {Name = "<font color=\"#FF0099\">Pink", Value = 6},
-                {Name = "Black", Value = 7}
-            },
-            PropBone = 64064, -- Right Finger 31 Bone
-            PropPlacement = {
-                0.0290,
-                0.0140,
-                0.0490,
-                174.9616,
-               -149.6187,
-                8.6491
-            },
-            onFootFlag = AnimFlag.LOOP,
-            PtfxAsset = "scr_tn_meet",
-            PtfxName = "scr_tn_meet_phone_camera_flash",
-            PtfxPlacement = {
-                -0.015,
-                0.0,
-                0.041,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('camera'),
-            PtfxWait = 200
-        }
-    },
-    ["selfiesexy3"] = { -- Custom Emote By Little Spoon, designed for a custom iFruit phone model, however I am sticking with default game props for now
-        "littlespoon@selfie003",
-        "selfie003",
-        "Selfie Sexy 3 - Squat",
-        AnimationOptions = {
-            Prop = "prop_phone_ing",
-            PropTextureVariations = {
-                {Name = "<font color=\"#00A0F4\">Blue", Value = 0},
-                {Name = "<font color=\"#1AA20E\">Green", Value = 1},
-                {Name = "<font color=\"#800B0B\">Dark Red", Value = 2},
-                {Name = "<font color=\"#FF7B00\">Orange", Value = 3},
-                {Name = "<font color=\"#5F5F5F\">Grey", Value = 4},
-                {Name = "<font color=\"#a356fa\">Purple", Value = 5},
-                {Name = "<font color=\"#FF0099\">Pink", Value = 6},
-                {Name = "Black", Value = 7}
-            },
-            PropBone = 64064, -- Right Finger 31 Bone
-            PropPlacement = {
-                0.0290,
-                0.0140,
-                0.0490,
-                174.9616,
-               -149.6187,
-                8.6491
-            },
-            onFootFlag = AnimFlag.LOOP,
-            PtfxAsset = "scr_tn_meet",
-            PtfxName = "scr_tn_meet_phone_camera_flash",
-            PtfxPlacement = {
-                -0.015,
-                0.0,
-                0.041,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('camera'),
-            PtfxWait = 200
-        }
-    },
-    ["selfiesexy4"] = { -- Custom Emote By Little Spoon, designed for a custom iFruit phone model, however I am sticking with default game props for now
-        "littlespoon@selfie004",
-        "selfie004",
-        "Selfie Sexy 4",
-        AnimationOptions = {
-            Prop = "prop_phone_ing",
-            PropTextureVariations = {
-                {Name = "<font color=\"#00A0F4\">Blue", Value = 0},
-                {Name = "<font color=\"#1AA20E\">Green", Value = 1},
-                {Name = "<font color=\"#800B0B\">Dark Red", Value = 2},
-                {Name = "<font color=\"#FF7B00\">Orange", Value = 3},
-                {Name = "<font color=\"#5F5F5F\">Grey", Value = 4},
-                {Name = "<font color=\"#a356fa\">Purple", Value = 5},
-                {Name = "<font color=\"#FF0099\">Pink", Value = 6},
-                {Name = "Black", Value = 7}
-            },
-            PropBone = 64064, -- Right Finger 31 Bone
-            PropPlacement = {
-                0.0290,
-                0.0140,
-                0.0490,
-                174.9616,
-               -149.6187,
-                8.6491
-            },
-            onFootFlag = AnimFlag.LOOP,
-            PtfxAsset = "scr_tn_meet",
-            PtfxName = "scr_tn_meet_phone_camera_flash",
-            PtfxPlacement = {
-                -0.015,
-                0.0,
-                0.041,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('camera'),
-            PtfxWait = 200
-        }
-    },
-    ["selfiesexy5"] = { -- Custom Emote By Little Spoon, designed for a custom iFruit phone model, however I am sticking with default game props for now
-        "littlespoon@selfie005",
-        "selfie005",
-        "Selfie Sexy 5",
         AnimationOptions = {
             Prop = "prop_phone_ing",
             PropTextureVariations = {
@@ -20569,47 +19704,6 @@ RP.PropEmotes = {
             PtfxWait = 200
         }
     },
-    ["selfiecute4"] = { -- Custom Emote By Struggleville, designed for a custom iFruit phone model, however I am sticking with default game props for now
-        "anim@egirl_1foot_selfie",
-        "1foot_selfie_clip",
-        "Selfie Cute 4",
-        AnimationOptions = {
-            Prop = "prop_phone_ing",
-            PropTextureVariations = {
-                {Name = "<font color=\"#00A0F4\">Blue", Value = 0},
-                {Name = "<font color=\"#1AA20E\">Green", Value = 1},
-                {Name = "<font color=\"#800B0B\">Dark Red", Value = 2},
-                {Name = "<font color=\"#FF7B00\">Orange", Value = 3},
-                {Name = "<font color=\"#5F5F5F\">Grey", Value = 4},
-                {Name = "<font color=\"#a356fa\">Purple", Value = 5},
-                {Name = "<font color=\"#FF0099\">Pink", Value = 6},
-                {Name = "Black", Value = 7}
-            },
-            PropBone = 4185, -- Left Finger 21
-            PropPlacement = {
-                0.0290,
-               -0.0230,
-                0.0190,
-               -14.7860,
-                67.8030,
-                6.1827
-            },
-            onFootFlag = AnimFlag.LOOP,
-            PtfxAsset = "scr_tn_meet",
-            PtfxName = "scr_tn_meet_phone_camera_flash",
-            PtfxPlacement = {
-                -0.015,
-                0.0,
-                0.041,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('camera'),
-            PtfxWait = 200
-        }
-    },
     ["selfiecute5"] = { -- Custom Emote By Wolf's Square
         "eagle@girlphonepose21",
         "girl",
@@ -20742,142 +19836,6 @@ RP.PropEmotes = {
             PtfxInfo = Translate('camera'),
             PtfxWait = 200
         }
-    },
-    ["selfiehhands"] = { -- Custom Emote By QueenSistersAnimations, designed for a custom iFruit phone model, however I am sticking with default game props for now
-        "heartselfiemirror@queensisters",
-        "heartselfie_clip",
-        "Selfie Heart Hands",
-        AnimationOptions = {
-            Prop = "prop_phone_ing",
-            PropTextureVariations = {
-                {Name = "<font color=\"#00A0F4\">Blue", Value = 0},
-                {Name = "<font color=\"#1AA20E\">Green", Value = 1},
-                {Name = "<font color=\"#800B0B\">Dark Red", Value = 2},
-                {Name = "<font color=\"#FF7B00\">Orange", Value = 3},
-                {Name = "<font color=\"#5F5F5F\">Grey", Value = 4},
-                {Name = "<font color=\"#a356fa\">Purple", Value = 5},
-                {Name = "<font color=\"#FF0099\">Pink", Value = 6},
-                {Name = "Black", Value = 7}
-            },
-            PropBone = 64096, -- Right Finger 11
-            PropPlacement = {
-                0.0390,
-                0.0200,
-                0.0330,
-                90.0000,
-                180.0000,
-                13.0000
-            },
-            onFootFlag = AnimFlag.LOOP,
-            PtfxAsset = "scr_tn_meet",
-            PtfxName = "scr_tn_meet_phone_camera_flash",
-            PtfxPlacement = {
-                -0.015,
-                0.0,
-                0.041,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('camera'),
-            PtfxWait = 200
-        }
-    },
-    ["selfiefu2"] = { -- Custom Emote By QueenSistersAnimations, designed for a custom iFruit phone model, however I am sticking with default game props for now
-        "fuckyouselfie@queensisters",
-        "mirrorselfie_clip",
-        "Selfie Middle Finger 2",
-        AnimationOptions = {
-            Prop = "prop_phone_ing",
-            PropTextureVariations = {
-                {Name = "<font color=\"#00A0F4\">Blue", Value = 0},
-                {Name = "<font color=\"#1AA20E\">Green", Value = 1},
-                {Name = "<font color=\"#800B0B\">Dark Red", Value = 2},
-                {Name = "<font color=\"#FF7B00\">Orange", Value = 3},
-                {Name = "<font color=\"#5F5F5F\">Grey", Value = 4},
-                {Name = "<font color=\"#a356fa\">Purple", Value = 5},
-                {Name = "<font color=\"#FF0099\">Pink", Value = 6},
-                {Name = "Black", Value = 7}
-            },
-            PropBone = 64097, -- Right Finger 12
-            PropPlacement = {
-               -0.0210,
-                0.0300,
-               -0.0030,
-               -180.0000,
-               -180.0000,
-                0.0000
-            },
-            onFootFlag = AnimFlag.LOOP,
-            PtfxAsset = "scr_tn_meet",
-            PtfxName = "scr_tn_meet_phone_camera_flash",
-            PtfxPlacement = {
-                -0.015,
-                0.0,
-                0.041,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('camera'),
-            PtfxWait = 200
-        }
-    },
-    ["selfiefu3"] = { -- Custom Emote By QueenSistersAnimations, designed for a custom iFruit phone model, however I am sticking with default game props for now
-        "selfiekilye@queensisters",
-        "kilye_clip",
-        "Selfie Middle Finger Thot Pose",
-        AnimationOptions = {
-            Prop = 'prop_cs_dildo_01',
-            PropBone = 28422, -- Right Wrist
-            PropPlacement = {
-                0.0450,
-                0.0050,
-               -0.0150,
-                92.0810,
-                1.3049,
-               -2.8863
-            },
-            SecondProp = "prop_phone_ing",
-            PropTextureVariations = {
-                {Name = "<font color=\"#00A0F4\">Blue", Value = 0},
-                {Name = "<font color=\"#1AA20E\">Green", Value = 1},
-                {Name = "<font color=\"#800B0B\">Dark Red", Value = 2},
-                {Name = "<font color=\"#FF7B00\">Orange", Value = 3},
-                {Name = "<font color=\"#5F5F5F\">Grey", Value = 4},
-                {Name = "<font color=\"#a356fa\">Purple", Value = 5},
-                {Name = "<font color=\"#FF0099\">Pink", Value = 6},
-                {Name = "Black", Value = 7}
-            },
-            SecondPropBone = 26613, -- Left Finger 30
-            SecondPropPlacement = {
-                0.0650,
-                -0.0280,
-                0.0440,
-                10.6808,
-                13.7526,
-                2.6457
-            },
-            onFootFlag = AnimFlag.LOOP,
-            ExitEmote = "getup",
-            ExitEmoteType = "Exits",
-            PtfxAsset = "scr_tn_meet",
-            PtfxName = "scr_tn_meet_phone_camera_flash",
-            PtfxPlacement = {
-                -0.015,
-                0.0,
-                0.041,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('camera'),
-            PtfxWait = 200,
-        },
-        AdultAnimation = true
     },
     ["selfiemale"] = { -- Custom Emote By Wolf's Square
         "eagle@boypose04",
@@ -25383,90 +24341,6 @@ RP.PropEmotes = {
                 -5.0,
                 3.367247,
                 0.0711684
-            },
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["murder1"] = {
-        "dead",
-        "dead_e",
-        "Murder Axe",
-        AnimationOptions = {
-            Prop = "bzzz_murder_axe001",
-            PropBone = 18905,
-            PropPlacement = {
-                -0.22,
-                0.34,
-                -0.3,
-                -56.0,
-                98.0,
-                34.0
-            },
-            SecondProp = 'p_bloodsplat_s',
-            SecondPropBone = 57005,
-            SecondPropPlacement = {
-                0.28,
-                0.17,
-                -0.12,
-                -98.0,
-                -51.0,
-                237.0
-            },
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["murder2"] = {
-        "dead",
-        "dead_a",
-        "Murder Pistol",
-        AnimationOptions = {
-            Prop = "w_pi_heavypistol",
-            PropBone = 18905,
-            PropPlacement = {
-                0.27,
-                0.35,
-                0.05,
-                -98.0,
-                2.0,
-                183.0
-            },
-            SecondProp = 'p_bloodsplat_s',
-            SecondPropBone = 57005,
-            SecondPropPlacement = {
-                -0.8,
-                0.41,
-                0.0,
-                -98.0,
-                -7.0,
-                237.0
-            },
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["murder3"] = {
-        "dead",
-        "dead_b",
-        "Murder Machete",
-        AnimationOptions = {
-            Prop = "bzzz_murder_machete001",
-            PropBone = 18905,
-            PropPlacement = {
-                -0.22,
-                0.18,
-                -0.67,
-                196.0,
-                157.0,
-                -35.0
-            },
-            SecondProp = 'p_bloodsplat_s',
-            SecondPropBone = 57005,
-            SecondPropPlacement = {
-                -0.28,
-                -0.15,
-                0.00,
-                266.2,
-                182.3,
-                -10.0
             },
             onFootFlag = AnimFlag.LOOP,
         }
