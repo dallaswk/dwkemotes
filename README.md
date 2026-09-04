@@ -208,6 +208,70 @@ Heredados y todavía disponibles: `EmoteCommandStart`, `EmoteCancel`,
 
 ---
 
+## Ajustar animaciones compartidas (`/emoteoffset`)
+
+Las poses de pareja colocan a quien inicia la animación junto a la otra persona
+usando cuatro números (`SyncOffsetFront`, `Side`, `Height` y `Heading`). Afinarlos
+a ojo desde el `.lua` es lento, así que se pueden mover en vivo sobre la pose ya
+puesta:
+
+1. Lanza la animación compartida con normalidad y espera a que la acepten.
+2. Quien la inició escribe **`/emoteoffset`**.
+3. Ajusta con el teclado. Los valores se ven en pantalla mientras se mueven:
+
+   | Tecla | Ajusta |
+   |---|---|
+   | `W` / `S` | adelante / atrás |
+   | `A` / `D` | izquierda / derecha |
+   | `R` / `F` | altura |
+   | `Q` / `E` | giro |
+   | `Shift` | paso grande (0.05 y 5°) en vez del fino (0.01 y 1°) |
+   | `Enter` | guardar |
+   | `Retroceso` | descartar |
+
+Mientras dura el ajuste, tu compañero se queda inmóvil y los dos peds dejan de
+chocar entre sí, para que lo que mides sea una distancia fija y no el resultado
+de haberos empujado. Si tu cliente se cae a media calibración, el compañero se
+suelta solo a los 10 segundos.
+
+Al guardar, el valor se escribe en `data/sync_offsets.json` y se reparte a todos
+los clientes en el momento: la siguiente vez que alguien lance esa animación ya
+sale colocada, sin reiniciar el recurso.
+
+Las teclas mueven los ejes del *offset*, que son relativos a la otra persona, no
+a tu cámara: `W` desplaza por el eje frontal de tu pareja, que es justo el número
+que acabará en el `.lua`.
+
+**Cada lado de la pareja lleva su propio offset.** Quien se recoloca es siempre
+quien inicia la animación, y puede iniciarla cualquiera de los dos: el juego usa
+el `SyncOffset` de la entrada concreta que se elige en el menú. Una pose calibrada
+solo por un lado sale a un metro cuando se lanza por el otro, así que hay que
+ajustarla dos veces, una desde cada entrada.
+
+Cuando el ajuste esté bien, se pasa al pack desde la consola del servidor:
+
+```
+emoteoffsets list                 # lo ajustado hasta ahora
+emoteoffsets export               # escribe data/sync_offsets_export.lua
+emoteoffsets apply                # lo escribe en los .lua de custom_emotes/
+emoteoffsets clear <emote|all>    # descarta ajustes
+```
+
+`apply` reescribe la línea `addPair(...)` de cada animación en los packs
+declarados en `Config.OffsetEditorPacks`, dejando copia en `data/*.bak`; hay que
+reiniciar el recurso para que cargue el `.lua` nuevo. En esa línea los cuatro
+primeros números son el offset del lado A y los cuatro siguientes, opcionales, el
+del lado B; `apply` sustituye el que corresponda y conserva el otro. Lo que no esté declarado
+con `addPair()` no se toca: `export` deja su bloque `AnimationOptions` listo para
+pegar.
+
+El editor está abierto a cualquier jugador por defecto. Para cerrarlo antes de
+producción basta con dar un ACE a `Config.OffsetEditorAce`
+(p. ej. `'dwkemotes.offseteditor'`); lo valida el servidor, tanto al abrirlo como
+al guardar.
+
+---
+
 ## Estructura
 
 ```
@@ -217,7 +281,13 @@ dwkemotes/
 │   ├── EmoteMenu.lua          Puente Lua ↔ NUI, payload y callbacks
 │   ├── Migrate.lua            Importación de datos de rpemotes        [nuevo]
 │   ├── Usage.lua              Historial de uso                        [nuevo]
+│   ├── OffsetEditor.lua       Editor de SyncOffset en vivo            [nuevo]
+│   ├── Syncing.lua            Animaciones compartidas
 │   └── …
+├── server/
+│   ├── OffsetEditor.lua       Guarda y exporta los SyncOffset         [nuevo]
+│   └── …
+├── data/                      Lo que el recurso escribe en caliente   [nuevo]
 ├── html/
 │   ├── index.html
 │   ├── css/style.css

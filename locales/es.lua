@@ -185,4 +185,21 @@ return {
     ['confirmplay'] = "Confirmar antes de reproducir",
     ['confirmplayhint'] = "El clic izquierdo solo selecciona la animación; para lanzarla, haz un segundo clic sobre ella, doble clic o pulsa Enter. No afecta a las formas de caminar ni a los ánimos.",
     ['hint_play'] = "Reproducir",
+
+    -- Editor de SyncOffset (/emoteoffset)
+    ['offset_front'] = "Adelante / atrás",
+    ['offset_side'] = "Izquierda / derecha",
+    ['offset_height'] = "Altura",
+    ['offset_heading'] = "Giro",
+    ['offset_step_fine'] = "Paso fino (mantén para paso grande)",
+    ['offset_step_coarse'] = "Paso grande",
+    ['offset_save'] = "Guardar offset",
+    ['offset_saved'] = "Offset de ~g~%s~w~ guardado",
+    ['offset_cancelled'] = "Ajuste descartado",
+    ['offset_no_emote'] = "~r~No estás en una animación compartida",
+    ['offset_not_source'] = "~r~Solo puede ajustarlo quien inició la animación",
+    ['offset_already_editing'] = "~r~Ya estás ajustando el offset",
+    ['offset_emote_ended'] = "~r~La animación terminó, ajuste descartado",
+    ['offset_no_permission'] = "~r~No tienes permiso para ajustar offsets",
+    ['offset_partner_frozen'] = "~y~Te han inmovilizado mientras calibran la pose",
 }

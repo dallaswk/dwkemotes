@@ -185,4 +185,21 @@ return {
     ['confirmplay'] = "Confirm before playing",
     ['confirmplayhint'] = "Left click only selects the animation; to play it, click it again, double click, or press Enter. Walking styles and moods are not affected.",
     ['hint_play'] = "Play",
+
+    -- SyncOffset editor (/emoteoffset)
+    ['offset_front'] = "Forward / back",
+    ['offset_side'] = "Left / right",
+    ['offset_height'] = "Height",
+    ['offset_heading'] = "Rotation",
+    ['offset_step_fine'] = "Fine step (hold for large step)",
+    ['offset_step_coarse'] = "Large step",
+    ['offset_save'] = "Save offset",
+    ['offset_saved'] = "Offset for ~g~%s~w~ saved",
+    ['offset_cancelled'] = "Adjustment discarded",
+    ['offset_no_emote'] = "~r~You are not in a shared emote",
+    ['offset_not_source'] = "~r~Only the player who started the emote can adjust it",
+    ['offset_already_editing'] = "~r~You are already adjusting the offset",
+    ['offset_emote_ended'] = "~r~The emote ended, adjustment discarded",
+    ['offset_no_permission'] = "~r~You don't have permission to adjust offsets",
+    ['offset_partner_frozen'] = "~y~You have been held still while the pose is calibrated",
 }

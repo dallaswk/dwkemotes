@@ -12,6 +12,12 @@ local lastEmoteTime = 0
 local isBumpingPed = false
 local pedBumpTimeout = 500
 
+-- Suspende la vigilancia de checkStatusThread. Hay flujos que recolocan el ped
+-- a proposito (el editor de offsets, /emoteoffset) y mover una entidad corta la
+-- reproduccion durante unos frames; sin esto la emote se cancelaria sola al
+-- primer reajuste, que es justo lo que se esta intentando calibrar.
+local animationWatchSuspended = false
+
 ---@type ScenarioType
 local ChosenScenarioType
 local CurrentAnimOptions
@@ -172,7 +178,10 @@ local function checkStatusThread(dict, anim)
             Wait(5)
         end
         while CheckStatus and IsInAnimation do
-            if not IsEntityPlayingAnim(PlayerPedId(), dict, anim, 3) and not isBumpingPed then
+            if not IsEntityPlayingAnim(PlayerPedId(), dict, anim, 3)
+                and not isBumpingPed
+                and not animationWatchSuspended
+            then
                 DebugPrint("Animation ended")
                 DestroyAllProps()
                 EmoteCancel()
@@ -548,7 +557,9 @@ end
 --- No pasa por OnEmotePlay a proposito: no hay que repetir permisos, cooldown
 --- ni animacion de salida, solo cambiar como se esta reproduciendo lo que ya
 --- suena. Sin esto, activar el modo no se notaria hasta la siguiente emote.
-local function replayCurrentAnimation()
+--- Es global porque tambien la usa el editor de offsets para recuperar la pose
+--- despues de recolocar el ped.
+function ReplayCurrentAnimation()
     if not IsInAnimation then return end
     if not currentEmote or not currentEmote.dict or not currentEmote.anim then return end
     if currentEmote.scenario then return end
@@ -591,7 +602,7 @@ function SetWalkLock(enabled, replay)
         SetResourceKvp(WalkLockKvp, enabled and "1" or "0")
     end
 
-    if replay then replayCurrentAnimation() end
+    if replay then ReplayCurrentAnimation() end
 
     DebugPrint("Walk lock = " .. tostring(WalkLock))
     TriggerEvent('dwkemotes:walkLockChanged', WalkLock)
@@ -624,6 +635,23 @@ CreateThread(function()
         WalkLock = stored == "1"
     end
 end)
+
+--- Corta la vigilancia que cancela la emote cuando la animacion deja de sonar.
+--- Solo para flujos que mueven el ped a proposito y la recuperan ellos mismos.
+---@param suspended boolean
+function SetAnimationWatchSuspended(suspended)
+    animationWatchSuspended = suspended == true
+end
+
+--- Si el ped sigue reproduciendo la animacion en curso. Devuelve true cuando no
+--- hay nada que comprobar, para que quien la use no relance de mas.
+---@return boolean
+function IsCurrentAnimationPlaying()
+    if not currentEmote or not currentEmote.dict or not currentEmote.anim then return true end
+    if currentEmote.scenario then return true end
+
+    return IsEntityPlayingAnim(PlayerPedId(), currentEmote.dict, currentEmote.anim, 3)
+end
 
 CreateExport("IsWalkLockEnabled", IsWalkLockEnabled)
 CreateExport("SetWalkLock", SetWalkLock)
@@ -820,6 +848,11 @@ local function playScenario(emoteData)
 end
 
 function OnEmotePlay(name, textureVariation, emoteType)
+    -- Red de seguridad: si algo dejo la vigilancia suspendida (un editor que
+    -- murio a medias), empezar una emote nueva la restablece. Ningun flujo que
+    -- la suspende pasa por aqui.
+    animationWatchSuspended = false
+
     local emoteData = emoteType == EmoteType.SHARED and SharedEmoteData[name] or EmoteData[name]
     if not emoteData then
         EmoteChatMessage("'" .. name .. "' " .. Translate('notvalidemote') .. "")

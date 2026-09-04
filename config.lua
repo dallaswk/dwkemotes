@@ -125,6 +125,24 @@ Config = {
     UpdateRepo = nil,        -- p.ej. 'MiOrg/dwkemotes'. Si es nil no se hace ninguna peticion HTTP
     DebugDisplay = false,
 
+    -- Dos peds en una pose de pareja se solapan siempre, y la colision entre
+    -- ellos los empuja hasta sacarlos de la pose. Mientras dura una animacion
+    -- compartida se ignoran mutuamente; la colision con todo lo demas sigue
+    -- igual, y vuelve sola en cuanto la animacion termina.
+    SharedEmoteNoCollision = true,
+
+    -- Editor de SyncOffset (/emoteoffset)
+    -- Ajusta en vivo la posicion relativa de las shared emotes. Lo guardado va
+    -- a data/sync_offsets.json y se reparte a todos sin reiniciar el recurso;
+    -- `emoteoffsets apply` en la consola lo pasa a los .lua de custom_emotes/.
+    OffsetEditorEnabled = true,
+    OffsetEditorAce = nil, -- nil = cualquier jugador. Pon aqui un ACE (p.ej.
+                           -- 'dwkemotes.offseteditor') para cerrarlo antes de
+                           -- sacarlo a produccion; lo valida el servidor.
+    OffsetEditorPacks = { 'duopareja' }, -- packs de custom_emotes/ que declaran
+                                         -- sus parejas con addPair() y que por
+                                         -- tanto `emoteoffsets apply` reescribe
+
     -- Emote Placement
     PlacementEnabled = true,
     DisablePlacementKeybindWhileMoving = true, -- When true, you cannot enter placement mode while moving. This only affects the keybind.

@@ -45,7 +45,8 @@ server_scripts {
     'server/Server.lua',
     'server/Updates.lua',
     'server/emojis.lua',
-    'server/GroupEmote.lua'
+    'server/GroupEmote.lua',
+    'server/OffsetEditor.lua'
 }
 
 client_scripts {
@@ -69,6 +70,8 @@ client_scripts {
     'client/Pointing.lua',
     'client/PTFX.lua',
     'client/Ragdoll.lua',
+    -- Define GetSyncOffset(), que Syncing.lua usa al colocar al jugador.
+    'client/OffsetEditor.lua',
     'client/Syncing.lua',
     'client/Walk.lua',
     'client/Placement.lua',

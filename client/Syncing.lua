@@ -1,6 +1,47 @@
 local isRequestAnim = false
 local targetPlayerId
 
+-- Datos de la shared emote en curso, para el editor de offsets (/emoteoffset).
+-- Solo quien la inicia se recoloca con el SyncOffset, asi que hay que saber si
+-- somos ese lado: el otro no tiene nada que ajustar.
+local activeSharedEmote = nil
+local activeSharedIsSource = false
+
+--- @return string|nil emote, number|nil partnerServerId, boolean isSource
+function GetActiveSharedSync()
+    return activeSharedEmote, targetPlayerId, activeSharedIsSource
+end
+
+local sharedCollisionRunning = false
+
+--- Dos peds en una pose de pareja se solapan por definicion, y la colision entre
+--- ellos los empuja hasta sacarlos de la pose: se separan solos y, si la pose
+--- deja a uno dentro del otro, salen andando por el mapa.
+---
+--- Mientras dura la emote compartida se ignoran mutuamente. Se pide cada frame
+--- con thisFrameOnly, asi la colision vuelve sola en cuanto la emote termina y
+--- no hay nada que restaurar por si el hilo muere.
+local function runSharedCollisionThread()
+    if sharedCollisionRunning then return end
+    if not Config.SharedEmoteNoCollision then return end
+    sharedCollisionRunning = true
+
+    CreateThread(function()
+        while activeSharedEmote and targetPlayerId and IsInAnimation do
+            local ped = PlayerPedId()
+            local partner = GetPlayerPed(GetPlayerFromServerId(targetPlayerId))
+
+            if DoesEntityExist(partner) and partner ~= ped then
+                SetEntityNoCollisionEntity(ped, partner, true)
+            end
+
+            Wait(0)
+        end
+
+        sharedCollisionRunning = false
+    end)
+end
+
 if Config.SharedEmotesEnabled then
     RegisterCommand('nearby', function(source, args, raw)
         if not LocalPlayer.state.canEmote then return end
@@ -33,6 +74,8 @@ RegisterNetEvent("dwkemotes:client:syncEmote", function(emote, player)
     EmoteCancel()
     Wait(300)
     targetPlayerId = player
+    activeSharedEmote = emote
+    activeSharedIsSource = false
     local plyServerId = GetPlayerFromServerId(player)
 
     if IsPedInAnyVehicle(GetPlayerPed(plyServerId ~= 0 and plyServerId or GetClosestPlayer()), true) then
@@ -77,6 +120,7 @@ RegisterNetEvent("dwkemotes:client:syncEmote", function(emote, player)
     end
 
     OnEmotePlay(emote, nil, EmoteType.SHARED)
+    runSharedCollisionThread()
 end)
 
 RegisterNetEvent("dwkemotes:client:syncEmoteSource", function(emote, player)
@@ -113,7 +157,7 @@ RegisterNetEvent("dwkemotes:client:syncEmoteSource", function(emote, player)
         end
     end
 
-    local offset = options and options.syncOffset or vector4(0.0, 1.0, 0.0, 180.0)
+    local offset = GetSyncOffset(emote, options)
     local coords = GetOffsetFromEntityInWorldCoords(pedInFront, offset.x + 0.0, offset.y + 0.0, offset.z + 0.0)
     local heading = GetEntityHeading(pedInFront)
     SetEntityHeading(ped, heading - offset.w + 0.0)
@@ -122,8 +166,11 @@ RegisterNetEvent("dwkemotes:client:syncEmoteSource", function(emote, player)
     Wait(300)
 
     targetPlayerId = player
+    activeSharedEmote = emote
+    activeSharedIsSource = true
     if emoteData ~= nil then
         OnEmotePlay(emote, nil, EmoteType.SHARED)
+        runSharedCollisionThread()
         return
     end
 end)
@@ -131,11 +178,15 @@ end)
 RegisterNetEvent("dwkemotes:client:cancelEmote", function(player)
     if targetPlayerId and targetPlayerId == player then
         targetPlayerId = nil
+        activeSharedEmote = nil
+        activeSharedIsSource = false
         EmoteCancel()
     end
 end)
 
 function CancelSharedEmote()
+    activeSharedEmote = nil
+    activeSharedIsSource = false
     if targetPlayerId then
         TriggerServerEvent("dwkemotes:server:cancelEmote", targetPlayerId)
         targetPlayerId = nil
