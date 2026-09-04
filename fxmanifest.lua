@@ -92,6 +92,11 @@ data_file 'DLC_ITYP_REQUEST' 'stream/bzzz_props.ytyp'
 
 data_file 'DLC_ITYP_REQUEST' 'stream/bzzz_camp_props.ytyp'
 
+-- Regalos de BzZzi. Los .ydr ya viajaban en el stream pero ningun .ytyp
+-- declaraba sus arquetipos, asi que `gift`/`gift2` salian sin objeto en la mano;
+-- este los registra y de paso habilita los dos que trae scully_port.
+data_file 'DLC_ITYP_REQUEST' 'stream/bzzz_prop_give_gift.ytyp'
+
 data_file 'DLC_ITYP_REQUEST' 'stream/apple_1.ytyp'
 
 data_file 'DLC_ITYP_REQUEST' 'stream/kaykaymods_props.ytyp'
