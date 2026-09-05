@@ -1,4 +1,4 @@
-﻿-- duopareja -- poses de pareja/duo (Shared) del pack DUOPAREJA.
+-- duopareja -- poses de pareja/duo (Shared) del pack DUOPAREJA.
 -- Dict y clip tomados de los README de cada pack; los .ycd no se tocan.
 -- Cada pareja lleva su propio SyncOffset en vez del 1.0 m por defecto que
 -- aplica EmoteMenu cuando no se define ninguno.
