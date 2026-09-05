@@ -9,44 +9,76 @@
   font-family: var(--rrp-font-family);
 }
 
+/* El atributo hidden gana a cualquier display de componente. Sin esto, un
+   .rrp-modal o un .rrp-menu con display propio nace abierto aunque el HTML
+   diga [hidden], que es como se ocultan y se muestran desde el JS. */
+[hidden] { display: none !important; }
+
 /* ---------- Panel contenedor ---------- */
-/* Los contenedores usan la escala neutra (negros): el verde se reserva
-   para jerarquía y acción — títulos, cabeceras, botones y hovers. */
+/* El panel es el papel: superficie neutra, borde de 1 px y nada más.
+   El color entra por el contenido, no por el contenedor. */
 .rrp-panel {
   background: var(--rrp-surface-1);
   border: var(--rrp-border-width) solid var(--rrp-border-subtle);
   border-radius: var(--rrp-radius-lg);
   box-shadow: var(--rrp-shadow-panel);
-  padding: var(--rrp-space-lg);
-  color: var(--rrp-white);
+  padding: var(--rrp-space-md);
+  color: var(--rrp-text);
 }
-/* Variante verde: panel sobre la escala de fondo, como antes de la
-   escala neutra. Úsala solo si el HUD ya está sobre un fondo negro. */
-.rrp-panel--green {
-  background: var(--rrp-bg-dark);
-  border-color: transparent;
+/* Panel sin relleno propio: la cabecera y el cuerpo ponen el suyo. */
+.rrp-panel--flush { padding: 0; }
+
+/* Cabecera de panel: se separa del cuerpo con una línea, no con un
+   bloque de color. */
+.rrp-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rrp-space-md);
+  min-height: 56px;
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
+}
+.rrp-panel__body { padding: var(--rrp-space-md); }
+.rrp-panel__title {
+  margin: 0;
+  font-size: var(--rrp-font-size-heading2);
+  font-weight: var(--rrp-font-weight-semibold);
+}
+.rrp-panel__sub {
+  margin: 2px 0 0;
+  font-size: var(--rrp-font-size-label);
+  color: var(--rrp-text-muted);
 }
 
 /* ---------- Título principal ---------- */
+/* Sin caja: el peso y el tamaño ya lo separan del resto. */
 .rrp-title {
-  background: var(--rrp-bg-secondary);
-  border-radius: var(--rrp-radius-md);
-  padding: var(--rrp-space-md);
-  text-align: center;
   margin-bottom: var(--rrp-space-md);
+  padding-bottom: var(--rrp-space-sm);
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
 }
 .rrp-title h1 {
   margin: 0;
   font-weight: var(--rrp-font-weight-bold);
   font-size: var(--rrp-font-size-title);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 .rrp-title p {
   margin: var(--rrp-space-xs) 0 0;
-  font-weight: var(--rrp-font-weight-semibold);
+  font-weight: var(--rrp-font-weight-regular);
   font-size: var(--rrp-font-size-subtitle);
-  opacity: 0.9;
+  color: var(--rrp-text-2);
+}
+/* Antetítulo teal: la única vez que el verde hace de texto. */
+.rrp-kicker {
+  margin: 0 0 var(--rrp-space-sm);
+  color: var(--rrp-teal);
+  font-size: var(--rrp-font-size-label);
+  font-weight: var(--rrp-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 
 /* ---------- Título 2 (sección) ---------- */
@@ -64,18 +96,15 @@
   padding: var(--rrp-space-md);
   margin-bottom: var(--rrp-space-md);
 }
-/* Caja destacada: mismo negro, borde teal para atarla a la paleta. */
+/* Caja destacada: mismo negro, borde teal. Es el mismo recurso que
+   marca la selección, así que úsala para una sola caja por pantalla. */
 .rrp-textbox--teal {
   border-color: var(--rrp-border-teal);
+  background: var(--rrp-teal-soft);
 }
-/* Caja con el borde blanco duro del sistema original. */
+/* Caja con el borde más marcado, sin llegar al teal. */
 .rrp-textbox--outline {
-  border-color: var(--rrp-border-color);
-}
-/* Variante verde de la caja (fondo bg-primary + borde blanco). */
-.rrp-textbox--green {
-  background: var(--rrp-bg-primary);
-  border-color: var(--rrp-border-color);
+  border-color: var(--rrp-border-strong);
 }
 .rrp-textbox .rrp-textbox__title {
   font-weight: var(--rrp-font-weight-semibold);
@@ -101,7 +130,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--rrp-bg-secondary);
+  background: var(--rrp-surface-1);
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
   font-weight: var(--rrp-font-weight-semibold);
   font-size: var(--rrp-font-size-button);
   padding: var(--rrp-space-sm) var(--rrp-space-md);
@@ -118,62 +148,135 @@
 .rrp-dropdown__option + .rrp-dropdown__option {
   border-top: var(--rrp-border-width) solid var(--rrp-border-subtle);
 }
+/* Hover neutro: sube la superficie, no tiñe. */
 .rrp-dropdown__option:hover,
 .rrp-dropdown__option.is-hover {
-  background: var(--rrp-hover-btn-bg);
+  background: var(--rrp-surface-3);
 }
-/* Fila ya seleccionada / marcada — variante de máximo énfasis */
+/* Fila seleccionada: tinte teal y línea teal a la izquierda. */
 .rrp-dropdown__option.is-selected {
-  background: var(--rrp-accent);
-  color: var(--rrp-text-on-accent);
+  background: var(--rrp-teal-soft);
+  box-shadow: inset 2px 0 0 var(--rrp-teal);
   font-weight: var(--rrp-font-weight-semibold);
 }
 
 /* ---------- Botones ---------- */
+/* El botón por defecto es neutro. Solo uno por pantalla lleva el verde
+   (--primary / --accept): si dos acciones piden lo mismo, ninguna manda. */
 .rrp-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--rrp-bg-secondary);
-  color: var(--rrp-white);
-  border: none;
+  gap: var(--rrp-space-sm);
+  min-height: var(--rrp-control-height);
+  padding: 0 var(--rrp-space-md);
+  background: var(--rrp-surface-2);
+  color: var(--rrp-text);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
   border-radius: var(--rrp-radius-sm);
   font-weight: var(--rrp-font-weight-semibold);
   font-size: var(--rrp-font-size-button);
-  padding: var(--rrp-space-sm) var(--rrp-space-md);
   cursor: pointer;
-  transition: background var(--rrp-transition-fast), color var(--rrp-transition-fast);
+  transition: background var(--rrp-transition-fast), color var(--rrp-transition-fast),
+              border-color var(--rrp-transition-fast);
 }
-/* Hover genérico / botón "Cancelar" */
+.rrp-btn svg { width: 16px; height: 16px; flex: none; }
+/* Hover neutro: sube la superficie y marca más el borde. */
 .rrp-btn:hover,
 .rrp-btn--cancel:hover {
-  background: var(--rrp-hover-btn-bg);
+  background: var(--rrp-surface-3);
+  border-color: var(--rrp-border-strong);
 }
-/* Botón "Aceptar": hover pasa a color accent con texto oscuro */
+.rrp-btn:active { transform: translateY(1px); }
+
+/* Acción dominante. El degradado y el brillo interior son los únicos
+   del sistema: por eso este botón se ve antes que cualquier otro. */
+.rrp-btn--primary,
+.rrp-btn--accept {
+  background: linear-gradient(180deg, var(--rrp-btn-from), var(--rrp-btn-to));
+  border-color: var(--rrp-btn-to);
+  color: var(--rrp-text-on-teal);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 1px 0 rgba(0, 0, 0, 0.32);
+}
+.rrp-btn--primary:hover,
 .rrp-btn--accept:hover {
-  background: var(--rrp-accent);
-  color: var(--rrp-text-on-accent);
+  background: linear-gradient(180deg, var(--rrp-btn-hover-from), var(--rrp-btn-hover-to));
+  border-color: var(--rrp-btn-from);
+  color: var(--rrp-text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.11), 0 2px 8px rgba(1, 150, 133, 0.14);
 }
-/* Botón destructivo: borrar, expulsar, romper un contrato. */
+.rrp-btn--primary:active,
+.rrp-btn--accept:active {
+  background: linear-gradient(180deg, var(--rrp-btn-active-from), var(--rrp-btn-active-to));
+  border-color: var(--rrp-btn-active-to);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
+/* Botón destructivo: rojo apagado sobre tinte, no un bloque rojo. Lo
+   que destruye no tiene por qué ser lo más llamativo de la pantalla. */
 .rrp-btn--danger {
-  background: var(--rrp-danger);
-  color: var(--rrp-text-on-danger);
+  background: var(--rrp-danger-soft);
+  border-color: rgba(217, 92, 92, 0.28);
+  color: var(--rrp-danger-hover);
 }
 .rrp-btn--danger:hover {
-  background: var(--rrp-danger-hover);
+  background: rgba(217, 92, 92, 0.16);
+  border-color: var(--rrp-danger);
+  color: var(--rrp-text);
 }
-/* Botón secundario sobre negro: solo borde, sin peso de color. */
+/* Botón terciario: sin superficie propia. */
 .rrp-btn--ghost {
   background: transparent;
-  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
 }
 .rrp-btn--ghost:hover {
   background: var(--rrp-surface-3);
+  border-color: var(--rrp-border-strong);
 }
 /* Tamaño y ocupación */
-.rrp-btn--sm    { padding: var(--rrp-space-xs) var(--rrp-space-sm); font-size: var(--rrp-font-size-label); }
+.rrp-btn--sm    { min-height: 28px; padding: 0 var(--rrp-space-sm); font-size: var(--rrp-font-size-label); }
+.rrp-btn--sm svg { width: 14px; height: 14px; }
 .rrp-btn--block { display: flex; width: 100%; }
-.rrp-btn--icon  { padding: var(--rrp-space-sm); aspect-ratio: 1; }
+.rrp-btn--icon  { width: var(--rrp-control-height); padding: 0; }
+
+/* --- Conmutador: el botón que se queda marcado --- */
+/* NUEVO. Un botón normal vuelve solo; este se queda encendido porque
+   representa un modo activo — caminar despacio, sordina de radio, ver
+   solo favoritos. La marca es la del sistema para "esto está elegido":
+   velo teal, borde teal y el texto arriba. Nunca bloque macizo.
+
+   NO lleva el halo inferior de `.rrp-tab` / `.rrp-nav__item`. Ese halo
+   dice "estás aquí" dentro de un grupo donde solo uno manda; un
+   conmutador dice "esto está encendido" y puede haber varios a la vez.
+   Si los dos se marcaran igual, la barra de herramientas parecería una
+   fila de pestañas.
+
+   El gancho bueno es `aria-pressed="true"`, que además es lo que un
+   lector de pantalla anuncia; `.is-active` queda para el JS que ya
+   trabaja así. Un conmutador NO es `aria-current` ni un checkbox
+   disfrazado: es un botón que recuerda su estado. */
+.rrp-btn.is-active,
+.rrp-btn[aria-pressed="true"] {
+  background: var(--rrp-teal-soft);
+  border-color: var(--rrp-border-teal);
+  color: var(--rrp-text);
+}
+/* El hover de un botón ya marcado sube un punto en vez de volver al
+   gris neutro: si al pasar por encima perdiera el teal, parecería que
+   se está apagando. */
+.rrp-btn.is-active:hover,
+.rrp-btn[aria-pressed="true"]:hover {
+  background: linear-gradient(180deg, rgba(1, 150, 133, 0.20), rgba(1, 150, 133, 0.10)),
+              var(--rrp-surface-2);
+  border-color: var(--rrp-teal-line);
+}
+/* Marcado y peligroso a la vez (sordina, modo pánico): manda el rojo. */
+.rrp-btn--danger.is-active,
+.rrp-btn--danger[aria-pressed="true"] {
+  background: var(--rrp-danger-soft);
+  border-color: var(--rrp-danger);
+  color: var(--rrp-danger);
+}
+.rrp-btn--sm.rrp-btn--icon { width: 28px; }
 
 .rrp-btn:disabled {
   opacity: 0.4;
@@ -183,9 +286,9 @@
 /* ---------- Superficies neutras (utilidades) ---------- */
 /* Para contenedores propios de un recurso que no encajen en un
    componente concreto, sin inventar colores nuevos. */
-.rrp-surface-1 { background: var(--rrp-surface-1); color: var(--rrp-white); }
-.rrp-surface-2 { background: var(--rrp-surface-2); color: var(--rrp-white); }
-.rrp-surface-3 { background: var(--rrp-surface-3); color: var(--rrp-white); }
+.rrp-surface-1 { background: var(--rrp-surface-1); color: var(--rrp-text); }
+.rrp-surface-2 { background: var(--rrp-surface-2); color: var(--rrp-text); }
+.rrp-surface-3 { background: var(--rrp-surface-3); color: var(--rrp-text); }
 .rrp-divider   { border: none; border-top: var(--rrp-border-width) solid var(--rrp-border-subtle); margin: var(--rrp-space-md) 0; }
 
 /* ---------- Degradados ---------- */
@@ -211,11 +314,9 @@
 .rrp-tab:focus-visible,
 .rrp-menu__item:focus-visible,
 .rrp-nav__item:focus-visible,
-.rrp-slot:focus-visible {
-  outline: none;
-  box-shadow: var(--rrp-focus-ring);
-}
-/* Campos: el borde ya dice dónde está el foco; el halo solo lo refuerza. */
+.rrp-slot:focus-visible,
+.rrp-inv-slot:focus-visible,
+/* Campos: el borde pasa a teal y el halo solo lo refuerza. */
 .rrp-input:focus,
 .rrp-input:focus-visible,
 .rrp-textarea:focus,
@@ -224,7 +325,7 @@
 .rrp-select:focus-visible,
 .rrp-input-group:focus-within {
   outline: none;
-  border-color: var(--rrp-hover-btn-bg);
+  border-color: var(--rrp-teal);
   box-shadow: var(--rrp-focus-glow);
 }
 /* Un campo inválido conserva su rojo al enfocarse: el estado manda. */
@@ -245,19 +346,17 @@
 .rrp-label {
   font-weight: var(--rrp-font-weight-semibold);
   font-size: var(--rrp-font-size-label);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--rrp-text-muted);
+  color: var(--rrp-text-2);
 }
 .rrp-input,
 .rrp-textarea,
 .rrp-select {
   width: 100%;
   height: var(--rrp-control-height);
-  background: var(--rrp-surface-3);
+  background: var(--rrp-surface-2);
   border: var(--rrp-border-width) solid var(--rrp-border-subtle);
   border-radius: var(--rrp-radius-sm);
-  color: var(--rrp-white);
+  color: var(--rrp-text);
   font-size: var(--rrp-font-size-body);
   font-weight: var(--rrp-font-weight-regular);
   padding: 0 var(--rrp-space-md);
@@ -277,7 +376,7 @@
 .rrp-input:hover,
 .rrp-textarea:hover,
 .rrp-select:hover {
-  border-color: var(--rrp-border-teal);
+  border-color: var(--rrp-border-strong);
 }
 .rrp-input:disabled,
 .rrp-textarea:disabled,
@@ -291,7 +390,7 @@
 .rrp-select.is-invalid {
   border-color: var(--rrp-danger);
 }
-.rrp-hint  { font-size: var(--rrp-font-size-label); color: var(--rrp-text-muted); }
+.rrp-hint  { font-size: var(--rrp-font-size-micro); color: var(--rrp-text-muted); }
 .rrp-error { font-size: var(--rrp-font-size-label); color: var(--rrp-danger); font-weight: var(--rrp-font-weight-semibold); }
 
 /* Select: flecha propia, para no depender del widget del sistema */
@@ -306,7 +405,7 @@
 }
 .rrp-select option {
   background: var(--rrp-surface-2);
-  color: var(--rrp-white);
+  color: var(--rrp-text);
 }
 
 /* Campo con icono o afijo (buscadores, cantidades, precios) */
@@ -329,6 +428,81 @@
 .rrp-input-group .rrp-input:focus,
 .rrp-input-group .rrp-input:focus-visible { box-shadow: none; }
 .rrp-input-group__affix { color: var(--rrp-text-muted); font-size: var(--rrp-font-size-label); }
+
+/* --- Campo numérico y su paso --- */
+/* La flecha doble que pinta el navegador en un `input[type=number]` es
+   un widget del sistema operativo: llega en blanco, con su propio
+   tamaño y sus propias esquinas, y sobre negro parece un pegote. No se
+   puede teñir ni redondear, así que se quita y se pone la nuestra.
+   Se quita SIEMPRE, haya paso propio o no — un campo sin flechas se
+   sigue subiendo con las teclas de cursor y con la rueda. */
+.rrp-input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.rrp-input[type="number"]::-webkit-outer-spin-button,
+.rrp-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Las cifras se alinean en columna: sin esto, cambiar un 1500 por un
+   1600 mueve todos los dígitos de sitio. */
+.rrp-input[type="number"] { font-variant-numeric: tabular-nums; }
+
+/* NUEVO. El paso: dos medios botones pegados al canto derecho del
+   grupo. Se comen el relleno del contenedor con un margen negativo
+   para quedar a ras del borde — un botón flotando con aire alrededor
+   parece un elemento suelto encima del campo, no parte de él. */
+.rrp-step {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-self: stretch;
+  margin: -1px calc(var(--rrp-space-md) * -1) -1px 0;
+  border-left: var(--rrp-border-width) solid var(--rrp-border-subtle);
+}
+/* Transparente, no `surface-2`. El grupo ya es `surface-3` — lo
+   elevado —, así que un botón hundido encima abre dos agujeros negros
+   en el canto del campo. Y transparente sobrevive a que el grupo cambie
+   de superficie: hereda la que tenga debajo, sea la que sea. */
+.rrp-step__btn {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--rrp-text-muted);
+  cursor: pointer;
+  transition: background var(--rrp-transition-fast), color var(--rrp-transition-fast);
+}
+.rrp-step__btn:first-child {
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-top-right-radius: var(--rrp-radius-sm);
+}
+.rrp-step__btn:last-child { border-bottom-right-radius: var(--rrp-radius-sm); }
+/* Hover neutro, como cualquier otro control del sistema. */
+.rrp-step__btn:hover {
+  background: var(--rrp-surface-4);
+  color: var(--rrp-text);
+}
+.rrp-step__btn:active { background: var(--rrp-surface-3); }
+/* En el tope no desaparece, se apaga: un botón que se va deja un hueco
+   y el campo parece roto. Apagado dice "por aquí ya no se sigue". */
+.rrp-step__btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+  background: transparent;
+  color: var(--rrp-text-muted);
+}
+.rrp-step__btn svg {
+  width: 10px;
+  height: 10px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.2;
+}
 
 /* ---------- Checkbox y radio ---------- */
 .rrp-check {
@@ -357,14 +531,14 @@
 .rrp-check input[type="radio"] { border-radius: 50%; }
 .rrp-check input:hover { border-color: var(--rrp-hover-btn-bg); }
 .rrp-check input:checked {
-  background: var(--rrp-accent);
-  border-color: var(--rrp-accent);
+  background: var(--rrp-teal);
+  border-color: var(--rrp-teal);
 }
 .rrp-check input[type="checkbox"]:checked::after {
   content: "";
   width: 9px;
   height: 5px;
-  border-left: 2px solid var(--rrp-text-on-accent);
+  border-left: 2px solid var(--rrp-text-on-teal);
   border-bottom: 2px solid var(--rrp-text-on-accent);
   transform: translateY(-1px) rotate(-45deg);
 }
@@ -411,7 +585,7 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--rrp-white);
+  background: var(--rrp-text);
   transition: transform var(--rrp-transition-fast);
 }
 .rrp-switch input:checked + .rrp-switch__track {
@@ -439,7 +613,7 @@
   height: 14px;
   border: none;
   border-radius: 50%;
-  background: var(--rrp-accent);
+  background: var(--rrp-teal);
   cursor: pointer;
   transition: transform var(--rrp-transition-fast);
 }
@@ -449,7 +623,7 @@
   height: 14px;
   border: none;
   border-radius: 50%;
-  background: var(--rrp-accent);
+  background: var(--rrp-teal);
   cursor: pointer;
 }
 .rrp-slider:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -457,19 +631,21 @@
 /* ---------- Barra de progreso ---------- */
 .rrp-progress {
   width: 100%;
-  height: 8px;
-  background: var(--rrp-surface-3);
+  height: 6px;
+  background: var(--rrp-surface-4);
   border-radius: 999px;
   overflow: hidden;
 }
 .rrp-progress__fill {
+  display: block;
   height: 100%;
   width: 0;
-  background: var(--rrp-hover-btn-bg);
+  background: var(--rrp-teal);
   border-radius: inherit;
   transition: width 200ms linear;
 }
-.rrp-progress--lg { height: 14px; }
+.rrp-progress--sm { height: 3px; }
+.rrp-progress--lg { height: 10px; }
 .rrp-progress--success .rrp-progress__fill { background: var(--rrp-success); }
 .rrp-progress--warning .rrp-progress__fill { background: var(--rrp-warning); }
 .rrp-progress--danger  .rrp-progress__fill { background: var(--rrp-danger); }
@@ -669,45 +845,213 @@
   max-width: calc(100vw - var(--rrp-space-lg) * 2);
   pointer-events: none;
 }
+/* El estado no se dice con una franja de color a lo ancho, sino con un
+   velo que muere a un tercio del ancho y con el icono. Así tres toasts
+   seguidos no forman un semáforo. Partes opcionales: __meta (hora o
+   cifra), __close y __timer (lo que queda de vida). */
 .rrp-notify {
-  display: flex;
-  align-items: flex-start;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
   gap: var(--rrp-space-sm);
-  background: var(--rrp-surface-2);
+  min-height: 58px;
+  padding: var(--rrp-space-sm);
+  background: linear-gradient(90deg, var(--rrp-teal-soft), transparent 62%),
+              var(--rrp-surface-2);
   border: var(--rrp-border-width) solid var(--rrp-border-subtle);
-  border-left: 3px solid var(--rrp-hover-btn-bg);
   border-radius: var(--rrp-radius-sm);
   box-shadow: var(--rrp-shadow-float);
-  padding: var(--rrp-space-sm) var(--rrp-space-md);
-  color: var(--rrp-white);
+  color: var(--rrp-text);
+  overflow: hidden;
   pointer-events: auto;
   animation: rrp-slide-in 160ms ease-out;
 }
 .rrp-notify__icon {
+  display: grid;
+  place-items: center;
   flex: none;
-  font-size: var(--rrp-font-size-heading2);
-  line-height: 1.2;
-  color: var(--rrp-hover-btn-bg);
+  width: 30px;
+  height: 30px;
+  border: var(--rrp-border-width) solid var(--rrp-border-strong);
+  border-radius: 50%;
+  background: var(--rrp-surface-1);
+  color: var(--rrp-teal-strong);
+  font-size: var(--rrp-font-size-label);
+  line-height: 1;
 }
+.rrp-notify__icon svg { width: 15px; height: 15px; }
+
+/* --- Aviso de un objeto: manda el arte --- */
+/* Cuando el toast va de un objeto concreto —lo has recogido, lo has
+   perdido, te lo han dado—, el pictograma de estado no es lo que buscas
+   de un vistazo: el objeto sí. El arte ocupa el sitio del icono y el
+   estado se queda en una chapa encima, que es la misma jerarquía que
+   tiene el slot de la rejilla.
+
+   El estado no se pierde por ello: sigue en el velo del fondo, en el
+   color de la barra del temporizador y en el color de la chapa. Tres
+   canales para lo mismo es de sobra; el cuarto era repetir el
+   pictograma a tamaño grande y no decía nada nuevo.
+
+   El arte es la excepción de color de la NUI, igual que dentro del
+   slot, y funciona por lo mismo: todo lo que lo rodea es neutro. */
+.rrp-notify__art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  /* El arte de objeto del sistema se sirve a 90×90. La casilla es más
+     pequeña porque el toast no puede medir lo que mide un slot, así que
+     la imagen se encoge para caber ENTERA: `contain` nunca recorta, y
+     recortar aquí es peor que en la rejilla — al lado del slot tienes
+     el nombre, y en un aviso el arte es lo único que identifica de qué
+     objeto te están hablando.
+
+     El `min-height` del toast es un mínimo, no un tope: la casilla más
+     su relleno lo hacen crecer solo, sin tocar los avisos que no llevan
+     arte. */
+  width: 46px;
+  height: 46px;
+  background: var(--rrp-surface-1);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  /* Red de seguridad: si el recurso sirve el PNG desde otra ruta y las
+     reglas de abajo no llegan a aplicarse, la imagen se queda dentro de
+     su casilla en vez de comerse el aviso entero. */
+  overflow: hidden;
+}
+.rrp-notify__art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+/* Sin PNG, el pictograma de categoría: un hueco vacío se lee como una
+   imagen que no ha cargado. */
+.rrp-notify__art > svg {
+  width: 20px;
+  height: 20px;
+  color: var(--rrp-text-muted);
+}
+/* La chapa hereda el color del modificador de estado, igual que
+   `__icon`. Fuera del canto para no comerse el arte. */
+.rrp-notify__art-badge {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--rrp-surface-1);
+  border: var(--rrp-border-width) solid var(--rrp-border-strong);
+  color: var(--rrp-teal-strong);
+}
+.rrp-notify__art-badge svg { width: 9px; height: 9px; }
+
+.rrp-notify__body { min-width: 0; }
+.rrp-notify__head {
+  display: flex;
+  align-items: center;
+  gap: var(--rrp-space-sm);
+  min-width: 0;
+}
+/* Un toast no se lee de cerca como la etiqueta de un campo: llega por el
+   rabillo del ojo, encima de un juego en movimiento y a la distancia a
+   la que estés de la pantalla. Por eso sube dos escalones —del tamaño de
+   etiqueta al de título de sección— y la línea de debajo se le queda casi
+   a la par.
+
+   Casi, no igual: la jerarquía la hacen el peso y el tono, no el tamaño.
+   Estirarla con dos puntos más de diferencia dejaría el dato —qué objeto
+   y cuántos— más pequeño justo cuando es lo que has salido a leer. */
 .rrp-notify__title {
-  margin: 0 0 2px;
+  margin: 0;
   font-weight: var(--rrp-font-weight-semibold);
-  font-size: var(--rrp-font-size-body);
+  font-size: var(--rrp-font-size-heading2);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rrp-notify__meta {
+  margin-left: auto;
+  flex: none;
+  font-size: var(--rrp-font-size-micro);
+  color: var(--rrp-text-muted);
+  font-variant-numeric: tabular-nums;
 }
 .rrp-notify__text {
-  margin: 0;
-  font-size: var(--rrp-font-size-label);
-  color: var(--rrp-text-muted);
-  line-height: 1.45;
+  margin: 2px 0 0;
+  font-size: var(--rrp-font-size-body);
+  color: var(--rrp-text-2);
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.rrp-notify--success { border-left-color: var(--rrp-success); }
-.rrp-notify--success .rrp-notify__icon { color: var(--rrp-success); }
-.rrp-notify--warning { border-left-color: var(--rrp-warning); }
-.rrp-notify--warning .rrp-notify__icon { color: var(--rrp-warning); }
-.rrp-notify--danger  { border-left-color: var(--rrp-danger); }
-.rrp-notify--danger  .rrp-notify__icon { color: var(--rrp-danger); }
-.rrp-notify--info    { border-left-color: var(--rrp-accent); }
-.rrp-notify--info    .rrp-notify__icon { color: var(--rrp-accent); }
+.rrp-notify__close {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--rrp-radius-sm);
+  color: var(--rrp-text-muted);
+  cursor: pointer;
+  transition: background var(--rrp-transition-fast), color var(--rrp-transition-fast);
+}
+.rrp-notify__close:hover { background: var(--rrp-surface-3); color: var(--rrp-text); }
+.rrp-notify__close svg { width: 13px; height: 13px; }
+.rrp-notify__timer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.025);
+}
+/* La barra se llena mientras se agota la cuenta atrás: llena = se va.
+   Anima transform, no width, porque en CEF eso no provoca relayout por
+   frame. Sin --rrp-notify-duration la animación dura 0 s y la barra se
+   queda en su estado final: así una notificación de catálogo puede
+   congelarse en un porcentaje con un width en línea. */
+.rrp-notify__timer span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--rrp-teal);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: rrp-notify-timer var(--rrp-notify-duration, 0s) linear forwards;
+}
+/* El ratón encima congela la cuenta atrás: el jugador está leyendo. El JS
+   del recurso tiene que parar también su temporizador de cierre, o la
+   barra dirá una cosa y el toast hará otra. */
+.rrp-notify:hover .rrp-notify__timer span,
+.rrp-notify.is-paused .rrp-notify__timer span {
+  animation-play-state: paused;
+}
+.rrp-notify--success { background: linear-gradient(90deg, var(--rrp-success-soft), transparent 62%), var(--rrp-surface-2); }
+.rrp-notify--success .rrp-notify__icon,
+.rrp-notify--success .rrp-notify__art-badge { color: var(--rrp-success); }
+.rrp-notify--success .rrp-notify__timer span { background: var(--rrp-success); }
+.rrp-notify--warning { background: linear-gradient(90deg, var(--rrp-warning-soft), transparent 62%), var(--rrp-surface-2); }
+.rrp-notify--warning .rrp-notify__icon,
+.rrp-notify--warning .rrp-notify__art-badge { color: var(--rrp-warning); }
+.rrp-notify--warning .rrp-notify__timer span { background: var(--rrp-warning); }
+.rrp-notify--danger  { background: linear-gradient(90deg, var(--rrp-danger-soft), transparent 62%), var(--rrp-surface-2); }
+.rrp-notify--danger  .rrp-notify__icon,
+.rrp-notify--danger  .rrp-notify__art-badge { color: var(--rrp-danger); }
+.rrp-notify--danger  .rrp-notify__timer span { background: var(--rrp-danger); }
+.rrp-notify--info    { background: linear-gradient(90deg, var(--rrp-info-soft), transparent 62%), var(--rrp-surface-2); }
+.rrp-notify--info    .rrp-notify__icon,
+.rrp-notify--info    .rrp-notify__art-badge { color: var(--rrp-info); }
+.rrp-notify--info    .rrp-notify__timer span { background: var(--rrp-info); }
 .rrp-notify.is-leaving { animation: rrp-slide-out 160ms ease-in forwards; }
 
 /* Aviso en línea, dentro del panel (no flotante) */
@@ -721,10 +1065,15 @@
   margin-bottom: var(--rrp-space-md);
   font-size: var(--rrp-font-size-body);
 }
-.rrp-alert--success { background: var(--rrp-success-soft); border-color: var(--rrp-success); }
-.rrp-alert--warning { background: var(--rrp-warning-soft); border-color: var(--rrp-warning); }
-.rrp-alert--danger  { background: var(--rrp-danger-soft);  border-color: var(--rrp-danger); }
-.rrp-alert--info    { background: var(--rrp-accent-soft);  border-color: var(--rrp-accent); }
+.rrp-alert__icon { flex: none; line-height: 1.3; }
+.rrp-alert--success { background: var(--rrp-success-soft); border-color: rgba(83, 184, 131, 0.28); }
+.rrp-alert--success .rrp-alert__icon { color: var(--rrp-success); }
+.rrp-alert--warning { background: var(--rrp-warning-soft); border-color: rgba(206, 220, 0, 0.28); }
+.rrp-alert--warning .rrp-alert__icon { color: var(--rrp-warning); }
+.rrp-alert--danger  { background: var(--rrp-danger-soft);  border-color: rgba(217, 92, 92, 0.28); }
+.rrp-alert--danger  .rrp-alert__icon { color: var(--rrp-danger); }
+.rrp-alert--info    { background: var(--rrp-info-soft);    border-color: rgba(94, 166, 216, 0.28); }
+.rrp-alert--info    .rrp-alert__icon { color: var(--rrp-info); }
 
 /* ---------- Menú de opciones (patrón qb-menu / ox_lib) ---------- */
 .rrp-menu {
@@ -745,20 +1094,25 @@
   background: none;
   border: none;
   border-top: var(--rrp-border-width) solid var(--rrp-border-subtle);
-  color: var(--rrp-white);
+  color: var(--rrp-text);
   text-align: left;
   padding: var(--rrp-space-sm) var(--rrp-space-md);
   cursor: pointer;
   transition: background var(--rrp-transition-fast), box-shadow var(--rrp-transition-fast);
 }
 .rrp-menu__item:first-child { border-top: none; }
+/* Filtrar una lista es ocultar items con [hidden], y la regla del
+   navegador (`[hidden] { display: none }`) pierde contra el
+   `display: flex` de arriba: sin esto el item se queda ahí, invisible
+   pero ocupando su fila. */
+.rrp-menu__item[hidden] { display: none; }
+/* Hover neutro: el teal se guarda para la fila realmente activa. */
 .rrp-menu__item:hover {
   background: var(--rrp-surface-3);
-  box-shadow: inset 3px 0 0 var(--rrp-hover-btn-bg);
 }
 .rrp-menu__item.is-active {
-  background: var(--rrp-surface-3);
-  box-shadow: inset 3px 0 0 var(--rrp-accent);
+  background: var(--rrp-teal-soft);
+  box-shadow: inset 2px 0 0 var(--rrp-teal);
 }
 .rrp-menu__item.is-disabled,
 .rrp-menu__item:disabled {
@@ -766,12 +1120,58 @@
   cursor: not-allowed;
   pointer-events: none;
 }
+/* --- Dos columnas --- */
+/* NUEVO. Para listas largas de una sola línea — animaciones, emotes,
+   frecuencias de radio — donde una columna obliga a desplazar el doble
+   por nada: el nombre ocupa un tercio del ancho y los otros dos tercios
+   se quedan vacíos.
+
+   Con descripción (`.rrp-menu__desc`) o con metadato a la derecha no
+   compensa: a media anchura el texto se corta y la fila deja de leerse
+   de un vistazo. Dos columnas son para nombres cortos.
+
+   Los items se quedan TRANSPARENTES a propósito. Es lo que deja pasar
+   las sombras de desbordamiento de `.rrp-scroll--shadow`, que se pintan
+   en el contenedor y por detrás; un item con fondo propio las taparía y
+   el degradado de "hay más abajo" desaparecería.
+
+   Por eso las separaciones son bordes y no huecos de rejilla: un hueco
+   necesitaría que el fondo lo pusiera el item.
+
+   Son dos columnas, no N. La primera fila se queda sin línea arriba con
+   `:nth-child(-n + 2)` y la vertical la pone `:nth-child(even)`; las dos
+   cuentan columnas a mano, así que un tercer tramo pide su propia regla,
+   no una variable. */
+.rrp-menu--cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+}
+.rrp-menu--cols .rrp-menu__item:first-child { border-top: var(--rrp-border-width) solid var(--rrp-border-subtle); }
+.rrp-menu--cols .rrp-menu__item:nth-child(-n + 2) { border-top: none; }
+.rrp-menu--cols .rrp-menu__item:nth-child(even) {
+  border-left: var(--rrp-border-width) solid var(--rrp-border-subtle);
+}
+/* Un nombre que no cabe se corta; no parte la fila en dos alturas y
+   descuadra la columna de al lado. */
+.rrp-menu--cols .rrp-menu__title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .rrp-menu__icon {
   flex: none;
   width: 22px;
   text-align: center;
   font-size: var(--rrp-font-size-heading2);
   color: var(--rrp-text-muted);
+}
+.rrp-menu__icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  margin: 0 auto;
 }
 .rrp-menu__body  { flex: 1; min-width: 0; }
 .rrp-menu__title {
@@ -795,8 +1195,8 @@
 /* La barra de categorías de una NUI (Animaciones, Objetos, Bailes…).
    Regla del componente: el estado activo NUNCA se marca con un bloque
    macizo de color bajo el texto — eso hunde el contraste y la etiqueta
-   deja de leerse. Se marca con tinte suave + indicador lateral, y el
-   texto sube a blanco. El color macizo se queda para los botones. */
+   deja de leerse. Se marca con tinte teal y borde teal, el mismo par
+   que la selección en el resto del sistema. El hover es neutro. */
 .rrp-nav {
   display: flex;
   flex-direction: column;
@@ -813,60 +1213,69 @@
   background: var(--rrp-surface-1);
   border-right: var(--rrp-border-width) solid var(--rrp-border-subtle);
 }
+/* Fila: icono a la izquierda, etiqueta a la derecha. Apilado, el icono
+   queda flotando sobre un texto que no lo toca y la fila crece a lo
+   alto justo donde una NUI no sobra sitio; en fila, el ojo baja por un
+   único borde izquierdo y los nombres se leen de un barrido. */
 .rrp-nav__item {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: var(--rrp-space-xs);
+  justify-content: flex-start;
+  gap: var(--rrp-space-sm);
   width: 100%;
-  padding: var(--rrp-space-sm) var(--rrp-space-xs);
+  padding: var(--rrp-space-sm);
   background: none;
-  border: none;
-  border-radius: var(--rrp-radius-md);
-  color: var(--rrp-text-muted);
+  border: var(--rrp-border-width) solid transparent;
+  border-radius: var(--rrp-radius-sm);
+  color: var(--rrp-text-2);
   font-family: inherit;
   font-size: var(--rrp-font-size-label);
-  font-weight: var(--rrp-font-weight-semibold);
-  text-align: center;
+  font-weight: var(--rrp-font-weight-medium);
+  text-align: left;
   cursor: pointer;
-  transition: background var(--rrp-transition-fast), color var(--rrp-transition-fast);
+  transition: background var(--rrp-transition-fast), color var(--rrp-transition-fast),
+              border-color var(--rrp-transition-fast);
 }
 .rrp-nav__icon {
-  font-size: 18px;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
   line-height: 1;
-  color: var(--rrp-hover-btn-bg);
+  color: inherit;
   transition: color var(--rrp-transition-fast);
 }
+.rrp-nav__icon svg { width: 16px; height: 16px; }
+/* `min-width:0` es lo que permite que el ellipsis funcione dentro de un
+   flex: sin él la etiqueta se niega a encoger por debajo de su texto y
+   desborda la fila en vez de cortarse. */
 .rrp-nav__label {
-  display: block;
-  max-width: 100%;
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: left;
 }
-/* Hover: sube la superficie, no el color. El texto pasa a blanco. */
+/* Hover: sube la superficie y marca el borde. Nunca tiñe de color. */
 .rrp-nav__item:hover {
   background: var(--rrp-surface-3);
-  color: var(--rrp-white);
+  border-color: var(--rrp-border-subtle);
+  color: var(--rrp-text);
 }
-/* Activo: tinte suave + barra de acento al costado. Sigue legible. */
+/* Activo: tinte teal, borde teal y el halo inferior. Sigue legible
+   porque el fondo es un velo, no un bloque. Una fila de navegación es
+   una pestaña puesta de canto, así que lleva la misma marca: el halo
+   está definido una sola vez, junto al de `.rrp-tab`. */
 .rrp-nav__item.is-active {
-  background: var(--rrp-success-soft);
-  color: var(--rrp-white);
+  background: linear-gradient(180deg, rgba(1, 150, 133, 0.17), rgba(1, 150, 133, 0.065)),
+              var(--rrp-surface-1);
+  border-color: var(--rrp-border-teal);
+  color: var(--rrp-text);
 }
-.rrp-nav__item.is-active::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 62%;
-  border-radius: 999px;
-  background: var(--rrp-accent);
-}
-.rrp-nav__item.is-active .rrp-nav__icon { color: var(--rrp-accent); }
 .rrp-nav__item:disabled,
 .rrp-nav__item.is-disabled {
   opacity: 0.4;
@@ -874,9 +1283,29 @@
   pointer-events: none;
 }
 
-/* Solo icono: la etiqueta se va al tooltip (usa data-rrp-tip). */
-.rrp-nav--rail .rrp-nav__item { padding: var(--rrp-space-sm); }
+/* Solo icono: la etiqueta se va al tooltip (usa data-rrp-tip). Sin
+   etiqueta que empuje, el icono se centra en la columna.
+
+   Y el carril NO recorta. `.rrp-nav` lleva `overflow: hidden auto`
+   porque una lista de categorías con nombre acaba siendo más larga que
+   la pantalla; un carril de iconos no; son cuatro o seis. Heredar ese
+   recorte aquí mata el tooltip contra el borde del propio carril — y el
+   tooltip es la ÚNICA etiqueta que tiene un botón de solo icono, así
+   que sin él la única forma de saber qué hace es pulsarlo.
+
+   Si algún día un carril necesita desplazarse, el scroll va en un
+   envoltorio por fuera y el tooltip se coloca con `--tip-pos="bottom"`,
+   que sale por el eje que no se recorta. */
+.rrp-nav--rail {
+  overflow: visible;
+  scrollbar-gutter: auto;
+}
+.rrp-nav--rail .rrp-nav__item {
+  padding: var(--rrp-space-sm);
+  justify-content: center;
+}
 .rrp-nav--rail .rrp-nav__label { display: none; }
+.rrp-nav--rail .rrp-nav__group { text-align: center; }
 
 /* Horizontal: la misma barra como fila de secciones. */
 .rrp-nav--row {
@@ -884,24 +1313,26 @@
   border-right: none;
   border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
 }
-.rrp-nav--row .rrp-nav__item { width: auto; flex: 1; }
-.rrp-nav--row .rrp-nav__item.is-active::before {
-  left: 50%;
-  top: auto;
-  bottom: 0;
-  transform: translateX(-50%);
-  width: 62%;
-  height: 3px;
+/* En horizontal el par icono+etiqueta se centra dentro de su tramo:
+   alineado a la izquierda, cada sección quedaría pegada al borde de un
+   reparto que ya es igual para todas. */
+.rrp-nav--row .rrp-nav__item {
+  width: auto;
+  flex: 1;
+  justify-content: center;
 }
+.rrp-nav--row .rrp-nav__label { flex: none; }
 
-/* Encabezado de grupo dentro de la navegación */
+/* Encabezado de grupo dentro de la navegación. Alineado con las filas
+   que encabeza: centrado sobre una lista alineada a la izquierda no
+   parece su título, parece otra cosa. */
 .rrp-nav__group {
-  padding: var(--rrp-space-sm) var(--rrp-space-xs) var(--rrp-space-xs);
-  font-size: 10px;
+  padding: var(--rrp-space-sm) var(--rrp-space-sm) var(--rrp-space-xs);
+  font-size: var(--rrp-font-size-micro);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--rrp-text-faint);
-  text-align: center;
+  text-align: left;
 }
 
 /* ---------- Tooltip por atributo ---------- */
@@ -921,7 +1352,7 @@
   border-radius: var(--rrp-radius-sm);
   box-shadow: var(--rrp-shadow-float);
   padding: var(--rrp-space-xs) var(--rrp-space-sm);
-  color: var(--rrp-white);
+  color: var(--rrp-text);
   font-size: var(--rrp-font-size-label);
   font-weight: var(--rrp-font-weight-regular);
   line-height: 1.3;
@@ -955,48 +1386,102 @@
 }
 
 /* ---------- Pestañas ---------- */
+/* Control segmentado: las pestañas viven dentro de una caja hundida y
+   la activa es la única que se levanta. */
 .rrp-tabs {
   display: flex;
-  gap: var(--rrp-space-sm);
-  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  gap: var(--rrp-space-xs);
+  padding: var(--rrp-space-xs);
+  background: var(--rrp-surface-2);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-md);
   margin-bottom: var(--rrp-space-md);
 }
 .rrp-tab {
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  min-height: 32px;
   background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
+  border: var(--rrp-border-width) solid transparent;
+  border-radius: var(--rrp-radius-sm);
   color: var(--rrp-text-muted);
   font-weight: var(--rrp-font-weight-semibold);
-  font-size: var(--rrp-font-size-button);
-  padding: var(--rrp-space-sm) var(--rrp-space-xs);
+  font-size: var(--rrp-font-size-label);
+  padding: 0 var(--rrp-space-sm);
   cursor: pointer;
-  transition: color var(--rrp-transition-fast), border-color var(--rrp-transition-fast);
+  transition: color var(--rrp-transition-fast), background var(--rrp-transition-fast),
+              border-color var(--rrp-transition-fast);
 }
-.rrp-tab:hover { color: var(--rrp-white); }
+.rrp-tab:hover { color: var(--rrp-text); background: var(--rrp-surface-3); }
+/* Activa: tinte teal, borde teal y una línea inferior que se apaga
+   hacia los lados. Es la misma marca que usa la selección en la rejilla. */
 .rrp-tab.is-active {
-  color: var(--rrp-white);
-  border-bottom-color: var(--rrp-accent);
+  color: var(--rrp-text);
+  background: linear-gradient(180deg, rgba(1, 150, 133, 0.11), rgba(1, 150, 133, 0.025)),
+              var(--rrp-surface-1);
+  border-color: var(--rrp-border-teal);
+}
+
+/* --- El halo inferior del elemento activo --- */
+/* Una pestaña y una fila de navegación son el mismo gesto: "estás
+   aquí". Por eso la marca se define una vez y la comparten las dos —
+   pestaña, rail de solo icono y fila de icono + etiqueta.
+
+   Va en ::before y no en ::after porque ::after es del tooltip por
+   atributo: un elemento activo con data-rrp-tip perdería el tooltip,
+   que es justo lo que le pasa a un rail de solo icono, donde el
+   tooltip es la única forma de saber qué hace el botón.
+
+   `bottom:0; height:1px` en lugar de `bottom:-1px; height:2px`: con el
+   `overflow:hidden` de la pestaña se veía ya un solo píxel, y así la
+   fila de navegación, que no puede recortar sin comerse el tooltip,
+   dibuja exactamente lo mismo. */
+.rrp-tab.is-active::before,
+.rrp-nav__item.is-active::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(1, 150, 133, 0),
+              var(--rrp-teal) 50%, rgba(1, 150, 133, 0));
+  pointer-events: none;
 }
 
 /* ---------- Badge / etiqueta de estado ---------- */
+/* El badge es neutro; el estado lo dice un punto de color. Así una
+   fila con cuatro badges no se convierte en cuatro manchas. */
 .rrp-badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--rrp-space-xs);
-  background: var(--rrp-surface-3);
+  gap: 6px;
+  background: var(--rrp-surface-2);
   border: var(--rrp-border-width) solid var(--rrp-border-subtle);
-  border-radius: 999px;
-  padding: 2px var(--rrp-space-sm);
-  font-size: var(--rrp-font-size-label);
+  border-radius: var(--rrp-radius-sm);
+  padding: 4px var(--rrp-space-sm);
+  color: var(--rrp-text-2);
+  font-size: var(--rrp-font-size-micro);
   font-weight: var(--rrp-font-weight-semibold);
-  line-height: 1.6;
+  line-height: 1.4;
   white-space: nowrap;
 }
-.rrp-badge--success { background: var(--rrp-success-soft); border-color: var(--rrp-success); }
-.rrp-badge--warning { background: var(--rrp-warning-soft); border-color: var(--rrp-warning); }
-.rrp-badge--danger  { background: var(--rrp-danger-soft);  border-color: var(--rrp-danger); }
-.rrp-badge--accent  { background: var(--rrp-accent); border-color: var(--rrp-accent); color: var(--rrp-text-on-accent); }
+.rrp-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--rrp-text-muted);
+}
+.rrp-badge--success::before { background: var(--rrp-success); }
+.rrp-badge--warning::before { background: var(--rrp-warning); }
+.rrp-badge--danger::before  { background: var(--rrp-danger); }
+.rrp-badge--info::before    { background: var(--rrp-info); }
+.rrp-badge--teal::before    { background: var(--rrp-teal); }
+/* Badge sin punto, para una cifra o una etiqueta sin estado. */
+.rrp-badge--plain::before { display: none; }
 
 /* Punto de estado: en servicio, conectado, buscado */
 .rrp-dot {
@@ -1022,8 +1507,6 @@
   background: rgba(0, 9, 8, 0.72);
   animation: rrp-fade-in 120ms ease-out;
 }
-/* [hidden] debe ganar al display:flex de arriba; si no, el modal nace abierto. */
-.rrp-modal[hidden] { display: none; }
 .rrp-modal__box {
   width: 380px;
   max-width: 100%;
@@ -1035,13 +1518,10 @@
   animation: rrp-pop-in 140ms ease-out;
 }
 .rrp-modal__header {
-  background: var(--rrp-bg-secondary);
   padding: var(--rrp-space-md);
-  font-weight: var(--rrp-font-weight-bold);
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  font-weight: var(--rrp-font-weight-semibold);
   font-size: var(--rrp-font-size-heading2);
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 .rrp-modal__body {
   padding: var(--rrp-space-lg);
@@ -1147,15 +1627,16 @@
 }
 .rrp-slot:hover {
   background: var(--rrp-surface-3);
-  border-color: var(--rrp-hover-btn-bg);
+  border-color: var(--rrp-border-strong);
 }
 .rrp-slot.is-selected {
-  border-color: var(--rrp-accent);
-  box-shadow: inset 0 0 0 1px var(--rrp-accent);
+  border-color: var(--rrp-border-teal);
+  background: var(--rrp-teal-soft);
+  box-shadow: inset 0 -2px 0 var(--rrp-teal);
 }
 .rrp-slot.is-empty { opacity: 0.45; cursor: default; }
 .rrp-slot.is-empty:hover { background: var(--rrp-surface-2); border-color: var(--rrp-border-subtle); }
-.rrp-slot img { max-width: 60%; max-height: 60%; }
+.rrp-slot img { width: 100%; height: 100%; max-width: 88%; max-height: 88%; object-fit: contain; }
 .rrp-slot__count {
   position: absolute;
   top: var(--rrp-space-xs);
@@ -1175,6 +1656,584 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ---------- Inventario completo ---------- */
+/* `.rrp-slots` es la pieza suelta (una tienda, una armería). `.rrp-inv` es
+   la pantalla entera, y trae su propio contenedor: barra superior con el
+   peso y las herramientas, rejilla, panel de detalle a la derecha y barra
+   inferior de categorías.
+
+   El reparto de color es el del sistema y aquí se ve en crudo: las
+   superficies son negro neutro, el teal aparece solo en el slot
+   seleccionado y en la acción principal del detalle, el amarillo solo si
+   una durabilidad está baja, y el hover no tiñe — sube la superficie.
+
+   La geometría se cambia por variable, sin tocar este CSS:
+     --rrp-inv-columns    : columnas de la rejilla (5 por defecto)
+     --rrp-inv-gap        : hueco entre slots
+     --rrp-inv-slot-ratio : proporción del slot (1/1 por defecto)
+     --rrp-inv-slot-min   : alto mínimo del slot
+     --rrp-inv-side       : ancho del panel de detalle */
+.rrp-inv {
+  --rrp-inv-columns: 5;
+  --rrp-inv-gap: var(--rrp-space-sm);
+  --rrp-inv-slot-ratio: 1 / 1;
+  --rrp-inv-slot-min: 104px;
+  --rrp-inv-icon-size: 90px;
+  --rrp-inv-side: 240px;
+  background: var(--rrp-surface-1);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-md);
+  box-shadow: var(--rrp-shadow-panel);
+  color: var(--rrp-text);
+  overflow: hidden;
+}
+
+/* --- Barra superior --- */
+.rrp-inv__top {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--rrp-space-md);
+  align-items: center;
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
+}
+.rrp-inv__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--rrp-space-sm);
+  min-width: 0;
+}
+/* Marca: el único sitio de la barra donde aparece el teal. */
+.rrp-inv__mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  background: var(--rrp-teal-soft);
+  border: var(--rrp-border-width) solid rgba(1, 150, 133, 0.28);
+  border-radius: var(--rrp-radius-sm);
+  color: var(--rrp-teal);
+}
+.rrp-inv__mark svg { width: 16px; height: 16px; }
+.rrp-inv__title {
+  margin: 0;
+  font-size: var(--rrp-font-size-heading2);
+  font-weight: var(--rrp-font-weight-semibold);
+  line-height: 1.2;
+}
+
+/* Peso: la cifra manda, la barra es el contexto. Cuando el macuto se
+   acerca al límite, el recurso añade --warning / --danger a la barra;
+   el inventario no tiene un color propio para eso. */
+.rrp-inv__weight { min-width: 190px; max-width: 260px; }
+.rrp-inv__weight-text {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--rrp-space-sm);
+  margin: 0 0 6px;
+  line-height: 1;
+}
+.rrp-inv__weight-value {
+  font-size: var(--rrp-font-size-button);
+  font-weight: var(--rrp-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.rrp-inv__weight-max {
+  font-size: var(--rrp-font-size-micro);
+  color: var(--rrp-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.rrp-inv__weight .rrp-progress { height: 3px; }
+
+/* Buscador y orden: los controles de siempre, aquí solo tienen sitio. */
+.rrp-inv__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--rrp-space-sm);
+  min-width: 0;
+}
+
+/* Dinero: texto, no chip. */
+.rrp-inv__cash {
+  display: flex;
+  align-items: baseline;
+  gap: var(--rrp-space-xs);
+  flex: none;
+  font-size: var(--rrp-font-size-body);
+  font-weight: var(--rrp-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.rrp-inv__cash-icon { color: var(--rrp-text-muted); }
+
+/* --- Cuerpo: rejilla + detalle --- */
+.rrp-inv__content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--rrp-inv-side);
+}
+.rrp-inv__main {
+  padding: var(--rrp-space-md);
+  border-right: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  min-width: 0;
+}
+/* Sin panel de detalle: la rejilla ocupa todo el ancho. */
+.rrp-inv--nodetail .rrp-inv__content { grid-template-columns: minmax(0, 1fr); }
+.rrp-inv--nodetail .rrp-inv__main { border-right: none; }
+
+.rrp-inv__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--rrp-inv-columns), minmax(0, 1fr));
+  gap: var(--rrp-inv-gap);
+  align-content: start;
+}
+/* Slots de lado fijo (tira de acceso rápido, mochila estrecha). */
+.rrp-inv__grid--fixed {
+  grid-template-columns: repeat(var(--rrp-inv-columns), var(--rrp-inv-slot-min));
+  justify-content: center;
+}
+
+/* --- Slot --- */
+.rrp-inv-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rrp-space-xs);
+  aspect-ratio: var(--rrp-inv-slot-ratio);
+  min-height: var(--rrp-inv-slot-min);
+  --rrp-inv-icon-size: 90px;
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--rrp-surface-2);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  color: var(--rrp-text);
+  font-family: var(--rrp-font-family);
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background var(--rrp-transition-fast),
+              border-color var(--rrp-transition-fast),
+              box-shadow var(--rrp-transition-fast);
+}
+/* Hover neutro: sube la superficie y marca el borde. Sin teal — ese se
+   guarda para decir cuál está seleccionado. */
+.rrp-inv-slot:hover {
+  background: var(--rrp-surface-3);
+  border-color: var(--rrp-border-strong);
+}
+/* Seleccionado: velo teal, borde teal y una línea teal al pie. Solo
+   puede haber uno, y es el único elemento verde de la rejilla. */
+.rrp-inv-slot.is-selected {
+  background: linear-gradient(180deg, rgba(1, 150, 133, 0.09), rgba(1, 150, 133, 0.025)),
+              var(--rrp-surface-2);
+  border-color: var(--rrp-border-teal);
+  box-shadow: inset 0 -2px 0 var(--rrp-teal);
+}
+
+/* Fila superior: número apagado a la izquierda, cantidad a la derecha.
+   El número es referencia, no información: va en el tono más bajo que
+   sigue siendo legible. */
+.rrp-inv-slot__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rrp-space-xs);
+  flex: none;
+  font-size: 9px;
+  font-weight: var(--rrp-font-weight-semibold);
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+}
+.rrp-inv-slot__index { color: var(--rrp-text-faint); }
+.rrp-inv-slot__amount {
+  color: var(--rrp-text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Zona de la imagen: ocupa la casilla para que el icono se vea casi al 100%. */
+.rrp-inv-slot__figure {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+/* El arte del objeto aprovecha casi el 100% de la casilla */
+.rrp-inv-slot__img {
+  width: 100%;
+  height: 100%;
+  max-width: 92%;
+  max-height: 92%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+  transition: transform var(--rrp-transition-fast);
+}
+.rrp-inv-slot:hover .rrp-inv-slot__img {
+  transform: scale(1.05);
+}
+/* Sin PNG: un icono de línea centrado */
+.rrp-inv-slot__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: 65%;
+  max-height: 65%;
+  color: var(--rrp-text);
+}
+.rrp-inv-slot__icon svg { width: 100%; height: 100%; max-width: 44px; max-height: 44px; display: block; }
+
+/* Pie: nombre y peso alineados a la izquierda, fijados abajo */
+.rrp-inv-slot__foot {
+  margin-top: auto;
+  flex: none;
+  min-width: 0;
+  padding-bottom: 2px;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+}
+.rrp-inv-slot__name {
+  display: block;
+  font-size: var(--rrp-font-size-micro);
+  font-weight: var(--rrp-font-weight-semibold);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rrp-inv-slot__weight {
+  display: none;
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--rrp-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Durabilidad, munición o batería: la barra del sistema pegada al canto
+   inferior. Los estados van con sus modificadores de siempre (--warning
+   por debajo del 40 %, --danger por debajo del 15 %). */
+/* Durabilidad, munición o batería: barra verde-amarilla-roja bajo el icono */
+.rrp-inv-slot > .rrp-progress,
+.rrp-inv-slot__dur {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 4px;
+  width: auto;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+  pointer-events: none;
+}
+.rrp-inv-slot > .rrp-progress .rrp-progress__fill,
+.rrp-inv-slot__dur .rrp-progress__fill {
+  border-radius: 999px;
+}
+
+/* Hueco libre: la misma caja, con el número aún más apagado. Nada más:
+   un hueco no necesita explicarse. */
+.rrp-inv-slot.is-empty {
+  cursor: default;
+}
+.rrp-inv-slot.is-empty .rrp-inv-slot__index { opacity: 0.55; }
+.rrp-inv-slot.is-empty:hover {
+  background: var(--rrp-surface-2);
+  border-color: var(--rrp-border-subtle);
+}
+
+/* --- Acceso rápido --- */
+/* NUEVO. Los primeros slots se usan con las teclas 1–5. El número va de
+   marca de agua detrás del contenido: lo bastante claro para verlo de
+   reojo, lo bastante apagado para no competir con el arte del objeto ni
+   con la cantidad, que son lo que de verdad hay que leer.
+
+   No lleva teal. Un slot de acceso rápido lo es siempre, esté
+   seleccionado o no, y teñirlo de verde chocaría con lo único que el
+   teal dice en la rejilla: cuál tienes cogido. Tampoco lleva borde
+   propio — un marco por slot en la primera fila parece que esos cinco
+   están seleccionados.
+
+   El número lo pone el recurso en data-quick, que casi siempre coincide
+   con el índice del slot pero no tiene por qué: un carril de acceso
+   rápido configurable puede apuntar a los slots que quiera. */
+.rrp-inv-slot.is-quick::before {
+  content: attr(data-quick);
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  color: var(--rrp-text);
+  font-size: 2.4em;
+  font-weight: var(--rrp-font-weight-bold);
+  line-height: 1;
+  opacity: 0.12;
+  pointer-events: none;
+}
+/* El contenido pasa por delante de la marca de agua: un pseudo-elemento
+   posicionado se pinta por encima de los hijos que no lo están, así que
+   hay que subirlos a ellos.
+
+   Acotado a las DOS piezas que están en el flujo. Un `> *` alcanzaba
+   también a las que van ancladas al slot —la barra de durabilidad, la
+   marca de contenedor, el precio—, que al volverse `relative` caían al
+   flujo y se salían de sitio justo en las cinco primeras ranuras. Esas
+   ya están fuera del flujo: solo necesitan subir por encima.
+
+   La zona de la imagen es el mismo caso y es el que se ve: anclada al
+   slot llena la casilla entera, pero en el flujo se encoge a lo que le
+   dejen la cabecera y el pie, y el arte de las cinco primeras ranuras
+   salía más pequeño que el del resto de la rejilla. Se queda anclada,
+   con la capa 1 que ya tiene de serie: por delante de la marca de agua
+   —que está en 0— y por detrás de la cantidad y la durabilidad.
+
+   La cabecera sube a 2, la capa que tiene en el resto de la rejilla:
+   comparte la 1 con la imagen y, al ir antes en el marcado, se quedaría
+   por debajo del arte. */
+.rrp-inv-slot.is-quick > .rrp-inv-slot__head,
+.rrp-inv-slot.is-quick > .rrp-inv-slot__foot {
+  position: relative;
+  z-index: 1;
+}
+.rrp-inv-slot.is-quick > .rrp-inv-slot__head {
+  z-index: 2;
+}
+.rrp-inv-slot.is-quick > .rrp-progress,
+.rrp-inv-slot.is-quick > .rrp-inv-slot__dur,
+.rrp-inv-slot.is-quick > .rrp-inv-slot__flag,
+.rrp-inv-slot.is-quick > .rrp-inv-slot__price {
+  z-index: 10;
+}
+
+/* Arrastre: el origen se apaga, el destino válido se marca en teal y el
+   inválido en rojo. El jugador sabe si puede soltar antes de soltar. */
+.rrp-inv-slot.is-dragging { opacity: 0.3; cursor: grabbing; }
+.rrp-inv-slot.is-dropzone {
+  border-color: var(--rrp-border-teal);
+  background: var(--rrp-teal-soft);
+}
+.rrp-inv-slot.is-blocked {
+  border-color: var(--rrp-danger);
+  background: var(--rrp-danger-soft);
+  cursor: not-allowed;
+}
+/* Fuera del buscador o del filtro: sigue ahí, deja de competir. */
+.rrp-inv-slot.is-dimmed { opacity: 0.25; }
+/* Slot que el jugador todavía no tiene desbloqueado. */
+.rrp-inv-slot.is-locked { opacity: 0.4; cursor: not-allowed; }
+.rrp-inv-slot.is-locked:hover {
+  background: var(--rrp-surface-2);
+  border-color: var(--rrp-border-subtle);
+}
+
+/* --- Panel de detalle --- */
+/* El slot solo enseña lo justo; todo lo demás se cuenta aquí, y solo
+   del objeto seleccionado. Es lo que permite que la rejilla esté limpia. */
+.rrp-inv__side {
+  padding: var(--rrp-space-md);
+  background: var(--rrp-surface-2);
+  min-width: 0;
+}
+.rrp-inv-detail__eyebrow {
+  margin: 0 0 var(--rrp-space-sm);
+  color: var(--rrp-teal);
+  font-size: 9px;
+  font-weight: var(--rrp-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.rrp-inv-detail__figure {
+  display: grid;
+  place-items: center;
+  height: 112px;
+  margin-bottom: var(--rrp-space-md);
+  background: var(--rrp-surface-1);
+  border: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  border-radius: var(--rrp-radius-sm);
+  overflow: hidden;
+}
+.rrp-inv-detail__figure svg { width: 58px; height: 58px; }
+.rrp-inv-detail__figure img { max-width: 70%; max-height: 80%; object-fit: contain; }
+.rrp-inv-detail__title {
+  margin: 0 0 var(--rrp-space-xs);
+  font-size: var(--rrp-font-size-heading2);
+  font-weight: var(--rrp-font-weight-bold);
+  line-height: 1.2;
+}
+.rrp-inv-detail__desc {
+  margin: 0 0 var(--rrp-space-md);
+  font-size: var(--rrp-font-size-micro);
+  color: var(--rrp-text-2);
+  line-height: 1.5;
+}
+.rrp-inv-detail__rows {
+  display: grid;
+  gap: var(--rrp-space-sm);
+  margin-bottom: var(--rrp-space-md);
+}
+.rrp-inv-detail__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rrp-space-md);
+  padding-bottom: var(--rrp-space-sm);
+  border-bottom: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  color: var(--rrp-text-muted);
+  font-size: var(--rrp-font-size-micro);
+}
+.rrp-inv-detail__row:last-child { border-bottom: none; padding-bottom: 0; }
+.rrp-inv-detail__value {
+  color: var(--rrp-text);
+  font-weight: var(--rrp-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+/* Rejilla de acciones: una sola lleva --primary. */
+.rrp-inv-detail__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--rrp-space-sm);
+}
+/* Sin nada seleccionado */
+.rrp-inv-detail__empty {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: 180px;
+  text-align: center;
+  color: var(--rrp-text-faint);
+  font-size: var(--rrp-font-size-micro);
+}
+
+/* Detalle flotante: la misma información junto al cursor, para una NUI
+   que no tenga sitio para la columna. Sin pointer-events, para no cortar
+   un arrastre que pase por encima. El JS lo coloca con left/top sobre el
+   ancestro posicionado. */
+.rrp-inv-tip {
+  position: absolute;
+  z-index: var(--rrp-z-tooltip);
+  width: 210px;
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  background: var(--rrp-surface-1);
+  border: var(--rrp-border-width) solid var(--rrp-border-strong);
+  border-radius: var(--rrp-radius-sm);
+  box-shadow: var(--rrp-shadow-float);
+  pointer-events: none;
+}
+.rrp-inv-tip .rrp-inv-detail__figure { display: none; }
+
+/* --- Barra inferior: categorías --- */
+.rrp-inv__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rrp-space-md);
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
+  border-top: var(--rrp-border-width) solid var(--rrp-border-subtle);
+  background: var(--rrp-surface-2);
+}
+.rrp-inv__cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rrp-space-xs);
+  min-width: 0;
+}
+.rrp-inv__cat {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  padding: 0 var(--rrp-space-sm);
+  background: none;
+  border: var(--rrp-border-width) solid transparent;
+  border-radius: var(--rrp-radius-sm);
+  color: var(--rrp-text-muted);
+  font-size: var(--rrp-font-size-micro);
+  font-weight: var(--rrp-font-weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--rrp-transition-fast),
+              border-color var(--rrp-transition-fast),
+              color var(--rrp-transition-fast);
+}
+.rrp-inv__cat-icon { display: flex; flex: none; width: 14px; }
+.rrp-inv__cat-icon svg { width: 100%; height: auto; display: block; }
+.rrp-inv__cat:hover {
+  background: var(--rrp-surface-3);
+  color: var(--rrp-text-2);
+}
+.rrp-inv__cat.is-active {
+  background: var(--rrp-teal-soft);
+  border-color: rgba(1, 150, 133, 0.22);
+  color: var(--rrp-text);
+}
+.rrp-inv__cat[data-rrp-count]::after {
+  content: attr(data-rrp-count);
+  color: var(--rrp-text-faint);
+  font-size: 9px;
+}
+/* Nota de ayuda al otro extremo de la barra. */
+.rrp-inv__note {
+  flex: none;
+  color: var(--rrp-text-faint);
+  font-size: 9px;
+}
+
+/* --- Tablero de dos inventarios (jugador <-> alijo, maletero, tienda) --- */
+.rrp-inv-board {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--rrp-space-md);
+  align-items: start;
+}
+.rrp-inv-board__aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rrp-space-sm);
+  align-self: center;
+  width: 42px;
+}
+.rrp-inv-board--stack { grid-template-columns: minmax(0, 1fr); }
+.rrp-inv-board--stack .rrp-inv-board__aside {
+  flex-direction: row;
+  width: auto;
+  justify-content: center;
+}
+
+/* Cabecera de cada mitad del tablero */
+.rrp-inv__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rrp-space-sm);
+  margin: 0;
+  font-size: var(--rrp-font-size-micro);
+  font-weight: var(--rrp-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--rrp-text-muted);
+}
+
+/* En una NUI estrecha el detalle estorba más de lo que aporta: se cae
+   la columna y el objeto seleccionado se cuenta en el flotante. */
+@media (max-width: 900px) {
+  .rrp-inv__content { grid-template-columns: minmax(0, 1fr); }
+  .rrp-inv__main { border-right: none; }
+  .rrp-inv__side { display: none; }
 }
 
 /* ---------- Tooltip ---------- */
@@ -1223,21 +2282,21 @@
 .rrp-stat {
   background: var(--rrp-surface-2);
   border: var(--rrp-border-width) solid var(--rrp-border-subtle);
-  border-radius: var(--rrp-radius-md);
-  padding: var(--rrp-space-md);
+  border-radius: var(--rrp-radius-sm);
+  padding: var(--rrp-space-sm) var(--rrp-space-md);
 }
 .rrp-stat__label {
   margin: 0 0 var(--rrp-space-xs);
-  font-size: var(--rrp-font-size-label);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: var(--rrp-font-size-micro);
   color: var(--rrp-text-muted);
 }
 .rrp-stat__value {
   margin: 0;
-  font-size: var(--rrp-font-size-title);
+  font-size: 18px;
   font-weight: var(--rrp-font-weight-bold);
+  letter-spacing: -0.02em;
   line-height: 1.1;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Estado vacío ---------- */
@@ -1258,7 +2317,7 @@
   width: 20px;
   height: 20px;
   border: 2px solid var(--rrp-border-subtle);
-  border-top-color: var(--rrp-accent);
+  border-top-color: var(--rrp-teal);
   border-radius: 50%;
   animation: rrp-spin 700ms linear infinite;
 }
@@ -1281,7 +2340,8 @@
 .rrp-list,
 .rrp-textarea,
 .rrp-modal__body,
-.rrp-table-wrap {
+.rrp-table-wrap,
+.rrp-inv__grid {
   scrollbar-width: thin;
   scrollbar-color: var(--rrp-surface-3) transparent;
 }
@@ -1292,7 +2352,8 @@
 .rrp-list::-webkit-scrollbar,
 .rrp-textarea::-webkit-scrollbar,
 .rrp-modal__body::-webkit-scrollbar,
-.rrp-table-wrap::-webkit-scrollbar {
+.rrp-table-wrap::-webkit-scrollbar,
+.rrp-inv__grid::-webkit-scrollbar {
   width: var(--rrp-scroll-size, 6px);
   height: var(--rrp-scroll-size, 6px);
 }
@@ -1303,7 +2364,8 @@
 .rrp-list::-webkit-scrollbar-track,
 .rrp-textarea::-webkit-scrollbar-track,
 .rrp-modal__body::-webkit-scrollbar-track,
-.rrp-table-wrap::-webkit-scrollbar-track {
+.rrp-table-wrap::-webkit-scrollbar-track,
+.rrp-inv__grid::-webkit-scrollbar-track {
   background: transparent;
 }
 .rrp-scroll::-webkit-scrollbar-thumb,
@@ -1313,7 +2375,8 @@
 .rrp-list::-webkit-scrollbar-thumb,
 .rrp-textarea::-webkit-scrollbar-thumb,
 .rrp-modal__body::-webkit-scrollbar-thumb,
-.rrp-table-wrap::-webkit-scrollbar-thumb {
+.rrp-table-wrap::-webkit-scrollbar-thumb,
+.rrp-inv__grid::-webkit-scrollbar-thumb {
   background: var(--rrp-surface-3);
   border-radius: 999px;
 }
@@ -1323,7 +2386,8 @@
 .rrp-dropdown::-webkit-scrollbar-thumb:hover,
 .rrp-list::-webkit-scrollbar-thumb:hover,
 .rrp-modal__body::-webkit-scrollbar-thumb:hover,
-.rrp-table-wrap::-webkit-scrollbar-thumb:hover {
+.rrp-table-wrap::-webkit-scrollbar-thumb:hover,
+.rrp-inv__grid::-webkit-scrollbar-thumb:hover {
   background: var(--rrp-hover-btn-bg);
 }
 /* Las esquinas de un contenedor con scroll en los dos ejes */
@@ -1382,6 +2446,7 @@
 @keyframes rrp-slide-in  { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
 @keyframes rrp-slide-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(16px); } }
 @keyframes rrp-spin      { to { transform: rotate(360deg); } }
+@keyframes rrp-notify-timer { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes rrp-shimmer   { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 
 .rrp-anim-fade { animation: rrp-fade-in 140ms ease-out; }
@@ -1408,6 +2473,11 @@
   .rrp-progress--countdown .rrp-progress__fill,
   .rrp-ring--timed {
     animation-duration: var(--rrp-progress-duration, 5s) !important;
+  }
+  /* La barra del toast es el reloj de su propio cierre: si se aplasta,
+     el aviso desaparece sin avisar de que iba a desaparecer. */
+  .rrp-notify__timer span {
+    animation-duration: var(--rrp-notify-duration, 0s) !important;
   }
   .rrp-progress--indeterminate .rrp-progress__fill,
   .rrp-spinner {

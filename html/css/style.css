@@ -8,13 +8,17 @@
      las variables locales `--*` son solo alias semanticos sobre los tokens
      `--rrp-*`, para que el resto de la hoja siga leyendose igual.
 
-     Regla principal: NEGRO PARA CONTENEDORES, VERDE PARA JERARQUIA.
-       surface-1  -> fondo exterior del panel y capa superpuesta
-       surface-2  -> tarjetas, cajas, cuerpo de menus flotantes
-       surface-3  -> campos de texto y teclas
-       El verde se reserva para lo que marca jerarquia o invita a actuar:
-       bg-secondary en los botones, hover-btn-bg en el hover de filas y
-       botones, y accent para el maximo enfasis (favoritos, seleccion).
+     El color tiene cinco papeles y no se sale de ahi:
+       negro neutro -> todas las superficies. Es el papel.
+       teal         -> seleccion y accion principal. Nada mas.
+       amarillo     -> aviso. No marca seleccion ni decora.
+       rojo/verde/azul -> resultado de una accion.
+       hover        -> neutro. Sube la superficie, no tiñe.
+
+     Escala de superficies, y ojo al orden: surface-2 es mas OSCURA que
+     surface-1. El panel es el papel (surface-1) y lo hundido -- una tarjeta,
+     un campo -- va por debajo (surface-2). surface-3 es lo que se levanta
+     (hover, fila activa) y surface-4 lo pulsado.
 
      Dos superficies contiguas se separan con `--rrp-border-subtle`, no
      subiendo el verde.
@@ -30,61 +34,89 @@
      - Todo el color pasa por variables para que el acento sea configurable.
      - `--panel-scale` escala la interfaz cambiando el tamaño base de fuente,
        no con transform: asi el arrastre del panel no pelea con la escala.
-     - `body.compact` y `body.no-anim` son los interruptores de los ajustes.
+     - `body.no-anim` es el interruptor de animaciones de los ajustes.
    ========================================================================== */
 
 :root {
     /* Acento: token del sistema. Las variantes translucidas las recalcula
-       app.js a partir del acento elegido por el jugador en los ajustes. */
-    --accent: var(--rrp-accent);
-    --accent-dim: rgba(206, 220, 0, 0.16);
-    --accent-subtle: rgba(206, 220, 0, 0.07);
-    --accent-border: rgba(206, 220, 0, 0.42);
-    --on-accent: var(--rrp-text-on-accent);
+       app.js a partir del acento elegido por el jugador en los ajustes.
+       Por defecto es el teal, que en este sistema es el color de la
+       seleccion; el amarillo solo avisa y no marca lo elegido. */
+    --accent: var(--rrp-teal);
+    --accent-dim: rgba(1, 150, 133, 0.16);
+    --accent-subtle: rgba(1, 150, 133, 0.07);
+    --accent-border: rgba(1, 150, 133, 0.42);
+    --on-accent: var(--rrp-text-on-teal);
 
     --panel-scale: 1;
-    --panel-alpha: 0.92;
     --cols: 2;
+
+    /* Opacidad del panel. Fija y la misma que la del inventario acoplado
+       (`--rrp-dock-alpha` de inv-dock.css): las dos NUI se ven una al lado de
+       la otra y tienen que pesar igual sobre el juego. Ya no es un ajuste. */
+    --panel-alpha: 0.95;
 
     /* Los mismos tokens, en triplete RGB.
        No son colores nuevos: son exactamente los valores de `tokens.css`
-         --rrp-black-green #000908   --rrp-surface-1 #0A100F
-         --rrp-surface-2   #121A19   --rrp-surface-3 #1B2523
-         --rrp-bg-secondary #005A50
-       escritos asi porque el menu deja al jugador regular la opacidad del
-       panel, y `rgba()` no puede tomar la alfa de un hex guardado en una
-       variable (`color-mix()` no existe en el CEF de FiveM). Si cambia un
-       token del sistema, hay que actualizar tambien su triplete. */
-    --rrp-black-green-rgb: 0, 9, 8;
-    --rrp-surface-1-rgb: 10, 16, 15;
-    --rrp-surface-2-rgb: 18, 26, 25;
-    --rrp-surface-3-rgb: 27, 37, 35;
-    --rrp-bg-secondary-rgb: 0, 90, 80;
+         --rrp-bg        #070809   --rrp-surface-1 #121415
+         --rrp-surface-2 #0D0F10   --rrp-surface-3 #1A1D1E
+         --rrp-surface-4 #202324
+       escritos asi porque las superficies del panel van translucidas, y
+       `rgba()` no puede tomar la alfa de un hex guardado en una variable
+       (`color-mix()` no existe en el CEF de FiveM). Si cambia un token del
+       sistema, hay que actualizar tambien su triplete. */
+    --rrp-bg-rgb: 7, 8, 9;
+    --rrp-surface-1-rgb: 18, 20, 21;
+    --rrp-surface-2-rgb: 13, 15, 16;
+    --rrp-surface-3-rgb: 26, 29, 30;
+    --rrp-surface-4-rgb: 32, 35, 36;
 
-    /* Contenedores: escala neutra. El fondo del panel se compone con
-       `rgba(var(--bg-panel), --panel-alpha)`. */
+    /* Los dos extremos del degradado de superficie. No son escalones de estado:
+       son el hombro y el pie, y salen igualmente de `tokens.css`
+         --rrp-surface-lift #1C2123   --rrp-surface-deep #0A0C0D */
+    --rrp-surface-lift-rgb: 28, 33, 35;
+    --rrp-surface-deep-rgb: 10, 12, 13;
+    --rrp-teal-rgb: 1, 150, 133;   /* = --rrp-teal #019685 */
+
+    /* Contenedores: escala neutra, sin tinte verde. El panel es el papel
+       (surface-1) y lo hundido va por debajo (surface-2). */
     --bg-panel: var(--rrp-surface-1-rgb);
-    --bg-sidebar: rgba(var(--rrp-black-green-rgb), 0.55);
+    /* El carril de categorias no pinta fondo propio: es el mismo papel que el
+       panel y se separa solo con su borde derecho, que es como el sistema
+       define `.rrp-nav` (surface-1, la misma superficie que la ventana).
+       Cualquier velo encima lo convertia en una banda negra mas oscura que el
+       panel, justo al reves de lo que dice la escala de superficies. */
+    --bg-sidebar: transparent;
 
-    /* Las superficies de dentro del panel van translucidas para que el ajuste
-       de opacidad siga afectando al menu entero y no deje islas opacas. */
+    /* Las superficies de dentro del panel van translucidas para que la
+       opacidad afecte al menu entero y no deje islas opacas. */
     --bg-card: rgba(var(--rrp-surface-2-rgb), 0.88);
-    --bg-input: rgba(var(--rrp-surface-3-rgb), 0.88);
-    --bg-elevated: var(--rrp-surface-2);        /* flota sobre el panel: opaco */
-    --bg-scrim: rgba(var(--rrp-black-green-rgb), 0.72);
+    --bg-input: rgba(var(--rrp-surface-2-rgb), 0.92);
+    --bg-elevated: var(--rrp-surface-1);        /* flota sobre el panel: opaco */
+    --bg-scrim: rgba(var(--rrp-bg-rgb), 0.72);
 
-    /* Verde: solo jerarquia y accion. */
-    --bg-button: rgba(var(--rrp-bg-secondary-rgb), 0.9);
-    --bg-card-hover: var(--rrp-hover-btn-bg);   /* estado momentaneo: opaco */
+    /* Botones neutros. El sistema reserva el degradado teal para la unica
+       accion dominante de la pantalla (`--bg-button-primary`), que aqui es
+       guardar una lista: si dos botones piden lo mismo, ninguno manda. */
+    --bg-button: rgba(var(--rrp-surface-3-rgb), 0.9);
+    --bg-button-hover: rgba(var(--rrp-surface-4-rgb), 0.95);
 
-    /* Separacion por borde, no por color. */
+    /* Hover neutro: sube la superficie y marca mas el borde, nunca tiñe. Es
+       lo que hace que el teal signifique algo. */
+    --bg-card-hover: var(--rrp-surface-3);
+
+    /* Separacion por borde, no por color. Dos bordes con dos papeles:
+       `--border-strong` es el hover neutro y `--border-selected` el teal de
+       lo elegido, que por eso no se usa de adorno. */
     --border: var(--rrp-border-subtle);
-    --border-strong: var(--rrp-border-teal);
-    --chip: var(--rrp-surface-3);
+    --border-strong: var(--rrp-border-strong);
+    --border-selected: var(--rrp-border-teal);
+    --chip: var(--rrp-surface-2);
 
-    --text: var(--rrp-white);
-    --text-secondary: var(--rrp-text-muted);
-    --text-tertiary: var(--rrp-text-faint);
+    --text: var(--rrp-text);
+    --text-secondary: var(--rrp-text-2);
+    --text-tertiary: var(--rrp-text-muted);
+    --text-faint: var(--rrp-text-faint);
 
     /* Estados semanticos: dicen como ha ido una accion o que riesgo tiene,
        nunca decoran. Si algo es solo "importante", eso es el acento. */
@@ -160,7 +192,7 @@ body {
 .list-name-input:focus,
 .list-name-input:focus-visible {
     outline: none;
-    border-color: var(--rrp-hover-btn-bg);
+    border-color: var(--rrp-teal);
     box-shadow: var(--focus-glow);
 }
 
@@ -223,14 +255,64 @@ body.no-anim *::after {
     transform: translateY(-50%);
     width: var(--panel-width);
     height: clamp(22rem, 64vh, 44rem);
-    background: rgba(var(--bg-panel), var(--panel-alpha));
-    border: 1px solid var(--border);
+    /* El mismo tratamiento que la tarjeta activa del inventario acoplado
+       (`.rrp-dock__card.is-active`), porque el menu abierto es justo eso: la
+       ventana con la que el jugador esta trabajando. Las dos NUI pueden verse a
+       la vez en pantalla y tienen que parecer de la misma familia.
+
+       Superficie: el degradado en diagonal de siempre, con la misma opacidad.
+       Alfa plano y no `backdrop-filter`: en FiveM cada recurso vive en su
+       iframe y el desenfoque nunca llega a ver el render de GTA.
+
+       Borde: arranca teal por el canto izquierdo -- por donde se entra a leer --
+       y se apaga a neutro antes de llegar al otro, en vez de rodear el panel de
+       color. `border-color` no admite degradados y `border-image` ignora el
+       `border-radius`; la forma que respeta el radio son dos fondos, la
+       superficie recortada a `padding-box` y la linea a `border-box`, que asoma
+       por el ancho del borde porque el borde va en transparente. */
+    border: 1px solid transparent;
+    background:
+        linear-gradient(
+            160deg,
+            rgba(var(--rrp-surface-lift-rgb), var(--panel-alpha)) 0%,
+            rgba(var(--rrp-surface-1-rgb), var(--panel-alpha)) 45%,
+            rgba(var(--rrp-surface-deep-rgb), var(--panel-alpha)) 100%
+        ) padding-box,
+        linear-gradient(
+            90deg,
+            rgba(var(--rrp-teal-rgb), 0.95) 0%,
+            rgba(var(--rrp-teal-rgb), 0.5) 40%,
+            var(--rrp-border-subtle) 100%
+        ) border-box;
     border-radius: var(--radius-lg);
-    box-shadow: var(--rrp-shadow-panel),
-                inset 0 0 0 0.5px rgba(255, 255, 255, 0.07);
+    /* Elevacion negra, no teal: el anillo oscuro exterior es lo que separa el
+       panel de un fondo de juego claro (mediodia en Vinewood) y la sombra da la
+       altura; ninguno de los dos tiñe. El halo teal, corto, es lo unico que
+       dice "esta es la ventana activa". */
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45),
+                0 16px 46px rgba(0, 0, 0, 0.55),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 28px rgba(var(--rrp-teal-rgb), 0.16);
     display: flex;
     animation: panelIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
+}
+
+/* La linea del canto izquierdo de `.rrp-dock__card.is-active`, que se apaga por
+   los dos extremos. Va en absoluto para no entrar como item del flex del panel.
+   Es la marca que remata el borde en degradado: el teal empieza aqui. */
+#emote-menu::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg,
+        transparent, var(--rrp-teal) 20%, var(--rrp-teal) 80%, transparent);
+    pointer-events: none;
+    z-index: 2;
 }
 
 #emote-menu.dragged {
@@ -273,7 +355,7 @@ body.no-anim *::after {
     background: var(--rrp-surface-3);
     border-radius: 999px;
 }
-.sidebar::-webkit-scrollbar-thumb:hover { background: var(--rrp-hover-btn-bg); }
+.sidebar::-webkit-scrollbar-thumb:hover { background: var(--rrp-border-strong); }
 
 .sidebar-item {
     display: flex;
@@ -282,7 +364,10 @@ body.no-anim *::after {
     justify-content: center;
     gap: 0.2rem;
     padding: 0.5rem 0.2rem;
-    border: none;
+    /* Transparente y no `none`: el estado activo solo cambia el color del
+       borde, y si el borde no existiese en reposo la fila daria un salto de
+       1 px al activarse. */
+    border: 1px solid transparent;
     background: transparent;
     color: var(--text-secondary);
     border-radius: var(--radius);
@@ -298,31 +383,38 @@ body.no-anim *::after {
     color: var(--text);
 }
 
-/* Activo: tinte suave + barra de acento al costado, como `.rrp-nav__item`.
-   Rellenar el fondo de lima macizo hundiria el contraste justo del elemento
+/* Activo: velo del acento sobre la superficie del panel y borde del acento
+   alrededor, igual que `.rrp-nav__item.is-active`. Es un velo, no un bloque:
+   rellenar el fondo de color macizo hundiria el contraste justo del elemento
    que se quiere destacar. */
 .sidebar-item.active {
-    background: var(--rrp-success-soft);
+    background: linear-gradient(180deg, var(--accent-dim), var(--accent-subtle)),
+                var(--rrp-surface-1);
+    border-color: var(--accent-border);
     color: var(--text);
 }
 
+/* El halo inferior de `.rrp-nav__item.is-active`: una linea de 1 px que se
+   apaga hacia los lados y dice "estas aqui". Va en ::before porque ::after lo
+   tiene reservado el tooltip por atributo del sistema. */
 .sidebar-item.active::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0.18rem;
-    height: 62%;
-    border-radius: 999px;
-    background: var(--accent);
+    left: 8%;
+    right: 8%;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent) 50%, transparent);
+    pointer-events: none;
 }
 
-/* El color por categoria llega como variable desde app.js, no en linea, para
-   que el estado activo pueda ganarle sin pelear con un style="". */
+/* Los iconos heredan el color de su fila, como `.rrp-nav__icon`: el sistema es
+   monocromo y una escala neutra es lo que hace que el acento se lea. La unica
+   excepcion es una lista personalizada, cuyo color eligio el jugador y llega
+   como `--cat-color` desde app.js. */
 .sidebar-icon {
     font-size: 1.05rem;
-    color: var(--cat-color, var(--rrp-hover-btn-bg));
+    color: var(--cat-color, inherit);
 }
 
 .sidebar-item.active .sidebar-icon { color: var(--accent); }
@@ -334,7 +426,9 @@ body.no-anim *::after {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     font-size: 0.56rem;
-    font-weight: 600;
+    /* Medium: el sistema reserva el semibold para titulos, botones y valores,
+       y deja las filas de navegacion en 500. */
+    font-weight: var(--rrp-font-weight-medium);
     letter-spacing: 0.01em;
     text-align: center;
     line-height: 1.15;
@@ -364,22 +458,33 @@ body.no-anim *::after {
     position: relative;
 }
 
+/* La cejilla de `.rrp-notch`: teal con un halo corto. Es el unico sitio donde
+   el teal aparece sin haber seleccionado nada, y se lo puede permitir porque es
+   diminuto y porque no hay otra forma de anunciar que la ventana se mueve. La
+   zona de agarre es el envoltorio, no la barra: 4 px de alto son un blanco
+   imposible de acertar. */
 .drag-handle::after {
     content: '';
     position: absolute;
     left: 50%;
     top: 0.5rem;
     transform: translateX(-50%);
-    width: 2.25rem;
-    height: 0.2rem;
-    border-radius: 1rem;
-    background: var(--border-strong);
-    transition: background var(--transition);
+    width: 3.1rem;
+    height: 0.25rem;
+    border-radius: 999px;
+    background: var(--rrp-teal);
+    box-shadow: 0 0 10px rgba(1, 169, 149, 0.8), 0 0 2px rgba(1, 169, 149, 1);
+    transition: background var(--transition), transform var(--transition),
+                box-shadow var(--transition);
 }
 
-.drag-handle:hover::after { background: var(--text-tertiary); }
+.drag-handle:hover::after {
+    background: var(--rrp-teal-strong);
+    transform: translateX(-50%) scale(1.08, 1.25);
+    box-shadow: 0 0 14px rgba(1, 169, 149, 1);
+}
+
 .drag-handle.dragging { cursor: grabbing; }
-.drag-handle.dragging::after { background: var(--accent); }
 
 .search-row {
     display: flex;
@@ -469,11 +574,13 @@ body.no-anim *::after {
     color: var(--text-secondary);
 }
 
-/* Mismo icono y mismo color que en la barra lateral. */
+/* Mismo icono y mismo color que en la barra lateral: el de la categoria si es
+   una lista del jugador, y si no el acento -- aqui el icono acompaña al titulo
+   de la categoria en la que se esta, que es justo lo que el acento marca. */
 .cat-icon {
     font-size: 0.85rem;
     flex-shrink: 0;
-    color: var(--cat-color, var(--rrp-hover-btn-bg));
+    color: var(--cat-color, var(--accent));
 }
 
 .cat-count {
@@ -573,7 +680,7 @@ body.no-anim *::after {
     background: var(--rrp-surface-3);
     border-radius: 999px;
 }
-.content-scroll::-webkit-scrollbar-thumb:hover { background: var(--rrp-hover-btn-bg); }
+.content-scroll::-webkit-scrollbar-thumb:hover { background: var(--rrp-border-strong); }
 
 .emote-grid { position: relative; }
 
@@ -592,14 +699,12 @@ body.no-anim *::after {
     transition: background var(--transition), border-color var(--transition);
 }
 
-body.compact .emote-card { height: 1.5rem; }
-
-/* Hover: sube la superficie y ata el borde a la paleta, como `.rrp-slot`.
-   Rellenar la tarjeta de teal macizo hundia el contraste del texto justo en la
-   fila que se esta señalando. */
+/* Hover: sube la superficie y marca mas el borde, sin teñir, como `.rrp-slot`.
+   Si el teal apareciese cada vez que el raton pasa por encima, dejaria de
+   decir "esto es lo que tienes seleccionado". */
 .emote-card:hover {
     background: var(--rrp-surface-3);
-    border-color: var(--rrp-hover-btn-bg);
+    border-color: var(--border-strong);
 }
 
 /* Seleccionada: misma superficie, borde de acento. Tinte + indicador, nunca un
@@ -821,7 +926,7 @@ body.compact .emote-card { height: 1.5rem; }
 
 .variant-option:hover {
     background: var(--rrp-surface-3);
-    box-shadow: inset 3px 0 0 var(--rrp-hover-btn-bg);
+    box-shadow: inset 3px 0 0 var(--rrp-border-strong);
 }
 
 /* ── Menu contextual ───────────────────────────────────────────────────── */
@@ -850,7 +955,7 @@ body.compact .emote-card { height: 1.5rem; }
 
 .ctx-item:hover {
     background: var(--rrp-surface-3);
-    box-shadow: inset 3px 0 0 var(--rrp-hover-btn-bg);
+    box-shadow: inset 3px 0 0 var(--rrp-border-strong);
 }
 .ctx-icon { font-size: 0.75rem; color: var(--text-secondary); }
 .ctx-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -966,7 +1071,7 @@ body.compact .emote-card { height: 1.5rem; }
 .color-dot:hover { transform: scale(1.15); }
 .color-dot.active {
     border-color: var(--rrp-white);
-    box-shadow: 0 0 0 1px rgba(var(--rrp-black-green-rgb), 0.6);
+    box-shadow: 0 0 0 1px rgba(var(--rrp-bg-rgb), 0.6);
 }
 
 .segmented {
@@ -993,8 +1098,12 @@ body.compact .emote-card { height: 1.5rem; }
 
 /* Tinte suave + subrayado de acento: mismo motivo que la barra lateral. El
    acento macizo se queda para los botones, donde el texto va a juego. */
+/* Velo + linea inferior del acento, no un bloque macizo: rellenar el fondo de
+   color bajo el texto hunde el contraste del elemento que se queria destacar.
+   El velo sale del acento y no del amarillo del sistema: el amarillo avisa, no
+   marca lo que esta elegido. */
 .segment.active {
-    background: var(--rrp-accent-soft);
+    background: var(--accent-dim);
     color: var(--text);
     box-shadow: inset 0 -2px 0 var(--accent);
 }
@@ -1026,7 +1135,7 @@ body.compact .emote-card { height: 1.5rem; }
     height: 0.8rem;
     border-radius: 50%;
     background: var(--accent);
-    box-shadow: 0 1px 3px rgba(var(--rrp-black-green-rgb), 0.5);
+    box-shadow: 0 1px 3px rgba(var(--rrp-bg-rgb), 0.5);
 }
 
 .slider-value {
@@ -1059,7 +1168,7 @@ body.compact .emote-card { height: 1.5rem; }
     height: 0.89rem;
     border-radius: 50%;
     background: var(--rrp-white);
-    box-shadow: 0 1px 3px rgba(var(--rrp-black-green-rgb), 0.5);
+    box-shadow: 0 1px 3px rgba(var(--rrp-bg-rgb), 0.5);
     transition: transform var(--transition);
 }
 
@@ -1245,13 +1354,24 @@ body.compact .emote-card { height: 1.5rem; }
     cursor: pointer;
 }
 
-/* Mismo comportamiento que `.rrp-btn` del sistema: reposo en bg-secondary,
-   hover generico a hover-btn-bg y hover de "aceptar" al acento con texto
-   oscuro. El acento aparece solo en el momento de confirmar. */
+/* Mismo reparto que `.rrp-btn` del sistema: el boton por defecto es neutro y
+   solo la accion dominante del modal -- guardar -- lleva el degradado teal, el
+   unico del sistema. Si los dos pidiesen lo mismo, ninguno mandaria. */
 .list-btn-cancel { background: var(--bg-button); color: var(--text); }
-.list-btn-cancel:hover { background: var(--bg-card-hover); }
-.list-btn-save { background: var(--bg-button); color: var(--text); }
-.list-btn-save:hover { background: var(--accent); color: var(--on-accent); }
+.list-btn-cancel:hover { background: var(--bg-button-hover); }
+
+.list-btn-save {
+    background: linear-gradient(180deg, var(--rrp-btn-from), var(--rrp-btn-to));
+    color: var(--rrp-text-on-teal);
+}
+
+.list-btn-save:hover {
+    background: linear-gradient(180deg, var(--rrp-btn-hover-from), var(--rrp-btn-hover-to));
+}
+
+.list-btn-save:active {
+    background: linear-gradient(180deg, var(--rrp-btn-active-from), var(--rrp-btn-active-to));
+}
 .list-btn-danger { background: var(--danger); color: var(--on-danger); }
 .list-btn-danger:hover { background: var(--danger-hover); }
 
@@ -1451,7 +1571,7 @@ body.compact .emote-card { height: 1.5rem; }
 .rt-r { color: var(--danger); }
 .rt-g { color: var(--success); }
 .rt-y { color: var(--warning); }
-.rt-b { color: var(--rrp-hover-btn-bg); }
+.rt-b { color: var(--rrp-info); }
 .rt-h { font-weight: 700; }
 
 .toast-bar {

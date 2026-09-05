@@ -3,74 +3,118 @@
    Fuente de verdad visual para todas las NUI de recursos FiveM.
    No redefinir estos valores en un recurso concreto: importar
    este archivo y usar las variables.
+
+   Reparto de color, y de aquí no se sale:
+     · Negro neutro  -> todas las superficies. Es el papel.
+     · Teal          -> selección y acción principal. Nada más.
+     · Amarillo      -> aviso. No marca selección ni decora.
+     · Rojo / verde / azul -> resultado de una acción (error, éxito, info).
+     · Hover         -> neutro. Sube la superficie, no tiñe de color.
    ============================================================ */
 
 :root {
-  /* ---- Color: escala de fondo (oscuro -> claro) -------------- */
-  --rrp-black-green:   #000908; /* negro tonos verdes: fondo de la página/HUD, detrás de todo */
-  --rrp-bg-dark:        #001D19; /* background fondo oscuro: contenedor exterior / overlay */
-  --rrp-bg-primary:     #00352F; /* background principal: paneles, cajas de texto */
-  --rrp-bg-secondary:   #005A50; /* background secundario: cabeceras, títulos, botones normales */
-  --rrp-hover-btn-bg:   #019685; /* background hover botón: hover genérico de botones/filas */
+  /* ---- Color: superficies (negro neutro) ------------------------- */
+  /* Sin tinte verde: el verde de la marca vale más cuando aparece
+     solo donde hay acción o selección. Las tres superficies se
+     distinguen por luminancia y por el borde, nunca por color. */
+  --rrp-bg:             #070809; /* fondo de la página / detrás de todo el HUD */
+  --rrp-surface-1:      #121415; /* panel, ventana, tarjeta: el papel */
+  --rrp-surface-2:      #0D0F10; /* hundido: campos, slots, celdas de datos */
+  --rrp-surface-3:      #1A1D1E; /* elevado: hover neutro, fila activa */
+  --rrp-surface-4:      #202324; /* pulsado / hover fuerte */
 
-  /* ---- Color: escala neutra (negros) ----------------------------- */
-  /* Superficies de contenedor. Bajan el peso del verde en pantalla:
-     el verde queda para jerarquía y acción (títulos, cabeceras,
-     botones, hovers); el negro es el "papel" sobre el que se apoya
-     el contenido. Llevan un tinte verdoso mínimo para que convivan
-     con la paleta sin leerse como gris neutro ajeno. */
-  --rrp-surface-1:      #0A100F; /* contenedor exterior: panel, ventana, HUD */
-  --rrp-surface-2:      #121A19; /* cajas internas: textbox, cuerpo de desplegable */
-  --rrp-surface-3:      #1B2523; /* elevación sobre surface-2: filas, estados neutros */
+  /* Los dos extremos de un degradado de superficie. No son escalones de
+     estado como los de arriba —nada se pinta "de surface-lift"—: son el
+     hombro y el pie de `.rrp-surface-depth`, y existen para que ese
+     degradado no lleve hexes sueltos. Caen dentro de la escala, entre
+     `surface-3` y `surface-4` el claro, entre `bg` y `surface-2` el
+     oscuro. */
+  --rrp-surface-lift:   #1C2123; /* hombro claro de un degradado de superficie */
+  --rrp-surface-deep:   #0A0C0D; /* pie oscuro de un degradado de superficie */
 
-  --rrp-border-subtle:  rgba(255, 255, 255, 0.10); /* separar superficies negras entre sí */
-  --rrp-border-teal:    rgba(1, 150, 133, 0.35);   /* borde tenue que ata el negro a la paleta */
+  /* Alias heredado: el fondo de página se llamaba así cuando llevaba
+     tinte verde. Se mantiene para no romper recursos ya escritos. */
+  --rrp-black-green:    var(--rrp-bg);
+
+  --rrp-border-subtle:  #202324; /* borde por defecto entre superficies */
+  --rrp-border-strong:  #35393A; /* borde en hover o en el elemento con foco */
+  --rrp-border-teal:    rgba(1, 150, 133, 0.45); /* borde de lo seleccionado */
+
+  /* ---- Color: teal (selección y acción principal) ----------------- */
+  --rrp-teal:           #019685; /* el verde ResetRP */
+  --rrp-teal-strong:    #01A995; /* teal un punto más vivo, para hover de texto/icono */
+  --rrp-teal-soft:      rgba(1, 150, 133, 0.12); /* tinte de fondo de lo seleccionado */
+  --rrp-teal-line:      rgba(1, 150, 133, 0.55); /* línea inferior del elemento activo */
+
+  /* Alias heredado del hover verde de botones. */
+  --rrp-hover-btn-bg:   var(--rrp-teal);
+
+  /* Botón principal: el único degradado del sistema. Marca la acción
+     dominante de la pantalla, y solo debe haber una. */
+  --rrp-btn-from:        #078E7E;
+  --rrp-btn-to:          #017E70;
+  --rrp-btn-hover-from:  #079987;
+  --rrp-btn-hover-to:    #018979;
+  --rrp-btn-active-from: #01796B;
+  --rrp-btn-active-to:   #016C60;
 
   /* ---- Color: estados semánticos ---------------------------------- */
-  /* Uso restringido: comunican el resultado de una acción o el riesgo de
-     una acción, nunca decoran. Si algo es solo "importante", eso es
-     --rrp-accent, no --rrp-danger. */
-  --rrp-success:        #019685; /* confirmación: reutiliza el teal de la paleta */
-  --rrp-warning:        #F2A93B; /* aviso: combustible bajo, tiempo agotándose */
-  --rrp-danger:         #E4483F; /* error o acción destructiva/irreversible */
-  --rrp-danger-hover:   #F4695F; /* hover de un botón de peligro */
+  /* Comunican el resultado o el riesgo de una acción, nunca decoran. */
+  --rrp-success:        #53B883; /* confirmación */
+  --rrp-warning:        #CEDC00; /* aviso: combustible bajo, tiempo agotándose */
+  --rrp-danger:         #D95C5C; /* error o acción destructiva/irreversible */
+  --rrp-danger-hover:   #E37A7A; /* hover de un botón de peligro */
+  --rrp-info:           #5EA6D8; /* informativo neutro */
 
-  /* Tintes suaves de los mismos estados, para fondos de alerta/badge
-     sobre las superficies negras (el color macizo se deja al borde). */
-  --rrp-success-soft:   rgba(1, 150, 133, 0.18);
-  --rrp-warning-soft:   rgba(242, 169, 59, 0.18);
-  --rrp-danger-soft:    rgba(228, 72, 63, 0.18);
-  --rrp-accent-soft:    rgba(206, 220, 0, 0.18);
+  /* Tintes de los mismos estados, para fondos de alerta o badge. El
+     color macizo se reserva al punto, al borde y al icono. */
+  --rrp-success-soft:   rgba(83, 184, 131, 0.10);
+  --rrp-warning-soft:   rgba(206, 220, 0, 0.09);
+  --rrp-danger-soft:    rgba(217, 92, 92, 0.10);
+  --rrp-info-soft:      rgba(94, 166, 216, 0.10);
 
-  --rrp-text-on-warning: #000908; /* texto sobre --rrp-warning macizo */
+  --rrp-text-on-warning: #070809; /* texto sobre --rrp-warning macizo */
   --rrp-text-on-danger:  #FFFFFF; /* texto sobre --rrp-danger macizo */
+  --rrp-text-on-teal:    #F2FFFC; /* texto sobre el botón principal */
 
-  /* ---- Color: acento -------------------------------------------- */
-  --rrp-accent:         #CEDC00; /* "hovers y cosas": hover de acción positiva/aceptar, selección destacada */
+  /* Amarillo de marca. Mismo valor que --rrp-warning porque es el
+     mismo amarillo: aquí sirve de acento puntual (una cifra que debe
+     leerse antes que el resto), nunca para marcar la selección. */
+  --rrp-accent:         var(--rrp-warning);
+  --rrp-accent-soft:    var(--rrp-warning-soft);
+  --rrp-text-on-accent: var(--rrp-text-on-warning);
 
   /* ---- Color: texto ----------------------------------------------- */
-  --rrp-white:          #FFFFFF; /* texto sobre fondos oscuros (uso por defecto) */
-  --rrp-text-on-accent: #00352F; /* texto sobre --rrp-accent, para mantener contraste (usar bg-primary oscuro) */
-  --rrp-text-muted:     rgba(255, 255, 255, 0.60); /* descripciones, etiquetas, valores secundarios */
-  --rrp-text-faint:     rgba(255, 255, 255, 0.38); /* placeholders, texto deshabilitado */
+  --rrp-text:           #E7E8E6; /* texto principal: blanco roto, sin deslumbrar */
+  --rrp-text-2:         #A9ADAA; /* secundario: descripciones, etiquetas */
+  --rrp-text-muted:     #777D79; /* terciario: unidades, metadatos, ayuda */
+  --rrp-text-faint:     #4E5551; /* placeholders, numeración de slot, deshabilitado */
+  --rrp-white:          #FFFFFF; /* blanco puro: solo donde hace falta de verdad */
 
   /* ---- Tipografía ------------------------------------------------- */
-  --rrp-font-family: "Montserrat", "Segoe UI", sans-serif;
-  --rrp-font-weight-regular:  400; /* texto básico / cuerpo */
-  --rrp-font-weight-semibold: 600; /* títulos 2, botones, desplegables */
-  --rrp-font-weight-bold:     700; /* título principal */
+  /* Escala cerrada: pocos tamaños y muy juntos. En una NUI, saltar de
+     11 a 22 px hace que todo grite; la jerarquía la marcan el peso y
+     el color, no el cuerpo. */
+  --rrp-font-family: "Montserrat", system-ui, "Segoe UI", sans-serif;
+  --rrp-font-weight-regular:  400; /* texto de cuerpo */
+  --rrp-font-weight-medium:   500; /* filas de navegación, texto de apoyo */
+  --rrp-font-weight-semibold: 600; /* títulos, botones, valores */
+  --rrp-font-weight-bold:     700; /* cifra grande y título principal */
 
-  --rrp-font-size-title:    22px;
-  --rrp-font-size-subtitle: 13px;
-  --rrp-font-size-heading2: 17px;
-  --rrp-font-size-body:     14px;
-  --rrp-font-size-button:   14px;
-  --rrp-font-size-label:    12px;
+  --rrp-font-size-title:    20px; /* título principal de una NUI */
+  --rrp-font-size-heading2: 14px; /* título de panel o de sección */
+  --rrp-font-size-subtitle: 12px; /* subtítulo bajo el título */
+  --rrp-font-size-body:     13px; /* texto de cuerpo */
+  --rrp-font-size-button:   12px;
+  --rrp-font-size-label:    11px; /* etiquetas de campo, texto secundario */
+  --rrp-font-size-micro:    10px; /* metadatos, unidades, pies de slot */
 
   /* ---- Espaciado y forma -------------------------------------------- */
+  /* Radios pequeños: sobre negro, una esquina muy redondeada engorda el
+     elemento y le quita precisión. */
   --rrp-radius-sm: 4px;
-  --rrp-radius-md: 8px;
-  --rrp-radius-lg: 14px;
+  --rrp-radius-md: 6px;
+  --rrp-radius-lg: 8px;
 
   --rrp-space-xs: 4px;
   --rrp-space-sm: 8px;
@@ -78,7 +122,7 @@
   --rrp-space-lg: 24px;
 
   --rrp-border-width: 1px;
-  --rrp-border-color: var(--rrp-white);
+  --rrp-border-color: var(--rrp-border-subtle);
 
   /* ---- Capas (z-index) ---------------------------------------------- */
   --rrp-z-panel:   1;
@@ -87,37 +131,34 @@
   --rrp-z-modal:   200;
 
   /* ---- Alto de controles (mantiene alineados input/select/botón) ------ */
-  --rrp-control-height: 34px;
+  --rrp-control-height: 36px;
 
   /* ---- Sombra / elevación --------------------------------------------- */
-  --rrp-shadow-panel: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --rrp-shadow-float: 0 4px 12px rgba(0, 0, 0, 0.55); /* toasts, tooltips, menús flotantes */
-  /* Foco. Dos formas, y no son intercambiables:
-     - ring: aro de acento para lo que NO tiene borde propio (botones,
-       filas, slots). Va con outline-offset para no comerse el elemento.
-     - glow: halo teal para los campos, que ya marcan el foco con su
-       propio borde. Un aro lima de 2px sobre un input con borde queda
-       como un doble marco chillón. */
-  --rrp-focus-ring:   0 0 0 2px var(--rrp-accent);
-  --rrp-focus-glow:   0 0 0 3px rgba(1, 150, 133, 0.30);
+  --rrp-shadow-panel: 0 18px 60px rgba(0, 0, 0, 0.28);
+  --rrp-shadow-float: 0 8px 20px rgba(0, 0, 0, 0.28); /* toasts, tooltips, menús */
+  /* Foco: aro teal, el mismo color que la selección. Un elemento con
+     borde propio suma el aro por fuera sin cambiar su borde. */
+  --rrp-focus-ring: 0 0 0 2px rgba(1, 150, 133, 0.45);
+  --rrp-focus-glow: 0 0 0 2px var(--rrp-teal-soft);
 
   /* ---- Transiciones ------------------------------------------------------ */
-  --rrp-transition-fast: 120ms ease-out;
+  --rrp-transition-fast: 160ms ease;
 
   /* ---- Escala de degradado (siempre oscuro arriba -> claro abajo) --------- */
-  /* Usar SIEMPRE con: linear-gradient(180deg, <stop-oscuro>, <stop-claro>) */
-  --rrp-gradient-0-from: var(--rrp-black-green);  /* #000908 */
-  --rrp-gradient-0-to:   var(--rrp-surface-2);    /* #121A19 */
+  /* Solo para superficies grandes de marca (cabecera de HUD, fondo de una
+     pantalla completa). Un botón o una tarjeta van planos. */
+  --rrp-gradient-0-from: var(--rrp-bg);         /* #070809 */
+  --rrp-gradient-0-to:   var(--rrp-surface-3);  /* #1A1D1E */
 
-  --rrp-gradient-1-from: var(--rrp-bg-dark);      /* #001D19 */
-  --rrp-gradient-1-to:   var(--rrp-bg-primary);   /* #00352F */
+  --rrp-gradient-1-from: var(--rrp-surface-2);  /* #0D0F10 */
+  --rrp-gradient-1-to:   var(--rrp-surface-4);  /* #202324 */
 
-  --rrp-gradient-2-from: var(--rrp-bg-primary);   /* #00352F */
-  --rrp-gradient-2-to:   var(--rrp-bg-secondary); /* #005A50 */
+  --rrp-gradient-2-from: var(--rrp-btn-active-to); /* #016C60 */
+  --rrp-gradient-2-to:   var(--rrp-teal);          /* #019685 */
 
-  --rrp-gradient-3-from: var(--rrp-bg-secondary); /* #005A50 */
-  --rrp-gradient-3-to:   var(--rrp-hover-btn-bg); /* #019685 */
+  --rrp-gradient-3-from: var(--rrp-teal);        /* #019685 */
+  --rrp-gradient-3-to:   var(--rrp-teal-strong); /* #01A995 */
 
-  --rrp-gradient-4-from: var(--rrp-hover-btn-bg); /* #019685 */
-  --rrp-gradient-4-to:   var(--rrp-white);        /* #FFFFFF */
+  --rrp-gradient-4-from: var(--rrp-teal-strong); /* #01A995 */
+  --rrp-gradient-4-to:   var(--rrp-text);        /* #E7E8E6 */
 }

@@ -188,15 +188,17 @@ Config = {
     -- ── Valores por defecto de la interfaz ──
     -- El jugador puede cambiarlos desde el panel de ajustes del menu (se guardan en su cliente).
     UI = {
-        accent = '#CEDC00',   -- Color de acento (--rrp-accent del sistema ResetRP)
+        accent = '#019685',   -- Color de acento (--rrp-teal del sistema ResetRP,
+                              -- que es el color de la seleccion. Los otros dos
+                              -- del selector son #01A995 y #CEDC00)
         columns = 2,          -- Columnas de la rejilla (1-4)
         scale = 100,          -- Escala de la interfaz en % (80-130)
-        opacity = 92,         -- Opacidad del panel en % (60-100)
         previewDelay = 500,   -- ms de hover antes de previsualizar (0 = desactivado)
         showRecents = true,
         showMostUsed = true,
-        showLabels = true,    -- Nombres bajo los iconos de la barra lateral
-        compact = false,      -- Modo compacto (filas mas bajas)
+        showLabels = false,   -- Nombres bajo los iconos de la barra lateral. En
+                              -- false la barra es de solo iconos, cada uno con
+                              -- su tooltip.
         confirmPlay = true,   -- El clic izquierdo solo selecciona; para lanzar la
                               -- animacion hace falta un segundo clic, doble clic
                               -- o Enter. Evita dispararla sin querer.

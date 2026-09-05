@@ -378,11 +378,11 @@ local function startEditor(emoteName, partnerServerId)
             if detachedForEdit then
                 -- Reenganche con el transform recien guardado: lo que queda en
                 -- pantalla y lo que vera un tercero son lo mismo.
-                local pos, rot = GetAttachTransform(emoteName, options)
+                local pos, rot, boneIndex = GetAttachTransform(emoteName, options, partner)
                 AttachEntityToEntity(
                     ped,
                     partner,
-                    GetPedBoneIndex(partner, options and options.bone or 0),
+                    boneIndex,
                     pos.x,
                     pos.y,
                     pos.z,

@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="design-system/tokens.css">
     <link rel="stylesheet" href="design-system/components.css">
     <link rel="stylesheet" href="css/style.css">
+    <!-- Editor de props (propeditor/). Si ese directorio no esta, este 404 es
+         inocuo: la hoja no aporta nada al menu. -->
+    <link rel="stylesheet" href="../propeditor/ui/editor.css">
 </head>
 <body>
     <div id="emote-menu" class="hidden" role="dialog" aria-label="dwkemotes">
@@ -112,5 +115,9 @@
     <script src="js/grid.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/app.js"></script>
+    <!-- Editor de props (propeditor/). Va el ultimo y no toca nada del menu:
+         se monta solo cuando el cliente le manda 'propeditor:open'. Si el
+         directorio no esta, este 404 tampoco rompe nada. -->
+    <script src="../propeditor/ui/editor.js"></script>
 </body>
 </html>

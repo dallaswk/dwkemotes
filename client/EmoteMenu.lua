@@ -609,7 +609,7 @@ local function getTranslations()
         'confirmdelete', 'cannotundo', 'copycommand', 'copiedcommand',
         -- dwkemotes
         'recents', 'mostused', 'settings', 'appearance', 'behaviour', 'data',
-        'accentcolor', 'columns', 'uiscale', 'opacity', 'compactmode',
+        'accentcolor', 'columns', 'uiscale',
         'sidebarlabels', 'uianimations', 'previewdelay', 'disabled',
         'showrecents', 'showmostused', 'exportprofile', 'importprofile',
         'importhint', 'importok', 'importfailed', 'profilecopied',

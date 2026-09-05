@@ -41,9 +41,9 @@ el menú, desde `/e` y desde los atajos de teclado— y las expone en dos
 categorías nuevas. Todo se guarda en el KVP local: nada viaja al servidor.
 
 **Panel de ajustes.** Botón de los deslizadores en la cabecera. Permite cambiar
-color de acento, número de columnas, escala, opacidad, modo compacto,
-animaciones, nombres de la barra lateral, retardo de la vista previa (0 la
-desactiva) y visibilidad de las categorías de historial. Se guarda en el cliente
+color de acento, número de columnas, escala, animaciones, nombres de la barra
+lateral, retardo de la vista previa (0 la desactiva) y visibilidad de las
+categorías de historial. Se guarda en el cliente
 de cada jugador y no afecta a los demás.
 
 **Atajos de teclado.**
@@ -130,16 +130,14 @@ Config.MostUsedMinCount = 3     -- Usos mínimos para salir en "Más usadas"
 
 -- Valores de partida de la interfaz (cada jugador puede cambiarlos después)
 Config.UI = {
-    accent = '#0A84FF',
+    accent = '#019685',   -- --rrp-teal del sistema de diseño ResetRP
     columns = 2,
     scale = 100,
-    opacity = 92,
     previewDelay = 500,
-    compact = false,
     animations = true,
     showRecents = true,
     showMostUsed = true,
-    showLabels = true,
+    showLabels = false,   -- false = barra lateral de solo iconos
 }
 
 -- Comprobación de versiones: desactivada salvo que indiques tu repositorio
@@ -272,6 +270,62 @@ al guardar.
 
 ---
 
+## Colocar props en las animaciones (`/propeditor`)
+
+Los objetos que lleva el ped durante una animación se declaran con cuatro campos
+(`Prop`, `PropBone`, `PropPlacement` y `PropNoCollision`) y se afinan igual de
+mal a ojo desde el `.lua`: un cigarro girado 10° de más se ve enseguida en el
+juego y no se adivina nunca leyendo números. El editor los coloca en vivo.
+
+1. Lanza la animación y escribe **`/propeditor`**, o abre el editor y la
+   animación de una vez con **`/propeditor <emote>`**.
+2. La cámara pasa a orbitar alrededor del ped y sus huesos salen marcados como
+   puntos. Pincha el hueso donde quieras colgar el objeto.
+3. Elige el modelo: la lista trae los props que ya usa el pack y una selección de
+   los del juego base, y el campo de texto acepta cualquier otro modelo — dice si
+   este servidor lo tiene antes de intentarlo.
+4. Colócalo:
+
+   | Tecla | Ajusta |
+   |---|---|
+   | `W` / `S` | eje Y |
+   | `A` / `D` | eje X |
+   | `R` / `F` | eje Z |
+   | `Ctrl` + esas | girar en vez de mover |
+   | `Shift` | paso grande (0.05 m y 10°) en vez del fino (0.005 m y 1°) |
+   | `Tab` | cambiar entre el prop principal y el secundario |
+   | `Enter` | guardar |
+   | `Retroceso` | salir |
+
+   El panel de la derecha hace lo mismo con deslizadores y casillas de número, y
+   la cámara se orbita arrastrando sobre el fondo (rueda para el zoom).
+
+Mientras el editor está abierto se trabaja sobre una copia local del prop, para
+poder recolocarla frame a frame sin reiniciar la animación y sin que el resto del
+servidor vea el objeto bailando. Al guardar, el ajuste se escribe en
+`propeditor/data/prop_overrides.json` y se reparte a todos los clientes en el
+momento: los props se rehacen sin reiniciar el recurso.
+
+Cuando el ajuste esté bien, se pasa al pack desde la consola del servidor:
+
+```
+emoteprops list                 # lo ajustado hasta ahora
+emoteprops export               # escribe propeditor/data/prop_overrides_export.lua
+emoteprops clear <emote|all>    # devuelve la emote a los props de su pack
+```
+
+`export` deja el bloque `AnimationOptions` de cada animación listo para pegar en
+su `.lua`. Aquí no hay `apply` automático como en `/emoteoffset`: los props se
+declaran en bloques repartidos por muchos ficheros y con formatos muy distintos,
+y reescribirlos a ciegas destrozaría packs ajenos.
+
+Todo el editor vive en **[`propeditor/`](propeditor/README.md)**: comentando el
+bloque del final de `fxmanifest.lua` desaparece por completo, incluidos los
+ajustes guardados. Igual que el de offsets, está abierto a cualquier jugador por
+defecto y se cierra dando un ACE a `Config.PropEditor.ace`.
+
+---
+
 ## Estructura
 
 ```
@@ -301,10 +355,21 @@ dwkemotes/
 │       ├── smoothScroll.js
 │       ├── nui.js
 │       └── app.js
+├── propeditor/                Editor de props en vivo                 [nuevo]
+│   ├── config.lua             Sus ajustes
+│   ├── client/                Cámara, previsualización, teclado
+│   ├── server/                Persistencia y comandos de consola
+│   ├── ui/                    Su capa de interfaz
+│   └── data/                  Lo que guarda
 ├── locales/                   Traducciones (es y en completos)
 ├── docs/referencia-emotes.md  Cómo añadir animaciones, props y PTFX
 └── config.lua
 ```
+
+`propeditor/` es opcional y aislado a propósito: se desactiva comentando el
+bloque del final de `fxmanifest.lua`, y lo único suyo que vive fuera son las dos
+líneas de `html/index.html` que cargan su CSS y su JS (dos 404 inocuos si el
+directorio no está).
 
 Para añadir animaciones propias, props, efectos de partículas o emotes
 compartidos, consulta **[docs/referencia-emotes.md](docs/referencia-emotes.md)**.

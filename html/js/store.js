@@ -51,27 +51,37 @@ const Store = {
     _labelMap: {},
     _searchIndex: [],
 
-    // Paleta del acento: son los tres tokens de color del sistema de diseno
-    // ResetRP (design-system/tokens.css). Fuente unica — el selector de
-    // ajustes lee de aqui. No anadir colores que no esten en tokens.css.
+    // Version del formato de ajustes. Se sube cuando un valor por defecto
+    // cambia por una decision de diseno y tiene que llegar tambien a quien ya
+    // tiene los ajustes guardados. Ver _migrateSettings.
+    SETTINGS_VERSION: 2,
+
+    // Paleta del acento: los dos teales del sistema de diseno ResetRP
+    // (design-system/tokens.css). Fuente unica -- el selector de ajustes lee de
+    // aqui. No anadir colores que no esten en tokens.css.
+    //
+    // El amarillo del sistema NO esta y no puede estar: aqui el acento es lo
+    // que marca la categoria activa, la tarjeta seleccionada y los favoritos, y
+    // el amarillo avisa, no selecciona. Pintar con el lo que esta elegido es
+    // justo el error que el sistema señala.
     ACCENTS: [
-        '#CEDC00',  // --rrp-accent
-        '#019685',  // --rrp-hover-btn-bg
-        '#005A50',  // --rrp-bg-secondary
+        '#019685',  // --rrp-teal: el verde ResetRP, seleccion y accion
+        '#01A995',  // --rrp-teal-strong
     ],
 
     DEFAULT_SETTINGS: {
-        accent: '#CEDC00',   // --rrp-accent del sistema de diseno ResetRP
+        accent: '#019685',   // --rrp-teal
+        v: 2,                // = SETTINGS_VERSION
         columns: 2,
         scale: 100,
-        opacity: 92,
         previewDelay: 500,
-        compact: false,
         animations: true,
         confirmPlay: true,
         showRecents: true,
         showMostUsed: true,
-        showLabels: true,
+        // Barra lateral de solo iconos. Cada uno lleva su tooltip y su
+        // aria-label, que es lo que el sistema pide para un icono sin etiqueta.
+        showLabels: false,
         panelPos: null,
     },
 
@@ -198,7 +208,39 @@ const Store = {
     _loadSettings() {
         const stored = this._loadJson('settings', null);
         const merged = { ...this.DEFAULT_SETTINGS, ...(stored || {}) };
-        return this._sanitizeSettings(merged);
+        const settings = this._sanitizeSettings(this._migrateSettings(merged, stored));
+
+        // La migracion se guarda en el acto. Si se dejase para el primer cambio
+        // que haga el jugador, el menu volveria a migrar en cada apertura.
+        if (!stored || stored.v !== this.SETTINGS_VERSION) {
+            this._saveJson('settings', settings);
+        }
+
+        return settings;
+    },
+
+    /**
+     * Ajustes guardados de una version anterior del menu.
+     *
+     * Un valor por defecto nuevo no llega a quien ya tiene el ajuste guardado:
+     * el merge de arriba deja ganar siempre a lo suyo. Cuando el cambio no es
+     * una preferencia sino una decision de diseno -- el acento, que ahora marca
+     * la seleccion y por eso no puede ser el amarillo de aviso -- hay que
+     * reponerlo a mano. Solo se tocan las claves que cambiaron: la escala, las
+     * columnas o el retardo que el jugador haya elegido se respetan.
+     */
+    _migrateSettings(s, stored) {
+        const from = stored ? Number(stored.v) || 1 : this.SETTINGS_VERSION;
+
+        // v2: sistema de diseno de negro neutro. El acento pasa a ser el teal
+        // de la seleccion y la barra lateral se queda en solo iconos.
+        if (from < 2) {
+            s.accent = this.DEFAULT_SETTINGS.accent;
+            s.showLabels = this.DEFAULT_SETTINGS.showLabels;
+        }
+
+        s.v = this.SETTINGS_VERSION;
+        return s;
     },
 
     _sanitizeSettings(s) {
@@ -208,8 +250,14 @@ const Store = {
         };
         s.columns = clamp(s.columns, 1, 4, 2);
         s.scale = clamp(s.scale, 80, 130, 100);
-        s.opacity = clamp(s.opacity, 60, 100, 92);
         s.previewDelay = clamp(s.previewDelay, 0, 2000, 500);
+
+        // Restos de versiones con opacidad y modo compacto ajustables. La
+        // opacidad del panel es ahora fija (la misma del inventario) y el modo
+        // compacto ya no existe: si se quedasen guardados, volverian a
+        // aparecer en el objeto de ajustes cada vez que se exporta el perfil.
+        delete s.opacity;
+        delete s.compact;
         // El acento tiene que salir de la paleta del sistema de diseno. Quien
         // venia de una version anterior tiene guardado uno de los colores
         // viejos (azul, morado, rosa...), que ya no esta en el selector: si no
@@ -218,7 +266,7 @@ const Store = {
         if (!this.ACCENTS.some(c => c.toLowerCase() === String(s.accent).toLowerCase())) {
             s.accent = this.DEFAULT_SETTINGS.accent;
         }
-        for (const flag of ['compact', 'animations', 'confirmPlay', 'showRecents', 'showMostUsed', 'showLabels']) {
+        for (const flag of ['animations', 'confirmPlay', 'showRecents', 'showMostUsed', 'showLabels']) {
             s[flag] = !!s[flag];
         }
         return s;
@@ -370,13 +418,19 @@ const Store = {
       * jugador y esta guardado en su cliente, asi que se respeta tal cual.
       */
     getCategoryColor(cat) {
+        // Solo las listas del jugador llevan color propio: lo eligio el y esta
+        // guardado en su cliente, asi que es contenido suyo, no cromo nuestro.
         if (this.isCustomList(cat)) {
             const list = this.customLists[cat];
-            return list ? list.color : 'var(--text-secondary)';
+            return list ? list.color : null;
         }
-        // Favoritos es la unica categoria que pide atencion por si misma.
-        if (cat === this.FAVORITES) return 'var(--rrp-accent)';
-        return 'var(--rrp-hover-btn-bg)';
+
+        // El resto hereda el color de su fila, como `.rrp-nav__icon` del
+        // sistema: gris en reposo, texto principal en hover y acento cuando
+        // esta activa. Un icono de un color por categoria rompe la escala
+        // neutra y le quita fuerza al acento, que es lo unico que deberia
+        // llamar la atencion.
+        return null;
     },
 
     getCategoryCount(cat) {

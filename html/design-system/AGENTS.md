@@ -33,43 +33,65 @@ Antes de escribir un solo `<style>` o archivo `.css` para una NUI nueva:
 |---|---|
 | `tokens.css` | Variables CSS (`--rrp-*`): colores, tipografía, espaciado, radios, degradados. |
 | `tokens.json` | Los mismos tokens en JSON, para JS/Lua o cualquier consumidor no-CSS. |
-| `components.css` | Clases listas para usar que ya aplican los tokens: la base (`.rrp-panel`, `.rrp-title`, `.rrp-textbox`, `.rrp-dropdown`, `.rrp-btn`, `.rrp-gradient-N`) y los componentes NUI (formularios, `.rrp-notify`, `.rrp-menu`, `.rrp-modal`, `.rrp-progress`, `.rrp-slots`, `.rrp-table`, `.rrp-keyhint`…). |
+| `components.css` | Clases listas para usar que ya aplican los tokens: la base (`.rrp-panel`, `.rrp-title`, `.rrp-textbox`, `.rrp-dropdown`, `.rrp-btn`, `.rrp-gradient-N`) y los componentes NUI (formularios, `.rrp-notify`, `.rrp-menu`, `.rrp-modal`, `.rrp-progress`, `.rrp-slots`, `.rrp-inv`, `.rrp-table`, `.rrp-keyhint`…). |
 | `components.md` | Referencia visual: qué clase usar para cada patrón del mockup, con ejemplos de HTML. |
+| `inv-dock.css` | Variante `.rrp-dock`: el inventario acoplado que flota sobre el juego. Extiende `.rrp-inv` sin tocarlo; se carga **después** de `components.css`. Trae además la bandeja de detalle con el traspaso dentro (`.rrp-dock__detail`), la barra rápida (`.rrp-hotbar`), el tooltip rico de objeto (`.rrp-itip`), el fantasma de arrastre (`.rrp-drag-ghost`) y el precio en el slot (`.rrp-inv-slot__price`). |
+| `inventory.html` | Laboratorio del inventario acoplado: la NUI a escala real de 1080p sobre una captura, con mandos para halo, opacidad, ancho y duración. |
 
 ## Principios
 
 - **Jerarquía tipográfica fija**: Montserrat Bold solo para el título
-  principal del panel. Montserrat SemiBold para subtítulos, títulos de
-  sección, botones y cabeceras de desplegable. Montserrat Regular para
-  todo el texto de cuerpo/opciones.
-- **Negro para contenedores, verde para jerarquía**: las superficies
-  grandes (panel, cajas, cuerpo de listas) van sobre la escala neutra
-  `surface-1 → surface-2 → surface-3`. El verde de `backgroundScale`
-  se reserva para lo que marca jerarquía o invita a actuar: título
-  principal, cabeceras de desplegable, botones y hovers. Así una NUI
-  no se lee como un bloque verde uniforme.
-- **Escala de fondo consistente**: cuando sí uses verde, de más oscuro
-  a más claro el orden es `bg-dark → bg-primary → bg-secondary`. No
-  uses `bg-secondary` como fondo exterior ni `bg-dark` como fondo de un
-  botón.
-- **Separación por borde, no por color**: sobre negro, dos superficies
-  contiguas se distinguen con `--rrp-border-subtle`, no subiendo el
-  verde. `--rrp-border-teal` es para la caja que debe destacar; el
-  borde blanco duro es ahora opt-in (`.rrp-textbox--outline`).
-- **El color accent (`#CEDC00`) es para llamar la atención**, no para
-  decorar: hover de "Aceptar", filas seleccionadas que deben destacar
-  al máximo. Si todo es amarillo, nada lo es.
+  principal y para una cifra grande. SemiBold para títulos de sección,
+  botones, etiquetas y valores. Medium para filas de navegación.
+  Regular para el texto de cuerpo.
+- **El color tiene cinco papeles y no se sale de ahí**: negro neutro
+  para todas las superficies; teal (`--rrp-teal`) para la selección y
+  la acción principal; amarillo (`--rrp-warning`) solo para avisar;
+  rojo, verde y azul para el resultado de una acción; y el hover, sin
+  color. Antes de pintar algo, decide cuál de los cinco papeles es.
+- **El hover es neutro**: sube la superficie (`surface-3`) y marca más
+  el borde (`--rrp-border-strong`), nunca tiñe. Es lo que hace que el
+  teal signifique algo: si el verde aparece cada vez que el ratón pasa
+  por encima, deja de decir "esto es lo que tienes seleccionado".
+- **Una sola acción dominante por pantalla**: el botón por defecto es
+  neutro, y solo `--primary` (alias `--accept`) lleva el degradado
+  verde. Si dos botones piden lo mismo a la vez, ninguno manda.
+- **El amarillo avisa, no selecciona**: `#CEDC00` es combustible bajo,
+  durabilidad al límite, tiempo agotándose. Marcar con él lo que está
+  elegido es el error clásico — para eso está el teal. Si el amarillo
+  sale en dos sitios con dos significados, deja de avisar de nada.
+- **Escala de superficies, y ojo al orden**: `surface-2` es más oscura
+  que `surface-1`, no más clara. El panel es el papel (`surface-1`) y
+  lo hundido — un campo, un slot, una celda — va por debajo
+  (`surface-2`). `surface-3` es para lo que se levanta: hover, fila
+  activa. `surface-4`, para lo pulsado y el carril de una barra.
+- **Separación por borde, no por color**: dos superficies contiguas se
+  distinguen con `--rrp-border-subtle`, nunca subiendo el verde.
+  `--rrp-border-teal` es el borde de lo seleccionado, y por eso no se
+  usa de adorno.
 - **Los estados semánticos comunican, no decoran**: `--rrp-success`,
-  `--rrp-warning` y `--rrp-danger` dicen cómo ha ido una acción o qué
-  riesgo tiene. Un botón es `--danger` cuando destruye algo, no cuando
-  es importante — para eso está accent. Sobre negro, el color va en el
-  borde y el texto, y el fondo usa el tinte `--rrp-*-soft`.
-- **El estado activo no se pinta con un bloque macizo**: en pestañas y
-  navegación, rellenar el fondo de teal o lima bajo el texto hunde el
-  contraste justo del elemento que querías destacar. Se marca con tinte
-  suave (`--rrp-*-soft`) más un indicador de acento al costado. El color
-  macizo se reserva a los botones, donde el texto se elige a juego
-  (`--rrp-text-on-accent`, `--rrp-text-on-danger`).
+  `--rrp-warning`, `--rrp-danger` e `--rrp-info` dicen cómo ha ido una
+  acción o qué riesgo tiene. Un botón es `--danger` cuando destruye
+  algo, no cuando es importante. Sobre negro, el color va en el punto,
+  el borde y el icono; el fondo usa el tinte `--rrp-*-soft`.
+- **El estado activo no se pinta con un bloque macizo**: en pestañas,
+  navegación y categorías, rellenar el fondo de color bajo el texto
+  hunde el contraste justo del elemento que querías destacar. Se marca
+  con velo teal + borde teal, y el texto sube a `--rrp-text`.
+- **Iconos monocromos de línea, nunca emoji**: van en un sprite SVG del
+  propio recurso (`<symbol>` + `<use href>`) con `stroke="currentColor"`,
+  para que hereden el color y los estados. Un emoji trae su propio color
+  y rompe la escala neutra; una fuente de iconos por CDN deja la NUI
+  llena de cuadrados el día que no haya red.
+- **El arte de objeto es la excepción, y va dentro del slot**: el PNG a
+  color de un objeto de inventario es contenido, no cromo. Es lo único
+  de la NUI que lleva color libre, y se ve bien justo porque todo lo que
+  lo rodea es neutro. Las imágenes viven en el recurso, nunca enlazadas
+  a un servidor externo.
+- **Escala tipográfica cerrada**: 20 / 14 / 13 / 12 / 11 / 10 px. La
+  jerarquía se hace con el peso y con los cuatro tonos de texto
+  (`--rrp-text` → `--rrp-text-faint`) antes que con el tamaño. Saltar de
+  11 a 22 px hace que todo grite.
 - **Un icono sin etiqueta lleva tooltip y `aria-label`**: `data-rrp-tip`
   resuelve el tooltip sin envolver el botón. Si la única forma de saber
   qué hace un botón es pulsarlo, el botón está mal.
@@ -79,12 +101,13 @@ Antes de escribir un solo `<style>` o archivo `.css` para una NUI nueva:
   en la página: una NUI no debe desplazarse entera de lado.
 - **Mira el catálogo antes de construir**: `components.md` cubre ya los
   patrones habituales de una NUI (formularios, toasts, menú de opciones,
-  modal, progreso, slots de inventario, tabla, tooltip, key hint). Si el
+  modal, progreso, slots, inventario completo, tabla, tooltip, key hint). Si el
   patrón existe, úsalo; no rehagas uno equivalente con otro nombre.
-- **Degradados**: siempre el stop más oscuro arriba y el más claro
-  abajo (`linear-gradient(180deg, oscuro, claro)`). Usa las 5 clases
-  `.rrp-gradient-0` a `.rrp-gradient-4` ya definidas en vez de crear
-  degradados sueltos; la 0 es la neutra (negro → `surface-2`).
+- **Degradados, con cuentagotas**: solo para superficies grandes de
+  marca, y siempre el stop más oscuro arriba (`linear-gradient(180deg,
+  oscuro, claro)`) con las clases `.rrp-gradient-0` a `.rrp-gradient-4`.
+  Un botón o una tarjeta van planos; el único control con degradado es
+  el botón principal, y ya está resuelto en el componente.
 - **Coherencia entre recursos**: dos NUIs distintas de ResetRP deben
   poder ponerse una al lado de la otra y parecer de la misma familia.
   Si un recurso necesita algo que el sistema no cubre (un componente

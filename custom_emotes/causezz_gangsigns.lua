@@ -16,15 +16,17 @@ CustomDP.Emotes = {
         AnimationOptions = {
             EmoteLoop = true,
             EmoteMoving = false,
-            Prop = 'v_62_ecolacup002',
+            -- Colocado con /propeditor. La lata sustituye al vaso de ecola que
+            -- traia el pack; va en el gancho de la mano izquierda (PH_L_Hand).
+            Prop = 'mne_can_black',
             PropBone = 60309,
             PropPlacement = {
-                -0.01,
-                -0.01,
-                -0.06,
-                0.0,
-                0.0,
-                0.0
+                0.09,
+                0.104,
+                0.026,
+                250.0,
+                4.0,
+                2.0
             },
         },
     },

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--
+    Banco de pruebas de la interfaz. NO forma parte del recurso: no esta en el
+    `files{}` del fxmanifest, asi que FiveM no lo sirve. Se abre a mano en un
+    navegador (o con Chrome en modo headless) para mirar colores, contraste y
+    estados sin arrancar el juego.
+
+    Carga los mismos CSS que index.html y dibuja a mano lo que app.js dibujaria
+    con los datos de Lua. Si cambia el marcado del menu, hay que actualizarlo
+    aqui tambien o dejara de representar lo que se ve en el juego.
+-->
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>dwkemotes - previsualizacion de estilos</title>
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="design-system/tokens.css">
+    <link rel="stylesheet" href="design-system/components.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Solo del banco de pruebas: simula el juego detras de la NUI para
+           poder juzgar la opacidad del panel. */
+        body {
+            background:
+                linear-gradient(115deg, #5d6b52 0%, #7d8a6e 35%, #9aa48c 60%, #6a7360 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="emote-menu" role="dialog">
+        <nav class="sidebar" id="sidebar"></nav>
+
+        <div class="menu-main">
+            <header class="menu-header">
+                <div class="drag-handle"></div>
+                <div class="search-row">
+                    <div class="search-container">
+                        <span id="search-icon-slot"></span>
+                        <input type="text" id="search-input" placeholder="Buscar animacion" />
+                    </div>
+                    <button id="walklock-btn" class="header-btn" type="button"></button>
+                    <button id="settings-btn" class="header-btn" type="button"></button>
+                    <button id="close-btn" class="header-btn" type="button"></button>
+                </div>
+            </header>
+
+            <div class="category-title" id="category-title"></div>
+
+            <div class="content-area">
+                <div class="content-scroll">
+                    <div id="emote-grid" class="emote-grid"></div>
+                </div>
+            </div>
+
+            <footer class="menu-footer" id="menu-footer"></footer>
+        </div>
+    </div>
+
+    <script src="js/icons.js"></script>
+    <script>
+        // ── Banco de pruebas ────────────────────────────────────────────────
+        // Reproduce a mano lo que app.js dibuja con los datos de Lua, para
+        // poder mirar colores y contraste sin arrancar el juego.
+        Icons.mount();
+
+        const CATS = [
+            { icon: 'star',       label: 'Favoritos' },
+            { icon: 'clock',      label: 'Recientes' },
+            { icon: 'fire',       label: 'Mas usadas' },
+            { icon: 'folder',     label: 'Policia', color: '#0A84FF' },
+            { icon: 'plus',       label: 'Nueva lista' },
+            { icon: 'play',       label: 'Animaciones' },
+            { icon: 'cube',       label: 'Objetos' },
+            { icon: 'users',      label: 'Compartidas', active: true },
+            { icon: 'music',      label: 'Bailes' },
+            { icon: 'keyboard',   label: 'Atajos' },
+            { icon: 'walk',       label: 'Caminar' },
+            { icon: 'masks',      label: 'Animos' },
+        ];
+
+        const sidebar = document.getElementById('sidebar');
+        for (const c of CATS) {
+            const item = document.createElement('button');
+            item.className = 'sidebar-item' + (c.active ? ' active' : '');
+            item.title = c.label;
+            if (c.color) item.style.setProperty('--cat-color', c.color);
+            item.appendChild(Icons.el(c.icon, 'sidebar-icon'));
+            sidebar.appendChild(item);
+        }
+
+        document.getElementById('search-icon-slot').appendChild(Icons.el('search', 'search-icon'));
+        document.getElementById('walklock-btn').appendChild(Icons.el('walk', 'header-icon'));
+        document.getElementById('settings-btn').appendChild(Icons.el('sliders', 'header-icon'));
+        document.getElementById('close-btn').appendChild(Icons.el('close', 'header-icon'));
+
+        const title = document.getElementById('category-title');
+        title.appendChild(Icons.el('users', 'cat-icon'));
+        title.appendChild(document.createTextNode('Compartidas'));
+        const count = document.createElement('span');
+        count.className = 'cat-count';
+        count.textContent = '248';
+        title.appendChild(count);
+
+        // Rejilla: las tarjetas van posicionadas en absoluto por grid.js, asi
+        // que aqui se colocan a mano en dos columnas.
+        const NAMES = [
+            'Couple Pose 76', 'Couple Pose 77', 'Couple Pose 78', 'Couple Pose 82',
+            'Couple Pose 83', 'Couple Pose 84', 'Couple Wedding A', 'Couple Wedding B',
+            'Cuddle 2 A', 'Cuddle 2 B', 'Cuddle A', 'Cute Pic Pose',
+            'En moto B', 'En moto C', 'Follow A', 'Friend Pose',
+        ];
+        const grid = document.getElementById('emote-grid');
+        const ROW = 34, COLW = 50;
+        NAMES.forEach((name, i) => {
+            const card = document.createElement('div');
+            card.className = 'emote-card';
+            if (i === 4) card.classList.add('selected');
+            if (i === 6) card.classList.add('favorited');
+            card.style.left = (i % 2) * COLW + '%';
+            card.style.top = Math.floor(i / 2) * ROW + 'px';
+            card.style.width = 'calc(50% - 0.2rem)';
+            card.appendChild(Icons.el('users', 'card-icon'));
+            const label = document.createElement('span');
+            label.className = 'card-label';
+            label.textContent = name;
+            card.appendChild(label);
+            grid.appendChild(card);
+        });
+        grid.style.height = (Math.ceil(NAMES.length / 2) * ROW) + 'px';
+
+        // Pie: unas cuantas teclas.
+        const footer = document.getElementById('menu-footer');
+        const hints = [['Enter', 'Reproducir'], ['F', 'Favorito'], ['Supr', 'Cancelar']];
+        const row = document.createElement('div');
+        row.className = 'footer-hints';
+        for (const [key, text] of hints) {
+            const h = document.createElement('span');
+            h.className = 'footer-hint';
+            const k = document.createElement('kbd');
+            k.className = 'kbd';
+            k.textContent = key;
+            h.appendChild(k);
+            h.appendChild(document.createTextNode(' ' + text));
+            row.appendChild(h);
+        }
+        footer.appendChild(row);
+    </script>
+</body>
+</html>

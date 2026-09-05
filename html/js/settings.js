@@ -77,14 +77,6 @@ const Settings = {
                 Store.setSetting('scale', value);
                 App.applySettings({ relayout: true });
             }),
-            this._sliderRow(Store.t('opacity'), s.opacity, 60, 100, 2, '%', (value) => {
-                Store.setSetting('opacity', value);
-                App.applySettings();
-            }),
-            this._toggleRow(Store.t('compactmode'), s.compact, (value) => {
-                Store.setSetting('compact', value);
-                App.applySettings({ relayout: true });
-            }),
             this._toggleRow(Store.t('sidebarlabels'), s.showLabels, (value) => {
                 Store.setSetting('showLabels', value);
                 App.applySettings({ sidebar: true });

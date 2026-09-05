@@ -165,20 +165,36 @@ local function splitLines(content)
 end
 
 --- Descompone una linea addPair(): los dos nombres de emote, todo el texto hasta
---- el label (que se conserva intacto) y los numeros que van detras, que son el
---- offset de A y, si estan, el de B.
----@return {a: string, b: string, prefix: string, nums: number[]}|nil
+--- el label (que se conserva intacto) y los argumentos que van detras, separados
+--- en los numeros del offset (A y, si esta, B) y todo lo que no sea un numero.
+---
+--- Lo que no es numero importa: detras del offset va el flag Attachto de la
+--- pareja, y reescribir la linea sin el lo apagaria en silencio.
+---@return {a: string, b: string, prefix: string, nums: number[], extras: string[]}|nil
 local function parseAddPairLine(line)
     local a, b = line:match('^addPair%("([%w_]+)",%s*"[^"]*",%s*"[^"]*",%s*"([%w_]+)"')
     if not a then return nil end
 
-    local prefix, numbers = line:match('^(addPair%(.*",%s*)([^)]*)%)%s*$')
+    local prefix, args = line:match('^(addPair%(.*",%s*)([^)]*)%)%s*$')
     if not prefix then return nil end
 
-    local nums = {}
-    for n in numbers:gmatch('%-?[%d%.]+') do nums[#nums + 1] = tonumber(n) end
+    local nums, extras = {}, {}
+    for item in args:gmatch('[^,]+') do
+        local value = item:match('^%s*(.-)%s*$')
+        local n = tonumber(value)
+        if n then
+            nums[#nums + 1] = n
+        elseif value ~= '' and value ~= 'nil' then
+            -- El `nil` se descarta a proposito: solo aparece como relleno del
+            -- offset de B que escribe rewriteAddPairLine, y contarlo como
+            -- argumento haria que una segunda pasada lo dejase ahi y empujase el
+            -- flag cuatro puestos mas alla. Descartandolo, reescribir es
+            -- idempotente.
+            extras[#extras + 1] = value
+        end
+    end
 
-    return { a = a, b = b, prefix = prefix, nums = nums }
+    return { a = a, b = b, prefix = prefix, nums = nums, extras = extras }
 end
 
 ---@return string
@@ -209,7 +225,21 @@ local function rewriteAddPairLine(line, emoteName, data)
         return nil
     end
 
-    return ('%s%s)'):format(parsed.prefix, sideB and (sideA .. ', ' .. sideB) or sideA)
+    local args = sideB and (sideA .. ', ' .. sideB) or sideA
+
+    if #parsed.extras > 0 then
+        -- El flag Attachto es el argumento 16 de addPair(), detras de los dos
+        -- offsets. Si el lado B no lleva numeros hay que rellenar su hueco: sin
+        -- los cuatro nil, el flag entraria como el SyncOffsetFront de B, que es
+        -- justo lo que le pasa hoy a las lineas del pack que solo traen cuatro
+        -- numeros y un `true` al final.
+        if not sideB then
+            args = args .. ', nil, nil, nil, nil'
+        end
+        args = args .. ', ' .. table.concat(parsed.extras, ', ')
+    end
+
+    return ('%s%s)'):format(parsed.prefix, args)
 end
 
 --- Indexa una sola vez que emote esta declarada en que fichero y con que linea.

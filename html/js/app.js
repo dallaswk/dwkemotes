@@ -306,10 +306,10 @@ const App = {
         root.style.setProperty('--accent-subtle', this._alpha(s.accent, 0.07));
         root.style.setProperty('--accent-border', this._alpha(s.accent, 0.42));
         root.style.setProperty('--panel-scale', s.scale / 100);
-        root.style.setProperty('--panel-alpha', s.opacity / 100);
         root.style.setProperty('--cols', String(s.columns));
 
-        document.body.classList.toggle('compact', !!s.compact);
+        // La opacidad del panel no se toca aqui: es fija en style.css y la
+        // misma que la del inventario acoplado.
         document.body.classList.toggle('no-anim', !s.animations);
 
         if (opts.order) {
@@ -330,7 +330,7 @@ const App = {
         }
 
         // El pie depende de los ajustes (atajo de Enter) y su ancho util depende
-        // de la escala, las columnas y el modo compacto.
+        // de la escala y de las columnas.
         if (this._footerEl && this._footerEl.firstElementChild) this._buildFooter();
         else this._syncFooterMarquee();
     },
@@ -338,7 +338,7 @@ const App = {
     /** #RRGGBB -> rgba() con la opacidad pedida. */
     _alpha(hex, alpha) {
         const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(hex));
-        if (!m) return `rgba(206, 220, 0, ${alpha})`;   // --rrp-accent
+        if (!m) return `rgba(1, 150, 133, ${alpha})`;   // --rrp-teal
         const [r, g, b] = [m[1], m[2], m[3]].map(v => parseInt(v, 16));
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     },
@@ -372,10 +372,13 @@ const App = {
             item.setAttribute('aria-label', label);
             item.title = label;
 
-            // El color va como variable y no en linea: asi la regla del estado
-            // activo (icono en acento) puede ganarle sin pelear con un style="".
+            // Solo las listas del jugador traen color; el resto de iconos
+            // hereda el de su fila. El color va como variable y no en linea
+            // para que la regla del estado activo pueda ganarle sin pelear con
+            // un style="".
             const icon = Icons.el(Store.getCategoryIcon(cat), 'sidebar-icon');
-            item.style.setProperty('--cat-color', Store.getCategoryColor(cat));
+            const catColor = Store.getCategoryColor(cat);
+            if (catColor) item.style.setProperty('--cat-color', catColor);
             item.appendChild(icon);
 
             if (Store.settings.showLabels) {
@@ -480,7 +483,8 @@ const App = {
         // viene dentro de la etiqueta traducida: los emojis los pinta la fuente
         // del sistema y no siguen ni el color ni el trazo del resto del menu.
         const icon = Icons.el(Store.getCategoryIcon(cat), 'cat-icon');
-        icon.style.setProperty('--cat-color', Store.getCategoryColor(cat));
+        const catColor = Store.getCategoryColor(cat);
+        if (catColor) icon.style.setProperty('--cat-color', catColor);
         this._titleEl.appendChild(icon);
 
         // `_shortLabel` quita el emoji del principio y del final de la etiqueta.

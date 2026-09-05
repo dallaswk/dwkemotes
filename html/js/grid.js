@@ -805,7 +805,7 @@ const Grid = {
         const favEntry = this._ctxItem(
             isFav ? 'star' : 'starOutline',
             isFav ? Store.t('btn_remove_favorite') : Store.t('btn_set_favorite'),
-            isFav ? 'var(--rrp-accent)' : null
+            isFav ? 'var(--accent)' : null
         );
         favEntry.onclick = () => {
             const nowFav = Store.toggleFavorite(emoteId, emoteData);

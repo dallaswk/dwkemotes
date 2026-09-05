@@ -159,3 +159,26 @@ data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_shaker.ytyp'
 
 data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_pops.ytyp'
 
+
+-- ═════════════════════════════════════════════════════════════════════════════
+-- Editor de props en vivo (propeditor/)
+--
+-- Comenta o borra este bloque para desactivarlo por completo. Lo unico que
+-- queda fuera del directorio son dos lineas en html/index.html; si el
+-- directorio no esta, esas dos dan un 404 inocuo y el menu sigue igual.
+-- ═════════════════════════════════════════════════════════════════════════════
+
+files {
+    'propeditor/ui/editor.css',
+    'propeditor/ui/editor.js',
+}
+
+shared_script 'propeditor/config.lua'
+
+client_scripts {
+    'propeditor/client/Bones.lua',
+    'propeditor/client/PropCatalog.lua',
+    'propeditor/client/PropEditor.lua',
+}
+
+server_script 'propeditor/server/PropEditor.lua'

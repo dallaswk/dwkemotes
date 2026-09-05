@@ -207,15 +207,33 @@ end
 --- como funcionan los emotes de carga estilo "carry".
 ---@param emoteName string
 ---@param options table|nil AnimationOptions de la emote
+---@param target integer ped al que se engancha
 ---@return vector3 pos
 ---@return vector3 rot
-function GetAttachTransform(emoteName, options)
+---@return integer boneIndex indice de hueso para AttachEntityToEntity; -1 engancha
+---                          en el espacio de la entidad, sin pasar por el esqueleto
+function GetAttachTransform(emoteName, options, target)
     if options and options.syncOffset then
         local o = GetSyncOffset(emoteName, options)
-        return vector3(o.y, o.x, o.z), vector3(0.0, 0.0, -o.w)
+
+        -- Espacio de la ENTIDAD (-1), no el de un hueso. Estos cuatro numeros
+        -- son los mismos que usa anchorSourcePed() unas lineas mas arriba, con
+        -- GetOffsetFromEntityInWorldCoords (x a la derecha, y adelante, z
+        -- arriba) y SetEntityHeading para el giro; enganchar significa exigir
+        -- que el resultado sea identico, asi que el orden tiene que ser el
+        -- mismo. Enganchando al hueso SKEL_ROOT se interpretaban en los ejes del
+        -- esqueleto, que estan girados 90 grados respecto a los de la entidad:
+        -- el ped salia tumbado y hundido en el suelo, y la pose solo se veia
+        -- bien mientras /emoteoffset lo tenia desenganchado.
+        return vector3(o.x, o.y, o.z), vector3(0.0, 0.0, -o.w), -1
     end
+
+    -- Enganches estaticos estilo "carry": pos y rot estan calibrados a mano
+    -- contra el hueso que declara la emote, asi que ahi si se resuelve el hueso
+    -- y se conserva exactamente el comportamiento de siempre.
     return options and options.pos or vector3(0.0, 0.0, 0.0),
-           options and options.rot or vector3(0.0, 0.0, 0.0)
+           options and options.rot or vector3(0.0, 0.0, 0.0),
+           GetPedBoneIndex(target, (options and options.bone) or -1)
 end
 
 --- Un contador en vez de un booleano de "ya corre": si se lanza otra pose, el
@@ -338,11 +356,11 @@ RegisterNetEvent("dwkemotes:client:syncEmote", function(emote, player)
             local ped = PlayerPedId()
             local pedInFront = GetPlayerPed(plyServerId ~= 0 and plyServerId or GetClosestPlayer())
 
-            local pos, rot = GetAttachTransform(emote, options)
+            local pos, rot, boneIndex = GetAttachTransform(emote, options, pedInFront)
             AttachEntityToEntity(
                 ped,
                 pedInFront,
-                GetPedBoneIndex(pedInFront, options.bone or -1),
+                boneIndex,
                 pos.x,
                 pos.y,
                 pos.z,
@@ -405,11 +423,11 @@ RegisterNetEvent("dwkemotes:client:syncEmoteSource", function(emote, player)
     publishSharedPair(player)
 
     if options and options.Attachto then
-        local pos, rot = GetAttachTransform(emote, options)
+        local pos, rot, boneIndex = GetAttachTransform(emote, options, pedInFront)
         AttachEntityToEntity(
             ped,
             pedInFront,
-            GetPedBoneIndex(pedInFront, options.bone or -1),
+            boneIndex,
             pos.x,
             pos.y,
             pos.z,
