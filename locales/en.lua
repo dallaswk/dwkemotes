@@ -202,4 +202,5 @@ return {
     ['offset_emote_ended'] = "~r~The emote ended, adjustment discarded",
     ['offset_no_permission'] = "~r~You don't have permission to adjust offsets",
     ['offset_partner_frozen'] = "~y~You have been held still while the pose is calibrated",
+    ['offset_overrides_off'] = "~y~Saved offsets are not being applied (~b~%s~y~ mode): your changes will be stored but will not show",
 }

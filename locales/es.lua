@@ -202,4 +202,5 @@ return {
     ['offset_emote_ended'] = "~r~La animación terminó, ajuste descartado",
     ['offset_no_permission'] = "~r~No tienes permiso para ajustar offsets",
     ['offset_partner_frozen'] = "~y~Te han inmovilizado mientras calibran la pose",
+    ['offset_overrides_off'] = "~y~Los offsets guardados no se estan aplicando (modo ~b~%s~y~): lo que ajustes se guardara, pero no se vera",
 }

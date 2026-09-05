@@ -29,6 +29,14 @@ local overrides = {}
 
 local editing = false
 
+--- Mientras el editor esta abierto coloca el ped a mano y frame a frame, asi que
+--- el reanclaje de client/Syncing.lua tiene que apartarse: los dos se pelearian
+--- por el mismo ped y no se podria calibrar nada.
+---@return boolean
+function IsOffsetEditorActive()
+    return editing
+end
+
 --- Si el editor fue quien congelo al jugador. Es de modulo y no local al hilo de
 --- edicion a proposito: soltarlo tiene que poder hacerse desde fuera si ese hilo
 --- se cae, porque quedarse clavado en el sitio no tiene arreglo desde el juego.
@@ -41,16 +49,34 @@ local function releaseEditorFreeze()
     DebugPrint('[dwkemotes] editor de offsets: jugador descongelado')
 end
 
---- Offset efectivo de una shared emote: el override del servidor si lo hay, y
---- si no lo que declara la animacion. Lo llama client/Syncing.lua.
+--- Con 'zero' los dos peds quedan en la misma coordenada y con el mismo rumbo.
+--- No es lo mismo que DEFAULT_OFFSET, que separa un metro y da media vuelta:
+--- aqui no se desplaza nada a proposito.
+local ZERO_OFFSET <const> = vector4(0.0, 0.0, 0.0, 0.0)
+
+--- Offset efectivo de una shared emote. Lo llama client/Syncing.lua.
+---
+--- Lo elige Config.SyncOffsetSource: 'saved' (el fichero guardado y, en su
+--- defecto, el .lua), 'pack' (siempre el .lua) o 'zero' (sin desplazamiento).
+--- Ningun modo toca lo guardado, asi que se puede ir y volver. Sin la clave en
+--- el config se comporta como 'saved', que es como era antes.
 ---@param emoteName string
 ---@param options table|nil AnimationOptions de la emote
 ---@return vector4
 function GetSyncOffset(emoteName, options)
-    local o = overrides[emoteName]
-    if o then
-        return vector4(o.side, o.front, o.height, o.heading)
+    local source = Config.SyncOffsetSource or 'saved'
+
+    if source == 'zero' then
+        return ZERO_OFFSET
     end
+
+    if source ~= 'pack' then
+        local o = overrides[emoteName]
+        if o then
+            return vector4(o.side, o.front, o.height, o.heading)
+        end
+    end
+
     return options and options.syncOffset or DEFAULT_OFFSET
 end
 
@@ -181,6 +207,14 @@ local function startEditor(emoteName, partnerServerId)
     editing = true
     lastHint = nil
 
+    -- Se avisa al abrir, no al guardar: si el modo no es 'saved', lo que se
+    -- calibre aqui no se vera aplicado despues, y sin el aviso parece que el
+    -- editor no funciona.
+    local offsetSource = Config.SyncOffsetSource or 'saved'
+    if offsetSource ~= 'saved' then
+        SimpleNotify(Translate('offset_overrides_off', offsetSource))
+    end
+
     local options = SharedEmoteData[emoteName] and SharedEmoteData[emoteName].AnimationOptions
     local start = GetSyncOffset(emoteName, options)
     local side, front, height, heading = start.x, start.y, start.z, start.w
@@ -287,6 +321,14 @@ local function startEditor(emoteName, partnerServerId)
                 heading = (heading - stepHeading) % 360
             elseif IsDisabledControlJustPressed(0, 18) then -- Enter
                 editing = false
+
+                -- El override se aplica ya en local, sin esperar la vuelta del
+                -- servidor: en ese hueco el reanclaje de client/Syncing.lua leeria
+                -- todavia el offset anterior y devolveria el ped al sitio de
+                -- antes, deshaciendo en pantalla lo que se acaba de calibrar. El
+                -- evento del servidor luego solo confirma lo mismo.
+                overrides[emoteName] = { side = side, front = front, height = height, heading = heading }
+
                 TriggerServerEvent('dwkemotes:server:saveSyncOffset', emoteName, side, front, height, heading)
                 break
             elseif IsDisabledControlJustPressed(0, 194) then -- Backspace

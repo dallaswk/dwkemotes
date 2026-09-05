@@ -57,6 +57,34 @@ animaciones se mantiene intacta.
   jugador puede escalarlo entre el 80 % y el 130 % desde los ajustes).
 - El desplazamiento suave acumulaba el objetivo sin resincronizar tras un salto
   externo, lo que provocaba saltos al volver a usar la rueda.
+- **Las poses de pareja se veian bien para los dos que las hacian y mal para
+  cualquier otro jugador.** La no-colision entre los dos peds solo la pedian los
+  dos participantes, y `SetEntityNoCollisionEntity` unicamente afecta al mundo
+  local de quien la llama: en la pantalla de un tercero los dos peds clonados
+  chocaban entre si, su motor los empujaba para separarlos y la correccion de red
+  los volvia a juntar, asi que la pose se veia temblando y desalineada aunque el
+  SyncOffset estuviese bien calibrado. Ahora cada lado publica su pareja en un
+  state bag y todos los clientes aplican la no-colision en su propio mundo, con
+  un unico hilo que solo corre mientras hay alguna pareja activa.
+- **Las poses compartidas arrancaban desalineadas.** El iniciador se colocaba
+  junto a su pareja y solo despues se cancelaba la emote anterior, asi que entre
+  el `ClearPedTasks` y el arranque de la pose quedaban 300 ms con los dos peds ya
+  solapados y con colision: se empujaban, el empujon lo replicaba el propietario
+  y nada volvia a colocar el ped. El orden es ahora cancelar, esperar, pedir la
+  no-colision y solo entonces mover el ped.
+- **El iniciador de una pose compartida se veia bien a si mismo y todos los
+  demas lo veian donde estaba antes de recolocarse.** El ped se colocaba una sola
+  vez y en el mismo frame en que arrancaba el clip: los clones remotos reciben la
+  task de animacion y anclan ahi el mover, y como un ped en pose no se mueve, casi
+  no recibe actualizaciones de posicion y la correccion de red no cierra el hueco.
+  La firma del fallo era que los observadores coincidian entre si y solo
+  discrepaban del propietario del ped. Ahora entre colocar el ped y lanzar el clip
+  se deja pasar un tick de red, para que la posicion nueva salga antes que la
+  task, y mientras dura la pose se comprueba la desviacion dos veces por segundo,
+  recolocando solo si se sale de 2 cm o 1 grado. Todo en el cliente del
+  iniciador: el servidor no interviene. El reanclaje se aparta mientras
+  `/emoteoffset` esta abierto y relee el offset en cada pasada, asi que respeta al
+  instante lo que se acaba de calibrar.
 
 ### Mantenimiento
 
@@ -65,6 +93,14 @@ animaciones se mantiene intacta.
   `TitleColour`, `CustomMenuEnabled`, `PreviewPedToggle`.
 - La documentacion tecnica de creacion de emotes se conserva en
   `docs/referencia-emotes.md`.
+- `Config.SyncOffsetSource` elige de donde sale el `SyncOffset` de las shared
+  emotes: `'saved'` (manda `data/sync_offsets.json` y, en su defecto, el `.lua`
+  del pack), `'pack'` (siempre el `.lua`) o `'zero'` (los dos peds en la misma
+  coordenada y con el mismo rumbo, para comprobar si un pack esta hecho para
+  reproducirse con los dos clips compartiendo origen). Ningun modo borra lo
+  calibrado, asi que se puede ir y volver para comparar. Sale de fabrica en
+  `'zero'`, con `Config.OffsetEditorEnabled` apagado a juego: sin offsets que
+  aplicar, calibrar no sirve de nada.
 
 ### Compatibilidad
 

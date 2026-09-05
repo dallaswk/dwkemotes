@@ -135,13 +135,30 @@ Config = {
     -- Ajusta en vivo la posicion relativa de las shared emotes. Lo guardado va
     -- a data/sync_offsets.json y se reparte a todos sin reiniciar el recurso;
     -- `emoteoffsets apply` en la consola lo pasa a los .lua de custom_emotes/.
-    OffsetEditorEnabled = true,
+    -- Apagado a la vez que SyncOffsetSource = 'zero': con los offsets sin
+    -- aplicar, calibrar no sirve de nada. Para volver a ajustar hay que
+    -- reactivar los dos.
+    OffsetEditorEnabled = false,
     OffsetEditorAce = nil, -- nil = cualquier jugador. Pon aqui un ACE (p.ej.
                            -- 'dwkemotes.offseteditor') para cerrarlo antes de
                            -- sacarlo a produccion; lo valida el servidor.
     OffsetEditorPacks = { 'duopareja' }, -- packs de custom_emotes/ que declaran
                                          -- sus parejas con addPair() y que por
                                          -- tanto `emoteoffsets apply` reescribe
+
+    -- De donde sale el SyncOffset con el que se coloca quien inicia una shared
+    -- emote. Nada de esto borra lo calibrado: solo decide que se aplica, asi que
+    -- se puede ir y volver para comparar.
+    --   'saved' - manda data/sync_offsets.json; las poses que no esten ahi usan
+    --             el valor de su .lua. Es el comportamiento normal.
+    --   'pack'  - se ignora el fichero guardado y manda siempre el .lua.
+    --   'zero'  - los dos peds se colocan en la misma coordenada y con el mismo
+    --             rumbo, sin desplazar nada. Es la prueba para saber si un pack
+    --             esta hecho para reproducirse asi, con los dos clips
+    --             compartiendo origen.
+    -- Si el editor esta activo, funciona y guarda en cualquier modo, pero avisa
+    -- al abrirse cuando lo que ajuste no se va a aplicar en caliente.
+    SyncOffsetSource = 'zero',
 
     -- Emote Placement
     PlacementEnabled = true,
