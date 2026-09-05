@@ -198,6 +198,26 @@ local function anchorSourcePed(ped, partner, offset)
     SetEntityCoordsNoOffset(ped, coords.x, coords.y, coords.z)
 end
 
+--- Transform de enganche para AttachEntityToEntity.
+---
+--- Si la emote define a la vez Attachto y SyncOffset, el enganche se deriva del
+--- offset (que es lo que edita y guarda /emoteoffset): la pose enganchada se
+--- calibra igual que las demas y en cada lanzamiento usa el override guardado.
+--- Si no hay SyncOffset, se usa el pos/rot estatico de la definicion, que es
+--- como funcionan los emotes de carga estilo "carry".
+---@param emoteName string
+---@param options table|nil AnimationOptions de la emote
+---@return vector3 pos
+---@return vector3 rot
+function GetAttachTransform(emoteName, options)
+    if options and options.syncOffset then
+        local o = GetSyncOffset(emoteName, options)
+        return vector3(o.y, o.x, o.z), vector3(0.0, 0.0, -o.w)
+    end
+    return options and options.pos or vector3(0.0, 0.0, 0.0),
+           options and options.rot or vector3(0.0, 0.0, 0.0)
+end
+
 --- Un contador en vez de un booleano de "ya corre": si se lanza otra pose, el
 --- hilo anterior tiene que morir y el nuevo arrancar siempre. Con un booleano,
 --- relanzar una pose con la misma pareja dejaba al hilo viejo vivo unos cientos
@@ -218,6 +238,9 @@ local function runSourceAnchorThread(emoteName, partnerServerId, options)
             and activeSharedIsSource
             and targetPlayerId == partnerServerId
             and IsInAnimation
+            -- Un ped enganchado no se reancla por offsets: recolocarlo aqui lo
+            -- descolgaria y la pose se veria mal en todas las pantallas.
+            and not (options and options.Attachto)
         do
             local ply = GetPlayerFromServerId(partnerServerId)
             local partner = ply >= 0 and GetPlayerPed(ply) or 0
@@ -315,16 +338,17 @@ RegisterNetEvent("dwkemotes:client:syncEmote", function(emote, player)
             local ped = PlayerPedId()
             local pedInFront = GetPlayerPed(plyServerId ~= 0 and plyServerId or GetClosestPlayer())
 
+            local pos, rot = GetAttachTransform(emote, options)
             AttachEntityToEntity(
                 ped,
                 pedInFront,
                 GetPedBoneIndex(pedInFront, options.bone or -1),
-                options.pos.x,
-                options.pos.y,
-                options.pos.z,
-                options.rot.x,
-                options.rot.y,
-                options.rot.z,
+                pos.x,
+                pos.y,
+                pos.z,
+                rot.x,
+                rot.y,
+                rot.z,
                 false,
                 false,
                 false,
@@ -381,16 +405,17 @@ RegisterNetEvent("dwkemotes:client:syncEmoteSource", function(emote, player)
     publishSharedPair(player)
 
     if options and options.Attachto then
+        local pos, rot = GetAttachTransform(emote, options)
         AttachEntityToEntity(
             ped,
             pedInFront,
             GetPedBoneIndex(pedInFront, options.bone or -1),
-            options.pos.x,
-            options.pos.y,
-            options.pos.z,
-            options.rot.x,
-            options.rot.y,
-            options.rot.z,
+            pos.x,
+            pos.y,
+            pos.z,
+            rot.x,
+            rot.y,
+            rot.z,
             false,
             false,
             false,
@@ -398,10 +423,14 @@ RegisterNetEvent("dwkemotes:client:syncEmoteSource", function(emote, player)
             1,
             true
         )
-    end
 
-    local offset = GetSyncOffset(emote, options)
-    anchorSourcePed(ped, pedInFront, offset)
+        -- Nada mas: el attach ya coloca el ped y esa posicion es la que la red
+        -- reparte a todas las pantallas. Anchorear con SetEntityCoordsNoOffset
+        -- solo pelearia con el enganche y lo devolveria al metro por defecto.
+    else
+        local offset = GetSyncOffset(emote, options)
+        anchorSourcePed(ped, pedInFront, offset)
+    end
 
     -- Un tick de red entre colocar el ped y lanzar el clip: si la task de
     -- animacion llega a los otros clientes antes que la posicion nueva, sus
@@ -416,7 +445,9 @@ RegisterNetEvent("dwkemotes:client:syncEmoteSource", function(emote, player)
         return
     end
 
-    anchorSourcePed(ped, pedInFront, offset)
+    if not (options and options.Attachto) then
+        anchorSourcePed(ped, pedInFront, GetSyncOffset(emote, options))
+    end
 
     if emoteData ~= nil then
         OnEmotePlay(emote, nil, EmoteType.SHARED)

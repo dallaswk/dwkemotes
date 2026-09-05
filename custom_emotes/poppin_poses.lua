@@ -13,7 +13,30 @@ CustomDP.Emotes = {
         "flexonem@poppin",
         "flexonem_clip",
         "Poppin Flex On Em",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+        AnimationOptions = {
+            EmoteLoop = true,
+            EmoteMoving = false,
+            Prop = 'p_banknote_onedollar_s',
+            PropBone = 60309,
+            PropPlacement = {
+                0.0,
+                0.0,
+                -0.16,
+                90.0,
+                0.0,
+                0.0
+            },
+            SecondProp = 'p_banknote_onedollar_s',
+            SecondPropBone = 28422,
+            SecondPropPlacement = {
+                0.0,
+                0.0,
+                -0.16,
+                90.0,
+                0.0,
+                0.0
+            },
+        },
     },
     ["fuckmyopps"] = {
         "fuckmyopps@poppin",

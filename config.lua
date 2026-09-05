@@ -131,6 +131,11 @@ Config = {
     -- igual, y vuelve sola en cuanto la animacion termina.
     SharedEmoteNoCollision = true,
 
+    -- Diagnostico: /propscheck lista en el chat las emotes cuyos props NO
+    -- existen en el servidor (modelos fuera del juego y fuera del stream de
+    -- cualquier recurso). Util para detectar los props custom que "no se ven".
+    PropsCheckEnabled = true,
+
     -- Editor de SyncOffset (/emoteoffset)
     -- Ajusta en vivo la posicion relativa de las shared emotes. Lo guardado va
     -- a data/sync_offsets.json y se reparte a todos sin reiniciar el recurso;
@@ -138,7 +143,7 @@ Config = {
     -- Apagado a la vez que SyncOffsetSource = 'zero': con los offsets sin
     -- aplicar, calibrar no sirve de nada. Para volver a ajustar hay que
     -- reactivar los dos.
-    OffsetEditorEnabled = false,
+    OffsetEditorEnabled = true,
     OffsetEditorAce = nil, -- nil = cualquier jugador. Pon aqui un ACE (p.ej.
                            -- 'dwkemotes.offseteditor') para cerrarlo antes de
                            -- sacarlo a produccion; lo valida el servidor.
@@ -158,7 +163,7 @@ Config = {
     --             compartiendo origen.
     -- Si el editor esta activo, funciona y guarda en cualquier modo, pero avisa
     -- al abrirse cuando lo que ajuste no se va a aplicar en caliente.
-    SyncOffsetSource = 'zero',
+    SyncOffsetSource = 'saved',
 
     -- Emote Placement
     PlacementEnabled = true,

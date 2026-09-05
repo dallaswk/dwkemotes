@@ -242,6 +242,15 @@ local function startEditor(emoteName, partnerServerId)
             editorFroze = true
         end
 
+        -- En las emotes enganchadas el attach recoloca el ped cada frame y las
+        -- teclas no moverian nada: se desengancha mientras se ajusta y se vuelve
+        -- a enganchar al salir usando el transform del offset guardado.
+        local detachedForEdit = false
+        if options and options.Attachto then
+            DetachEntity(PlayerPedId(), true, true)
+            detachedForEdit = true
+        end
+
         -- Vigilante aparte: en cuanto se deja de editar, el jugador se suelta
         -- aunque el cierre de mas abajo no llegue a ejecutarse.
         CreateThread(function()
@@ -366,7 +375,30 @@ local function startEditor(emoteName, partnerServerId)
         local ped = PlayerPedId()
         local partner = GetPlayerPed(GetPlayerFromServerId(partnerServerId))
         if IsInAnimation and DoesEntityExist(partner) and partner ~= ped then
-            anchorTo(ped, partner, GetEntityHeading(partner))
+            if detachedForEdit then
+                -- Reenganche con el transform recien guardado: lo que queda en
+                -- pantalla y lo que vera un tercero son lo mismo.
+                local pos, rot = GetAttachTransform(emoteName, options)
+                AttachEntityToEntity(
+                    ped,
+                    partner,
+                    GetPedBoneIndex(partner, options and options.bone or 0),
+                    pos.x,
+                    pos.y,
+                    pos.z,
+                    rot.x,
+                    rot.y,
+                    rot.z,
+                    false,
+                    false,
+                    false,
+                    true,
+                    1,
+                    true
+                )
+            else
+                anchorTo(ped, partner, GetEntityHeading(partner))
+            end
         end
 
         SetAnimationWatchSuspended(false)

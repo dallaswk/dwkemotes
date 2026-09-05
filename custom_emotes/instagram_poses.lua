@@ -37,7 +37,20 @@ CustomDP.Emotes = {
         "instagrampose8@seimen",
         "instagrampose8_clip",
         "Instagram Pose 8",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+        AnimationOptions = {
+            EmoteLoop = true,
+            EmoteMoving = false,
+            Prop = 'prop_amb_phone',
+            PropBone = 28422,
+            PropPlacement = {
+                0.0,
+                0.0,
+                -0.05,
+                0.0,
+                0.0,
+                0.0
+            },
+        },
     },
     ["instagrampose9"] = {
         "instagrampose9@seimen",

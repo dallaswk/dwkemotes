@@ -61,6 +61,7 @@ client_scripts {
     'client/Emote.lua',
     'client/GroupEmote.lua',
     'client/EmoteMenu.lua',
+    'client/PropsCheck.lua',
     'client/Expressions.lua',
     'client/Handsup.lua',
     'client/Keybinds.lua',
