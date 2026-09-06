@@ -113,6 +113,7 @@ AceCategoryFromEmoteType = {
 ---@field PropBone? integer
 ---@field PropPlacement? number[]
 ---@field PropNoCollision? boolean
+---@field PedHeightOffset? number metros que la ped se despega del suelo al reproducir
 ---@field StartDelay? integer
 ---@field SecondProp? string
 ---@field SecondPropBone? integer

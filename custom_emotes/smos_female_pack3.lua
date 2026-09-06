@@ -9,12 +9,6 @@ if not ENABLED then return end
 local CustomDP = {}
 
 CustomDP.Emotes = {
-    ["ffp_smoke"] = {
-        "anim@female_smoke_01",
-        "f_smoke_01_clip",
-        "FFP Smoke",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
     ["ffp_lean"] = {
         "anim@female_lean_01",
         "f_lean_01_clip",
@@ -44,6 +38,28 @@ CustomDP.Emotes = {
         "f_model_03_clip",
         "FFP Model 3",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+    },
+}
+
+CustomDP.PropEmotes = {
+    ["ffp_smoke"] = {
+        "anim@female_smoke_01",
+        "f_smoke_01_clip",
+        "FFP Smoke",
+        AnimationOptions = {
+            EmoteLoop = true,
+            EmoteMoving = false,
+            Prop = 'p_cs_joint_01',
+            PropBone = 28422,
+            PropPlacement = {
+                0.090,
+                0.014,
+                -0.014,
+                0.00,
+                172.00,
+                0.00
+            },
+        },
     },
 }
 

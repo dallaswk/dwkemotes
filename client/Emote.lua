@@ -33,6 +33,10 @@ local EmoteCancelPlaying = false
 local currentEmote = {}
 local attachedProp
 local previewPropVersion = 0
+-- Cada emote elevada suspende la vigilancia de la animacion mientras da el
+-- salto. Si otra la releva en ese rato, la que sale no debe reactivarla y
+-- dejar a la nueva a merced de checkStatusThread.
+local pedHeightVersion = 0
 
 --- "Caminar con la animacion". Ver SetWalkLock mas abajo.
 local WalkLockKvp <const> = "walklock"
@@ -574,6 +578,12 @@ function ReplayCurrentAnimation()
         flags = AnimFlag.MOVING
     end
 
+    -- Una emote elevada necesita el override de fisica tambien al relanzarse: es
+    -- lo unico que la sostiene en el aire, y sin el se viene abajo a mitad.
+    if (animOption and tonumber(animOption.PedHeightOffset) or 0.0) ~= 0.0 then
+        flags = flags | 2048
+    end
+
     PlayAnim(ped, currentEmote.dict, currentEmote.anim,
         animOption and animOption.BlendInSpeed or 5.0,
         animOption and animOption.BlendOutSpeed or 5.0,
@@ -1020,6 +1030,12 @@ function OnEmotePlay(name, textureVariation, emoteType)
         DebugPrint("Walk lock: upperbody flag forced (" .. AnimFlag.MOVING .. ")")
     end
 
+    -- Altura fija de la emote. Despega a la ped del suelo los metros indicados y
+    -- ahi se queda mientras dure. Necesita el flag de override de fisica, el
+    -- mismo que usa Placement.lua para poder posar sobre mobiliario: sin el, la
+    -- ped cae al suelo en cuanto arranca la animacion.
+    local pedHeightOffset = tonumber(animOption and animOption.PedHeightOffset) or 0.0
+
     if GetPlacementState() == PlacementState.IN_ANIMATION and animOption and animOption.PlacementOverridesPhysics then
         -- Override physics (allow floating off the ground) & Ragdoll on Collision
         flags += 2048 + 4194304
@@ -1028,11 +1044,58 @@ function OnEmotePlay(name, textureVariation, emoteType)
         flags = 16 + 262144
     end
 
+    if pedHeightOffset ~= 0.0 then
+        flags = flags | 2048
+    end
+
     PlayAnim(PlayerPedId(), emoteData.dict, emoteData.anim, animOption?.BlendInSpeed or 5.0, animOption?.BlendOutSpeed or 5.0, animOption?.EmoteDuration or -1, flags, 0, false, vehicleHasHandleBars and 4098 or false,
         false)
     RemoveAnimDict(emoteData.dict)
 
     IsInAnimation = true
+
+    -- Se sube despues de lanzar la animacion: hacerlo antes no sirve, porque
+    -- ClearPedTasks y el arranque de la anim reasientan a la ped en el suelo.
+    --
+    -- Pero tampoco vale hacerlo en el mismo frame: TaskPlayAnim tarda unos
+    -- cuantos en arrancar y teletransportar a la ped mientras tanto hace que el
+    -- motor descarte la tarea. Eso era el T-pose flotante y sin control: la ped
+    -- subia, pero se quedaba sin animacion que reproducir. Hay que esperar a que
+    -- la animacion este de verdad en marcha.
+    if pedHeightOffset ~= 0.0 then
+        local dict, anim = emoteData.dict, emoteData.anim
+
+        pedHeightVersion += 1
+        local version = pedHeightVersion
+
+        CreateThread(function()
+            local ped = PlayerPedId()
+            local timeout = GetGameTimer() + 1000
+
+            while not IsEntityPlayingAnim(ped, dict, anim, 3) do
+                if GetGameTimer() > timeout or not IsInAnimation or pedHeightVersion ~= version then return end
+                Wait(0)
+            end
+
+            if pedHeightVersion ~= version then return end
+
+            -- Mover la ped corta la reproduccion durante unos frames, y eso es
+            -- justo lo que checkStatusThread lee como "la animacion termino"
+            -- para cancelar la emote. Se suspende su vigilancia mientras dura el
+            -- salto, igual que hace el editor de offsets al recolocar.
+            SetAnimationWatchSuspended(true)
+
+            local coords = GetEntityCoords(ped)
+            SetEntityCoordsNoOffset(ped, coords.x, coords.y, coords.z + pedHeightOffset, false, false, false)
+
+            Wait(250)
+
+            if pedHeightVersion == version then
+                SetAnimationWatchSuspended(false)
+            end
+        end)
+    end
+
     lastEmoteTime = GetGameTimer()  -- Set cooldown timer when emote actually starts
     runAnimationThread()
 

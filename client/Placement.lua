@@ -16,6 +16,14 @@ local placementRotation
 local positionPriorToPlacement = vector3(0)
 ---@type boolean
 local placementFrozePlayer = false -- true if the last placement emote caused the player to froze.
+-- Cuanto se despego del suelo la colocacion que se acaba de confirmar. Lo lee
+-- walkPedToPlacementPosition para decidir si el freeze dura toda la emote.
+local placementHeightOffset = 0
+
+-- A partir de esta separacion del suelo hay que sostener al ped congelado
+-- mientras dure la emote. 0.3 era el tope de altura de siempre, asi que por
+-- debajo de eso se mantiene el comportamiento de antes.
+local ELEVATED_FREEZE_MIN = 0.3
 
 local previewPed
 local menuBeforePlacement = nil
@@ -66,6 +74,7 @@ local function resetStoredPlacementValues()
     placementRotation = vector3(0)
     positionPriorToPlacement = vector3(0)
     placementFrozePlayer = false
+    placementHeightOffset = 0
     placementOptions = nil
 end
 
@@ -114,11 +123,32 @@ local function walkPedToPlacementPosition(emoteName)
         FreezeEntityPosition(playerPed, true) -- Freeze player briefly to prevent initial fall
         placementFrozePlayer = true
 
-        -- Unfreeze after one frame to restore collision
-        CreateThread(function()
-            Wait(0)
-            FreezeEntityPosition(playerPed, false)
-        end)
+        -- En una colocacion elevada el freeze tiene que aguantar toda la emote.
+        -- Si se suelta al frame siguiente el ped se cae, el motor lo pasa a
+        -- estado de caida y la animacion se pierde por el camino: T-pose y sin
+        -- control hasta que aterriza. Ahi lo descongela CleanUpPlacement.
+        if placementHeightOffset <= ELEVATED_FREEZE_MIN then
+            -- Unfreeze after one frame to restore collision
+            CreateThread(function()
+                Wait(0)
+                FreezeEntityPosition(playerPed, false)
+            end)
+        else
+            -- Congelado el ped no llega a andar, asi que la animacion no se
+            -- interrumpe sola y andar dejaria de cancelar la emote: solo saldria
+            -- con la tecla de cancelar. Se vigila a mano para que salir de una
+            -- colocacion elevada siga siendo lo mismo que de una a ras de suelo.
+            CreateThread(function()
+                while placementState == PlacementState.IN_ANIMATION do
+                    if anyMovementControlsPressed() then
+                        EmoteCancel()
+                        break
+                    end
+
+                    Wait(0)
+                end
+            end)
+        end
     end
     checkCollisionsWhileInAnimation()
 end
@@ -384,6 +414,7 @@ local function positionPreviewPed(emoteName)
                 if moveLeftRight <= -1 then moveLeftRight = -1 end
             elseif IsDisabledControlJustPressed(0, 18) then
                 if isPlacementValid then
+                    placementHeightOffset = upDownOffset
                     placementState = PlacementState.WALKING
                 else
                     PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)

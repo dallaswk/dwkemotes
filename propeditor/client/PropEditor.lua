@@ -47,6 +47,7 @@ local function snapshot(opts)
         SecondPropBone = opts.SecondPropBone,
         SecondPropPlacement = opts.SecondPropPlacement,
         SecondPropNoCollision = opts.SecondPropNoCollision,
+        PedHeightOffset = opts.PedHeightOffset,
     }
 end
 
@@ -86,12 +87,16 @@ local function applyOverride(name, data)
             o.Prop, o.PropBone, o.PropPlacement, o.PropNoCollision
         opts.SecondProp, opts.SecondPropBone, opts.SecondPropPlacement, opts.SecondPropNoCollision =
             o.SecondProp, o.SecondPropBone, o.SecondPropPlacement, o.SecondPropNoCollision
+        opts.PedHeightOffset = o.PedHeightOffset
         return true
     end
 
     opts.Prop, opts.PropBone, opts.PropPlacement, opts.PropNoCollision = slotToOptions(data.slot1)
     opts.SecondProp, opts.SecondPropBone, opts.SecondPropPlacement, opts.SecondPropNoCollision =
         slotToOptions(data.slot2)
+
+    local height = tonumber(data.pedHeight) or 0.0
+    opts.PedHeightOffset = height ~= 0.0 and height or nil
 
     return true
 end
@@ -284,10 +289,89 @@ local function reattachPreview(slot)
     )
 end
 
+-- ─── Ejes de la vista ────────────────────────────────────────────────────────
+--
+-- AttachEntityToEntity interpreta el offset en el espacio del HUESO, y los
+-- huesos de la mano de GTA estan girados de cualquier manera: pulsar W movia el
+-- prop en una direccion que no tiene nada que ver con lo que se ve en pantalla.
+-- Con Config.PropEditor.axisMode = 'camera' las teclas mueven respecto a la
+-- vista, y estas dos funciones traducen ese desplazamiento al espacio del hueso.
+
+--- Mide los tres ejes del hueso, en coordenadas del mundo.
+---
+--- Se miden en vez de calcularse: componer la matriz del hueso a mano obliga a
+--- acertar el orden de los angulos de Euler que aplica el attach, y basta con
+--- desplazar el prop una distancia conocida en cada eje local y mirar hacia
+--- donde se ha ido de verdad. Cuesta tres frames y se hace una vez por hueso.
+---
+--- Se resta la posicion del hueso en cada lectura para que una animacion en
+--- marcha no contamine la medida: asi se cancela lo que el hueso se traslada
+--- entre frames. Lo que gire en esos tres frames si entra como error, de modo
+--- que en una emote muy movida la medida sale algo torcida; en las emotes
+--- quietas, que es donde se calibra un prop, es exacta.
+---@param slot integer
+---@return table|nil ejes { x = vector3, y = vector3, z = vector3 }
+local function measureBoneBasis(slot)
+    local entity = session.entities[slot]
+    if not entity or not DoesEntityExist(entity) then return nil end
+
+    local data = slotData(slot)
+    local ped = PlayerPedId()
+    local boneIndex = GetPedBoneIndex(ped, data.bone or 0)
+    if boneIndex == -1 then boneIndex = 0 end
+
+    local D <const> = 0.05
+    local saved = { x = data.pos.x, y = data.pos.y, z = data.pos.z }
+
+    local function sample()
+        return GetEntityCoords(entity) - GetWorldPositionOfEntityBone(ped, boneIndex)
+    end
+
+    reattachPreview(slot)
+    Wait(0)
+    local origin = sample()
+
+    local basis = {}
+    for _, axis in ipairs({ 'x', 'y', 'z' }) do
+        data.pos[axis] = saved[axis] + D
+        reattachPreview(slot)
+        Wait(0)
+        basis[axis] = (sample() - origin) / D
+        data.pos[axis] = saved[axis]
+    end
+
+    reattachPreview(slot)
+
+    -- Un eje de longitud rara significa que la medida no vale (el hueso se
+    -- movio demasiado, o el objeto no llego a reengancharse). Mejor no tener
+    -- base y caer en los ejes de siempre que mover el prop a ciegas.
+    for _, axis in ipairs({ 'x', 'y', 'z' }) do
+        local len = #(basis[axis])
+        if len < 0.9 or len > 1.1 then return nil end
+    end
+    return basis
+end
+
+--- Invalida la base medida de un slot. Depende del hueso y de la entidad, asi
+--- que hay que llamarla al cambiar de hueso y al cambiar de modelo (que recrea
+--- el objeto). Girar el prop NO la invalida: en AttachEntityToEntity el offset
+--- y la rotacion son independientes, y girar no mueve el origen del objeto.
+---@param slot integer|nil nil = los dos
+local function forgetBoneBasis(slot)
+    if not session then return end
+    session.basis = session.basis or {}
+    if slot then
+        session.basis[slot] = nil
+    else
+        session.basis = {}
+    end
+end
+
 --- Crea el objeto del slot desde cero. Solo hace falta al cambiar de modelo.
 ---@param slot integer
 local function spawnPreview(slot)
     destroyPreview(slot)
+    forgetBoneBasis(slot)
 
     local data = slotData(slot)
     if not data.model or data.model == '' then return end
@@ -542,6 +626,24 @@ local function closeEditor(silent)
     SetNuiFocusKeepInput(false)
     SendNUIMessage({ action = 'propeditor:close' })
 
+    -- La ped vuelve al suelo siempre, se haya guardado o no: si se guardo, la
+    -- altura la aplica Emote.lua la proxima vez que se lance la emote, que es
+    -- cuando puede poner el flag de fisica que hace falta para sostenerla.
+    if session.pedHeight and session.pedHeight ~= 0.0 then
+        local ped = PlayerPedId()
+        local coords = GetEntityCoords(ped)
+        SetEntityCoordsNoOffset(ped, coords.x, coords.y, session.pedBaseZ, false, false, false)
+    end
+
+    if session.frozePed and DoesEntityExist(session.ped) then
+        FreezeEntityPosition(session.ped, false)
+    end
+
+    -- La vigilancia vuelve al final: mientras se descongela y se baja al ped la
+    -- animacion aun da tumbos, y reactivarla antes cancelaria la emote justo al
+    -- cerrar el editor.
+    SetAnimationWatchSuspended(false)
+
     -- Los props reales se rehacen desde AnimationOptions, que ya lleva lo
     -- guardado (o lo de siempre, si se salio sin guardar).
     local emoteName = session.emote
@@ -576,7 +678,7 @@ local function normalizedSlots()
         end
     end
 
-    return { slot1 = out[1], slot2 = out[2] }
+    return { slot1 = out[1], slot2 = out[2], pedHeight = round3(session.pedHeight or 0.0) }
 end
 
 function SavePropEditorSession()
@@ -590,6 +692,9 @@ local function startEditor(emoteName)
     if not emote then
         return SimpleNotify(('La emote %s no existe'):format(emoteName), 'error')
     end
+
+    -- La altura que la emote ya trae puesta: la aplica Emote.lua al lanzarla.
+    local pedHeightNow = tonumber(emote.AnimationOptions and emote.AnimationOptions.PedHeightOffset) or 0.0
 
     editing = true
     session = {
@@ -606,8 +711,32 @@ local function startEditor(emoteName)
         showAllBones = false,
         dirty = false,
         bones = {},
+        basis = {},
+        -- Altura de la ped. La ped no anda mientras el editor esta abierto, asi
+        -- que pedBaseZ sirve de referencia fija durante toda la sesion.
+        pedHeight = pedHeightNow,
+        -- El suelo del que se parte. Si la emote ya venia con altura, Emote.lua
+        -- la subio al lanzarla, asi que hay que descontarla de la Z actual o el
+        -- editor la sumaria por segunda vez.
+        pedBaseZ = GetEntityCoords(PlayerPedId()).z - pedHeightNow,
+        -- Ultima altura ya aplicada al ped. Recolocarlo en cada frame corta la
+        -- reproduccion de la animacion sin descanso: es lo que dejaba al ped en
+        -- T-pose dentro del editor. Solo se toca cuando el valor cambia.
+        pedHeightApplied = pedHeightNow,
     }
     session.bones = usableBones()
+
+    -- Recolocar el ped corta la reproduccion durante unos frames y la vigilancia
+    -- de Emote.lua lee eso como "la animacion ha terminado", asi que cancelaba
+    -- la emote nada mas empezar. Mismo trato que en el editor de offsets.
+    SetAnimationWatchSuspended(true)
+
+    -- Y congelado, que sigue admitiendo SetEntityCoords pero ya no lo empuja la
+    -- fisica: sin esto la altura se pierde en cuanto se suelta el ped.
+    if not IsEntityPositionFrozen(session.ped) then
+        FreezeEntityPosition(session.ped, true)
+        session.frozePed = true
+    end
 
     -- Los props reales se quitan: a partir de aqui manda la copia del editor,
     -- que es la unica que se puede recolocar sin reiniciar la emote. Esto
@@ -665,6 +794,24 @@ local function startEditor(emoteName)
             updateCamera()
             sendBonePoints()
 
+            -- La emote que ya esta corriendo se lanzo sin el flag de override de
+            -- fisica, pero el ped esta congelado, asi que basta con recolocarlo
+            -- cuando la altura cambia. Hacerlo en cada frame es justo lo que no
+            -- deja arrancar a la animacion.
+            if session.pedHeight ~= session.pedHeightApplied then
+                local coords = GetEntityCoords(ped)
+                SetEntityCoordsNoOffset(ped, coords.x, coords.y,
+                    session.pedBaseZ + session.pedHeight, false, false, false)
+                session.pedHeightApplied = session.pedHeight
+
+                -- Moverlo puede haber cortado la pose. Se relanza solo si de
+                -- verdad dejo de sonar, para no reiniciarla en cada pulsacion
+                -- mientras se mantiene Q o E.
+                if not IsCurrentAnimationPlaying() then
+                    ReplayCurrentAnimation()
+                end
+            end
+
             local coarse = IsDisabledControlPressed(0, 21)   -- Shift
             local rotating = IsDisabledControlPressed(0, 36) -- Ctrl
             local step = coarse and CFG.stepCoarse or CFG.stepFine
@@ -672,29 +819,95 @@ local function startEditor(emoteName)
             local data = slotData(session.slot)
             local moved = false
 
-            ---@param axis string 'x', 'y' o 'z'
+            -- La base se mide una vez por hueso y se guarda. measureBoneBasis
+            -- gasta tres frames, asi que no puede ir en cada pulsacion.
+            if CFG.axisMode == 'camera' and not session.basis[session.slot] then
+                session.basis[session.slot] = measureBoneBasis(session.slot) or false
+            end
+            local basis = session.basis[session.slot] or nil
+
+            ---@param axis string 'x', 'y' o 'z' del hueso
             ---@param direction number
-            local function nudge(axis, direction)
-                if rotating then
-                    data.rot[axis] = (data.rot[axis] + direction * stepRot) % 360
-                else
-                    data.pos[axis] = clamp(data.pos[axis] + direction * step, CFG.limitPos)
+            local function nudgeLocal(axis, direction)
+                data.pos[axis] = clamp(data.pos[axis] + direction * step, CFG.limitPos)
+                moved = true
+            end
+
+            --- Mueve el prop en una direccion del MUNDO, repartiendola entre los
+            --- tres ejes del hueso. La base es ortonormal (los huesos no
+            --- escalan), asi que proyectar sobre cada eje basta y no hace falta
+            --- invertir ninguna matriz.
+            ---@param world vector3 unitario
+            ---@param direction number
+            local function slide(world, direction)
+                local d = direction * step
+                for _, axis in ipairs({ 'x', 'y', 'z' }) do
+                    local e = basis[axis]
+                    local amount = (world.x * e.x + world.y * e.y + world.z * e.z) * d
+                    data.pos[axis] = clamp(data.pos[axis] + amount, CFG.limitPos)
                 end
                 moved = true
             end
 
-            if IsDisabledControlPressed(0, 32) then     -- W
-                nudge('y', 1)
-            elseif IsDisabledControlPressed(0, 33) then -- S
-                nudge('y', -1)
-            elseif IsDisabledControlPressed(0, 34) then -- A
-                nudge('x', -1)
-            elseif IsDisabledControlPressed(0, 35) then -- D
-                nudge('x', 1)
-            elseif IsDisabledControlPressed(0, 45) then -- R
-                nudge('z', 1)
-            elseif IsDisabledControlPressed(0, 49) then -- F
-                nudge('z', -1)
+            ---@param axis string
+            ---@param direction number
+            local function rotate(axis, direction)
+                data.rot[axis] = (data.rot[axis] + direction * stepRot) % 360
+                moved = true
+            end
+
+            -- Ejes de la vista en coordenadas del mundo, sacados de updateCamera:
+            -- con camYaw 0 la camara esta al sur mirando al norte, asi que
+            -- adelante es +Y y la derecha de la pantalla es +X. Arriba es el del
+            -- mundo a proposito: para colocar un prop, "subir" es subir.
+            local yaw = math.rad(session.camYaw)
+            local viewFwd <const> = vector3(-math.sin(yaw), math.cos(yaw), 0.0)
+            local viewRight <const> = vector3(math.cos(yaw), math.sin(yaw), 0.0)
+            local viewUp <const> = vector3(0.0, 0.0, 1.0)
+
+            --- Aplica una tecla. Girar sigue siendo en ejes del hueso: recomponer
+            --- los angulos de Euler para que girar fuese "respecto a la pantalla"
+            --- es otro problema, y el resultado tiene que seguir siendo un Euler
+            --- que el attach entienda.
+            ---@param control integer
+            ---@param axis string eje local, para rotar o si no hay base medida
+            ---@param world vector3 direccion en pantalla
+            ---@param direction number
+            ---@return boolean pulsada
+            local function key(control, axis, world, direction)
+                if not IsDisabledControlPressed(0, control) then return false end
+                if rotating then
+                    rotate(axis, direction)
+                elseif basis then
+                    slide(world, direction)
+                else
+                    nudgeLocal(axis, direction)
+                end
+                return true
+            end
+
+            local _ = key(32, 'y', viewFwd, 1)       -- W: alejar
+                or key(33, 'y', viewFwd, -1)         -- S: acercar
+                or key(34, 'x', viewRight, -1)       -- A: izquierda
+                or key(35, 'x', viewRight, 1)        -- D: derecha
+                or key(45, 'z', viewUp, 1)           -- R: subir
+                or key(49, 'z', viewUp, -1)          -- F: bajar
+
+            -- Q / E suben y bajan a la PED, no al prop. Va aparte de todo lo
+            -- anterior a proposito: no es un offset respecto a un hueso, es la
+            -- emote entera despegandose del suelo, y se guarda en la propia
+            -- emote (PedHeightOffset) en vez de en el PropPlacement.
+            local function nudgePed(direction)
+                local limit = CFG.limitPedHeight or 1.5
+                session.pedHeight = clamp(session.pedHeight + direction * step, limit)
+                session.dirty = true
+                moved = true
+            end
+
+            if IsDisabledControlPressed(0, 44) then     -- Q
+                nudgePed(1)
+            elseif IsDisabledControlPressed(0, 46) then -- E
+                nudgePed(-1)
             end
 
             -- Flechas: orbitar. Es la alternativa de teclado a arrastrar con el
@@ -766,6 +979,7 @@ callback('propEditorSetBone', function(data)
 
     slotData(session.slot).bone = math.floor(bone)
     session.dirty = true
+    forgetBoneBasis(session.slot)
     reattachPreview(session.slot)
     sendState()
 end)

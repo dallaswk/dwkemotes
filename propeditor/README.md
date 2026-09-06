@@ -24,14 +24,64 @@ En pantalla:
 |---|---|
 | Elegir hueso | Pinchar uno de los puntos, o buscarlo en la lista del panel |
 | Elegir modelo | Buscar en la lista, o escribir el nombre y pulsar Enter |
-| Mover el prop | `W`/`S` eje Y, `A`/`D` eje X, `R`/`F` eje Z |
-| Girar el prop | `Ctrl` + esas mismas teclas |
+| Mover el prop | `W`/`S` alejar y acercar, `A`/`D` izquierda y derecha, `R`/`F` subir y bajar — **respecto a lo que ves** |
+| Girar el prop | `Ctrl` + esas mismas teclas (esto sí va en ejes del hueso) |
+| Subir/bajar a la **ped** | `Q`/`E` — esto se guarda en la emote, no en el prop |
 | Paso grueso | `Shift` mantenido |
 | Orbitar la cámara | Arrastrar sobre el fondo, o las flechas |
 | Zoom | Rueda del ratón |
 | Cambiar de prop (1 ↔ 2) | `Tab`, o las pestañas del panel |
 | Guardar | `Enter`, o el botón |
 | Salir | `Retroceso`, o el botón |
+
+### Levantar a la ped del suelo (`Q`/`E`)
+
+A veces el prop está bien colocado y lo que no encaja es la altura de la propia
+ped: una pose pensada para estar sentada, o para apoyarse en algo que en este
+sitio está más alto. `Q` y `E` la despegan del suelo, y a diferencia de todo lo
+demás del editor **eso no es un offset del prop**: se guarda en la emote como
+`AnimationOptions.PedHeightOffset`, en metros.
+
+Al reproducir la emote, `client/Emote.lua` añade el flag `2048` (override de
+física, el mismo que usa `Placement.lua` para posar sobre mobiliario) y sube a la
+ped esos metros. Sin ese flag la ped cae al suelo en cuanto arranca la animación.
+
+Dentro del editor la emote ya está corriendo y se lanzó **sin** ese flag, así que
+el editor sostiene a la ped a esa altura frame a frame mientras lo tienes
+abierto. Al cerrar la devuelve al suelo, se haya guardado o no: si se guardó, la
+altura aparece la próxima vez que lances la emote, que es cuando se puede poner
+el flag.
+
+El tope es `limitPedHeight` en `propeditor/config.lua` (1,5 m). Una emote sin
+props pero con altura es un override válido y se guarda igual.
+
+### Por qué mover el prop era tan raro antes
+
+`AttachEntityToEntity` no coloca el prop en coordenadas del mundo: el offset va en
+el **espacio del hueso**, y los huesos de la mano de GTA están girados de
+cualquier manera. Por eso pulsar `W` movía el prop en una dirección que no tenía
+nada que ver con la pantalla, y colocar algo era ir a tientas.
+
+Ahora las teclas mueven respecto a la vista y el editor traduce ese
+desplazamiento al espacio del hueso. Para poder traducirlo necesita saber hacia
+dónde apuntan los ejes de ese hueso, y **los mide** en vez de calcularlos:
+desplaza el prop una distancia conocida en cada eje local y mira hacia dónde se
+ha ido de verdad. Son tres frames, una sola vez por hueso, y así no hay que
+acertar el orden de los ángulos de Euler que aplica el attach.
+
+Dos límites que conviene conocer:
+
+- La medida se toma una vez por hueso. En una emote **muy movida** el hueso gira
+  mientras se mide y durante el ajuste, así que las direcciones salen algo
+  torcidas; en las emotes quietas, que es donde se calibra un prop, es exacta.
+  Cambiar de hueso o de modelo vuelve a medir.
+- **Girar sigue yendo en ejes del hueso.** Recomponer los ángulos para que girar
+  fuese "respecto a la pantalla" es otro problema: el resultado tiene que seguir
+  siendo un Euler que el attach entienda.
+
+Se puede volver al comportamiento anterior con `axisMode = 'bone'` en
+`propeditor/config.lua`. Si la medida sale mal por lo que sea, el editor cae solo
+en los ejes de siempre en vez de mover el prop a ciegas.
 
 Los deslizadores y las casillas de número del panel hacen lo mismo que las
 teclas, con más precisión. El campo de modelo valida contra el juego mientras se

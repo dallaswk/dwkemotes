@@ -37,17 +37,17 @@ CustomDP.PropEmotes = {
         AnimationOptions = {
             EmoteLoop = true,
             EmoteMoving = false,
-            -- Colocado con /propeditor. La lata sustituye al vaso de ecola que
-            -- traia el pack; va en el gancho de la mano izquierda (PH_L_Hand).
-            Prop = 'mne_can_black',
+            -- Colocado con /propeditor. El vaso sustituye al de ecola que traia
+            -- el pack; va en el gancho de la mano izquierda (PH_L_Hand).
+            Prop = 'dwk_leancup',
             PropBone = 60309,
             PropPlacement = {
-                0.09,
-                0.104,
-                0.026,
-                250.0,
-                4.0,
-                2.0
+                0.090,
+                -0.040,
+                0.066,
+                250.00,
+                4.00,
+                2.00
             },
         },
     },

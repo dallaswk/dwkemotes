@@ -13,7 +13,11 @@ CustomDP.Emotes = {
         "skatergirl_cap@francis",
         "skatergirl_cap_clip",
         "Skater Girl Cap",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+        AnimationOptions = {
+            EmoteLoop = true,
+            EmoteMoving = false,
+            PedHeightOffset = 1.05,
+        },
     },
     ["nova_standduo1a"] = {
         "stand_duo1a@cosmo",

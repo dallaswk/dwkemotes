@@ -22,6 +22,9 @@ local EXPORT_FILE <const> = 'propeditor/data/prop_overrides_export.lua'
 -- de red puede llegar con cualquier cosa.
 local LIMIT_POS <const> = CFG.limitPos
 local MAX_MODEL_LEN <const> = 64
+-- Tope de lo que la ped puede despegarse del suelo. Es un limite de cordura:
+-- lo que manda de verdad es CFG.limitPedHeight en el cliente.
+local MAX_PED_HEIGHT <const> = 3.0
 local MAX_EMOTE_LEN <const> = 64
 
 ---@type table<string, table>
@@ -157,7 +160,18 @@ RegisterNetEvent('dwkemotes:propeditor:save', function(emoteName, data)
         slot1, slot2 = slot2, nil
     end
 
-    local entry = (slot1 or slot2) and { slot1 = slot1, slot2 = slot2 } or nil
+    -- Altura de la ped: no va dentro de un slot porque no es de un prop, es de
+    -- la emote. Por eso tambien puede ser lo unico que se guarde: una emote sin
+    -- props pero elevada es un override valido.
+    local pedHeight = tonumber(data.pedHeight) or 0.0
+    if pedHeight ~= pedHeight or pedHeight > MAX_PED_HEIGHT or pedHeight < -MAX_PED_HEIGHT then
+        pedHeight = 0.0
+    end
+    pedHeight = math.floor(pedHeight * 1000 + 0.5) / 1000
+
+    local entry = (slot1 or slot2 or pedHeight ~= 0.0)
+        and { slot1 = slot1, slot2 = slot2, pedHeight = pedHeight ~= 0.0 and pedHeight or nil }
+        or nil
 
     overrides[emoteName] = entry
     saveOverrides()
@@ -167,7 +181,7 @@ RegisterNetEvent('dwkemotes:propeditor:save', function(emoteName, data)
     TriggerClientEvent('dwkemotes:propeditor:updated', -1, emoteName, entry)
     TriggerClientEvent('dwkemotes:propeditor:saved', source, emoteName, entry)
 
-    local describe = 'sin props'
+    local describe = pedHeight ~= 0.0 and ('sin props, altura %+.3f'):format(pedHeight) or 'sin props'
     if slot1 then
         describe = ('%s @ %d'):format(slot1.model, slot1.bone)
         if slot2 then
@@ -232,6 +246,12 @@ local function exportOverrides()
         if entry.slot1 then writeSlotBlock(entry.slot1, '', out) end
         if entry.slot2 then writeSlotBlock(entry.slot2, 'Second', out) end
 
+        -- La altura no es de un prop, es de la emote, y puede venir sola: sin
+        -- esto una emote ajustada solo con Q/E se exportaba con el bloque vacio.
+        if entry.pedHeight and entry.pedHeight ~= 0.0 then
+            out[#out + 1] = ('        PedHeightOffset = %.3f,'):format(entry.pedHeight)
+        end
+
         out[#out + 1] = '    },'
         out[#out + 1] = '},'
         out[#out + 1] = ''
@@ -259,6 +279,13 @@ local function listOverrides()
                     slot.pos.x, slot.pos.y, slot.pos.z,
                     slot.rot.x, slot.rot.y, slot.rot.z))
             end
+        end
+
+        -- Una emote ajustada solo con Q/E no tiene slots: sin esta linea no
+        -- saldria en el listado y pareceria que no hay nada guardado.
+        if entry.pedHeight and entry.pedHeight ~= 0.0 then
+            print(('  %-28s altura de la ped %+.3f'):format(
+                (entry.slot1 or entry.slot2) and '' or name, entry.pedHeight))
         end
     end
 end
