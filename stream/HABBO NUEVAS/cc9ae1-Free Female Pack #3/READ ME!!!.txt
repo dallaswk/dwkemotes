@@ -1,0 +1,66 @@
+Don't forget to read the readme for the favoriteAnims.xml line. It's necessary to add.
+
+Place this line into FavoriteAnims.xml in your menyooStuff folder.
+
+	<Anim dict="anim@female_smoke_01" name="f_smoke_01_clip" />
+	<Anim dict="anim@female_lean_01" name="f_lean_01_clip" />
+	<Anim dict="anim@female_selfie_1st_01" name="f_selfie_1st_01_clip" />
+	<Anim dict="anim@female_model_01" name="f_model_01_clip" />
+	<Anim dict="anim@female_model_02" name="f_model_02_clip" />
+	<Anim dict="anim@female_model_03" name="f_model_03_clip" />
+
+
+
+Install using Jennie's Custom Anims mod. Get it here:
+https://www.gta5-mods.com/misc/custom-animations-add-on-customanims
+
+Make sure you follow their guidelines on how to install that mod properly and how to install animations using it.
+
+
+
+FOR DPEMOTES USERS ON FIVEM: 
+
+NOTE: FOR PROP PLACEMENT, FOLLOW THIS TUTORIAL:
+https://forum.cfx.re/t/how-to-menyoo-to-dpemotes-conversion-streaming-custom-add-on-props/4775018
+
+Place the ycd file into this folder:
+
+resources/dpemotes-master/streams
+
+Then copy this line into your AnimationList.lua
+
+["fsmoke1"] = {"anim@female_smoke_01", "f_smoke_01_clip", "Female Smoking Pose 1 (Smos)", AnimationOptions =
+{
+	EmoteLoop = true,
+	EmoteMoving = false,
+}},
+
+["fsmoke1"] = {"anim@female_lean_01", "f_smoke_01_clip", "Female Smoking Pose 1 (Smos)", AnimationOptions =
+{
+	EmoteLoop = true,
+	EmoteMoving = false,
+}},
+
+["fpsselfief1"] = {"anim@female_selfie_1st_01", "f_selfie_1st_01_clip", "Female 1st Person Selfie 1 (Smos)", AnimationOptions =
+{
+	EmoteLoop = true,
+	EmoteMoving = false,
+}},
+
+["fmodel1"] = {"anim@female_model_01", "f_model_01_clip", "Female Model Pose 1 (Smos)", AnimationOptions =
+{
+	EmoteLoop = true,
+	EmoteMoving = false,
+}},
+
+["fmodel2"] = {"anim@female_model_02", "f_model_02_clip", "Female Model Pose 2 (Smos)", AnimationOptions =
+{
+	EmoteLoop = true,
+	EmoteMoving = false,
+}},
+
+["fmodel3"] = {"anim@female_model_03", "f_model_03_clip", "Female Model Pose 3 (Smos)", AnimationOptions =
+{
+	EmoteLoop = true,
+	EmoteMoving = false,
+}},

@@ -1,0 +1,20 @@
+Installation:
+
+• In my Case using OpenIV,
+• mods > update > x64 > dlcpacks > customanims > dlc.rpf > x64 > anim > ingame > clip_mp_.rpf
+• Drag the .ycd files in the clip_mp_.rpf folder, to all of your other Anims
+
+
+FavouriteAnims.xml:
+
+• In my Case using OpenIV,
+• menyooStuff > FavouriteAnims.xml
+• be sure to have Edit Mode on, right Click on the XML and press Edit
+• copy and paste the following Line into your FavouriteAnims.xml and save it
+
+
+<Anim name="female_pose01_clip" dict="female_pose01@clyde"/>
+<Anim name="female_pose02_clip" dict="female_pose02@clyde"/>
+<Anim name="female_pose03_clip" dict="female_pose03@clyde"/>
+<Anim name="female_pose04_clip" dict="female_pose04@clyde"/>
+<Anim name="female_pose05_clip" dict="female_pose05@clyde"/>

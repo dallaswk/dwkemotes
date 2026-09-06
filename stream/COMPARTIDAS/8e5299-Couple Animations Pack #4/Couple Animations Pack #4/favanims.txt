@@ -1,0 +1,10 @@
+	<Anim dict="____________DRX ANIMATIONS________________" />
+	<Anim dict="drx@couple_male7" name="drx" />
+	<Anim dict="drx@couple_female7" name="drx" />
+	<Anim dict="drx@couple_male6" name="drx" />
+	<Anim dict="drx@couple_female6" name="drx" />
+	<Anim dict="drx@couple_male5" name="drx" />
+	<Anim dict="drx@couple_female5" name="drx" />
+
+Note: paste the lines in into your favoriteanims.xml file in your MenyooStuff folder.
+Thanks for Downloading! Join my Discord for more Animations https://discord.gg/drx-animations 

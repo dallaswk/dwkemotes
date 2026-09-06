@@ -1,0 +1,53 @@
+ ⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⠖⣡⡶⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             ⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⣀⣀⣀⠀⠀⢼⣿⢃⣾⣿⠁⢀⡴⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             ⠀⠀⠀⠀⠀⠀⢰⣧⣄⣠⣤⣾⠟⠋⠉⠉⠛⢷⣌⠃⢸⣿⣇⠀⣾⣷⡀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             ⠀⠀⠀⠀⠀⠀⠈⠛⠿⣯⣭⣤⣤⣴⣦⣄⡀⠀⢹⡆⠸⣿⣿⠀⢹⡿⣿⡄⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣄⣀⠉⠙⢿⣄⢨⣿⠀⣿⣿⡇⢸⡇⢻⣷⠀⠀⠀⣴⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             ⠀⠀⠀⢀⠀⠐⠒⠚⢛⣛⣻⣿⣷⣦⠈⣿⣾⠇⢠⣿⡿⠀⣼⠇⢀⣿⠀⠀⣸⣷⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             ⠀⠀⠀⠈⢷⣦⣴⣾⣿⣿⠿⠛⠛⣿⢠⣿⠏⠐⠛⣉⣠⡾⠋⠀⣼⠏⠀⣰⣿⣿⡄⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             ⠀⠀⠀⠀⠀⠉⠉⠉⠉⠀⠀⢀⡠⢃⠾⠛⠛⠿⢿⣿⣭⣤⣴⠟⠃⣠⣼⣿⣿⡿⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀         ⠀⠀⠀⠀⠀⠀⠀⣼⠏⠀⠀⢰⠀⠚⠛⠓⠲⣶⣶⣶⣶⠿⢿⣛⣛⡁⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀         ⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠈⢷⣄⣀⣠⣖⠈⠻⣿⣿⣷⡈⢿⣿⣷⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀           ⠀⠀⢸⣿⣧⡀⢠⣇⠀⢈⡿⣿⣿⡷⠀⠘⣿⣿⣷⠈⢿⣿⣆⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             ⠀⠀⣿⣿⡷⢸⡿⣿⡿⠃⠸⣇⠀⠀⠀⢸⣿⡿⠀⠀⠉⠛⠿⠋
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀         ⠀⠀⠀⠀⠀⡠⠾⣿⣿⠣⣾⠀⠀⠀⠀⢰⡿⠀⠀⠀⢸⡿⠃⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀          ⠀⢠⣤⣄⢸⣦⠘⢸⢣⡀⠈⠻⣦⣄⠀⠈⠁⠀⠀⠀⠊⠁⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ __      __ ⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⢹⠣⠏⠙⣷⡈⢼⣷⣄⠀⠙⣿⡇⠀⠀⠀⠀⠀⠀                _       ⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \ \    / / ⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⣴⡏⠀⠀⣿⠇⡼⠋⠻⠆⠀⣿⣟⠀⠀⠀⠀⠀⠀               | |      ⠀⠀⠀⠀⠀⠀⠀⠀
+⠀_ __     ____  \ \  / /  __ _⠀⠀    ⠀⢿⢳⡄⢈⡟⣠⡶⠆⠀⡆⠀⠇⠘⠀ _ __ ___    ____    __ | |  ___ 
+| '_ \   / _  \  \ \/ /  / _` |⠀   ⠀⢸⣯⣴⠏⣼⠋⠀⠀⢸⡇⡠⠀⠀ ⠀| '_ ` _ \  /  _ \  /  _` | / __|
+| | | | | (_)  |  \  /  | (_| |⠀⠀⠀⠀⠀⠛⠛⢁⣼⠇⠀⠀⠀⣼⣿⠁⠀⠀  | | | | | | | (_) | | (_| | \__ \
+|_| |_|  \____/    \/    \__,_|⠀⠀  ⢀⣼⡶⠟⠉⠀⠀⠀⢀⣿⠃⠀   |_| |_| |_|  \____/  \__ ,_| |___/
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        ⠀⣤⣶⡿⠋⠀⠀⠀⠀⠀⠲⠿⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+---------------------------------- ♥ --- ♥ -----------------------------------
+
+
+	<Anim dict="female_sitting_skateboard2@francis" name="female_sitting_skateboard2_clip" />
+	<Anim dict="f_sb_smoking@missi" name="f_sb_smoking_clip" />
+	<Anim dict="skateboard_holding_girl@michyrou" name="skateboard_holding_girl_clip" />
+	<Anim dict="skateboard_standup_male@michyrou" name="skateboard_standup_male_clip" />
+	<Anim dict="skateboard_sassy@francis" name="skateboard_sassy_clip" />
+	<Anim dict="f_cool_skateboard@missi" name="f_cool_skateboard_clip" />
+
+-------------------------------------------------------------------------------
+
+https://discord.gg/nova-mods
+
+--------!Selling, sharing or distributing these mods under another name is strictly prohibited!----------
+
+-------------------------------------------------------------------------------
+
+-------- ♥ SP Installation to use Menyoo ♥ --------
+
+Our Server noVa mods use the mod "addonprops" which you can find here https://www.gta5-mods.com/tools/addonprops
+
+Download https://www.gta5-mods.com/tools/addonprops and install it according to instructions from this site
+Put the .ycd files in your new addonprops folder and add our animations to your FavouriteAnims.xml (use the lines above)
+
+
+-------- ♥ FiveM Installation ♥ --------
+We dont give a plug and play version or script support for Five because there are too many ways for installation
+Please open a ticket and ask for using our mods for your server
+Also we do not offer script support, you have to get them to work by yourself!
+
+------------------------------ ♥♥ Anim by Francis, Missi, Michyrou ♥♥ ---------------------------

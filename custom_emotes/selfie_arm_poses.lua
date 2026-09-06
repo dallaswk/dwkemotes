@@ -11,37 +11,37 @@ local CustomDP = {}
 CustomDP.Emotes = {
     ["selfiearm1"] = {
         "smo@selfie_arm_01",
-        "selfiearm1_clip",
+        "selfie_arm_01_clip",
         "Selfie Arm 1",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
     ["selfiearm2"] = {
         "smo@selfie_arm_02",
-        "selfiearm2_clip",
+        "selfie_arm_02_clip",
         "Selfie Arm 2",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
     ["selfiearm3"] = {
         "smo@selfie_arm_03",
-        "selfiearm3_clip",
+        "selfie_arm_03_clip",
         "Selfie Arm 3",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
     ["selfiearm4"] = {
         "smo@selfie_arm_04",
-        "selfiearm4_clip",
+        "selfie_arm_04_clip",
         "Selfie Arm 4",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
     ["selfiearm5"] = {
         "smo@selfie_arm_05",
-        "selfiearm5_clip",
+        "selfie_arm_05_clip",
         "Selfie Arm 5",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
     ["selfiearm6"] = {
         "smo@selfie_arm_06",
-        "selfiearm6_clip",
+        "selfie_arm_06_clip",
         "Selfie Arm 6",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },

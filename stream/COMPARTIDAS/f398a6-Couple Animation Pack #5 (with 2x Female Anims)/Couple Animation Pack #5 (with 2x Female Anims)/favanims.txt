@@ -1,0 +1,16 @@
+
+	<Anim dict="____________DRX ANIMATIONS________________" />
+	<Anim dict="drx@c_valentine_f_romantic" name="drx" />
+	<Anim dict="drx@c_valentine_m_romantic" name="drx" />
+	<Anim dict="drx@c_valentine_f_gethug" name="drx" />
+	<Anim dict="drx@c_valentine_m_huggirl" name="drx" />
+	<Anim dict="drx@c_valentine_f_luvlook" name="drx" />
+	<Anim dict="drx@c_valentine_m_luvlook" name="drx" />
+	<Anim dict="drx@c_valentine_f_getkiss" name="drx" />
+	<Anim dict="drx@c_valentine_m_kissgirl" name="drx" />
+	<Anim dict="____________2x FEMALE SINGLE ANIM________________" />
+	<Anim dict="drx@valentine_f_rosehead" name="drx" />
+	<Anim dict="drx@valentine_f_holdrose" name="drx" />
+
+Note: paste the lines in into your favoriteanims.xml file in your MenyooStuff folder.
+Thanks for Downloading! Join my Discord for more Animations https://discord.gg/drx-animations 
