@@ -9,18 +9,15 @@ if not ENABLED then return end
 local CustomDP = {}
 
 CustomDP.Emotes = {
-    ["glockygdk1"] = {
-        "gdk@1@94glocky",
-        "gdk1_clip",
-        "Glocky GDK 1",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
     ["glockygdk2"] = {
         "gdk@2@94glocky",
         "gdk2_clip",
         "Glocky GDK 2",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
+}
+
+CustomDP.PropEmotes = {
     ["glockytata"] = {
         "oyk@tata@94glocky",
         "tataoyk_clip",

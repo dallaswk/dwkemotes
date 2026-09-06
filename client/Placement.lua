@@ -2,6 +2,11 @@
 local SMALL_CHANGE_AMOUNT = 0.01
 local LARGE_CHANGE_AMOUNT = 2.5
 
+-- Cuanto puede despegarse del suelo la ped con R / F. Configurable porque el
+-- tope de antes (0.3 arriba) se quedaba corto para colocar sobre mobiliario.
+local MAX_HEIGHT_UP = Config.PlacementMaxHeightUp or 0.3
+local MAX_HEIGHT_DOWN = Config.PlacementMaxHeightDown or 0.5
+
 local placementState = PlacementState.NONE
 ---@type vector4
 local placementPosition
@@ -356,11 +361,11 @@ local function positionPreviewPed(emoteName)
             elseif IsDisabledControlPressed(0, 45) then
                 upDownOffset += SMALL_CHANGE_AMOUNT
 
-                if upDownOffset >= 0.3 then upDownOffset = 0.3 end
+                if upDownOffset >= MAX_HEIGHT_UP then upDownOffset = MAX_HEIGHT_UP end
             elseif IsDisabledControlPressed(0, 49) then
                 upDownOffset -= SMALL_CHANGE_AMOUNT
 
-                if upDownOffset <= -0.5 then upDownOffset = -0.5 end
+                if upDownOffset <= -MAX_HEIGHT_DOWN then upDownOffset = -MAX_HEIGHT_DOWN end
             elseif IsDisabledControlPressed(0, 33) then
                 moveForwardBack += SMALL_CHANGE_AMOUNT
 
@@ -464,8 +469,15 @@ function CleanUpPlacement(ped)
         local pedCoords = GetEntityCoords(ped)
         local foundGround, groundZ = GetGroundZFor_3dCoord(pedCoords.x, pedCoords.y, pedCoords.z, false)
 
-        -- No ground found, or ground > 3 units away, or diff between start & end Z > 1 unit
-        if not foundGround or math.abs(pedCoords.z - groundZ) > 3 or math.abs(pedCoords.z - positionPriorToPlacement.z) > 1 then
+        -- Sin suelo, demasiado despegado de el, o demasiada diferencia de Z
+        -- entre donde empezo y donde acabo. Los dos margenes crecen con lo que
+        -- permita Config.PlacementMaxHeight*, o elevar la ped a proposito se
+        -- leeria como abuso y la devolveria al sitio nada mas soltar la emote.
+        local groundTolerance = 3 + MAX_HEIGHT_UP
+        local heightDiff = pedCoords.z - positionPriorToPlacement.z
+
+        if not foundGround or math.abs(pedCoords.z - groundZ) > groundTolerance
+            or heightDiff > 1 + MAX_HEIGHT_UP or heightDiff < -(1 + MAX_HEIGHT_DOWN) then
             SetEntityCoordsNoOffset(ped, positionPriorToPlacement.x, positionPriorToPlacement.y, positionPriorToPlacement.z, true, true, true)
         end
     end

@@ -8,7 +8,7 @@ if not ENABLED then return end
 ---@diagnostic disable-next-line: missing-fields
 local CustomDP = {}
 
-CustomDP.Emotes = {
+CustomDP.PropEmotes = {
     ["glockydoak2"] = {
         "doak@2@94glocky",
         "doak2_clip",
@@ -37,30 +37,6 @@ CustomDP.Emotes = {
                 345.00
             },
         },
-    },
-    ["glockygunposefrom"] = {
-        "gunpose@from94",
-        "gunpose_clip",
-        "Glocky Gun Pose From",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["glockyslimekf2"] = {
-        "slime@kf2@94glocky",
-        "slimekf2_clip",
-        "Glocky Slime KF2",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["glockyslimeoyk"] = {
-        "slime@oyk@94glocky",
-        "slimeoyk_clip",
-        "Glocky Slime Oyk",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["glockysmmmbf"] = {
-        "smm@mbf@94glocky",
-        "smmmbf_clip",
-        "Glocky SMM MBF",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
 }
 

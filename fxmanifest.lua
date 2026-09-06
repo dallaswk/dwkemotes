@@ -159,6 +159,11 @@ data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_shaker.ytyp'
 
 data_file 'DLC_ITYP_REQUEST' 'stream/ityp_mne_pops.ytyp'
 
+-- Props propios del recurso (stream/[Props]/dwk/). No pertenecen a ningun pack
+-- de terceros ni al MLO Midnight: se streamean desde aqui y estan pensados para
+-- usarse a mano desde el editor de props, que los ofrece via PropEditorCatalog.
+data_file 'DLC_ITYP_REQUEST' 'stream/ityp_dwk_leancup.ytyp'
+
 
 -- ═════════════════════════════════════════════════════════════════════════════
 -- Editor de props en vivo (propeditor/)

@@ -9,6 +9,27 @@ if not ENABLED then return end
 local CustomDP = {}
 
 CustomDP.Emotes = {
+    ["causezzsign1"] = {
+        "causezzsign1@gangsign",
+        "barrio_clip",
+        "Causezz Sign 2",
+        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+    },
+    ["causezzsign2"] = {
+        "causezzsign2@gangsign",
+        "barrio_clip",
+        "Causezz Sign 3",
+        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+    },
+    ["causezzgangsign5"] = {
+        "causezzgangsign5@gangsign",
+        "mexican_clip",
+        "Causezz Sign 5",
+        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+    },
+}
+
+CustomDP.PropEmotes = {
     ["causezz1"] = {
         "causezz1@gangsign",
         "barriosign_clip",
@@ -29,18 +50,6 @@ CustomDP.Emotes = {
                 2.0
             },
         },
-    },
-    ["causezzsign1"] = {
-        "causezzsign1@gangsign",
-        "barrio_clip",
-        "Causezz Sign 2",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["causezzsign2"] = {
-        "causezzsign2@gangsign",
-        "barrio_clip",
-        "Causezz Sign 3",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
     ["causezzgangsign3"] = {
         "causezzgangsin3@gangsign",
@@ -70,12 +79,6 @@ CustomDP.Emotes = {
                 122.00
             },
         },
-    },
-    ["causezzgangsign5"] = {
-        "causezzgangsign5@gangsign",
-        "mexican_clip",
-        "Causezz Sign 5",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
 }
 

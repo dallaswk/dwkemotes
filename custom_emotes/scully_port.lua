@@ -94,14 +94,6 @@ Scully.Emotes = {
             onFootFlag = AnimFlag.MOVING
         }
     },
-    ["gangsign6"] = {
-        "qpacc@gangsign2",
-        "gangsign2_clip",
-        "Gang Sign 6",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING
-        }
-    },
     ["gangsign7"] = {
         "qpacc@gangsign3",
         "gangsign3_clip",
@@ -239,46 +231,6 @@ Scully.Emotes = {
             onFootFlag = AnimFlag.MOVING
         }
     },
-    ["handsup6"] = {
-        "anim@mp_rollarcoaster",
-        "hands_up_idle_a_player_one",
-        "Hands Up 6",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING
-        }
-    },
-    ["hhands2"] = {
-        "heart@hands1",
-        "base",
-        "Heart Hands 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING
-        }
-    },
-    ["hhands3"] = {
-        "heart@hands2",
-        "base",
-        "Heart Hands 3",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING
-        }
-    },
-    ["hidegun2"] = {
-        "fin_a_int-3",
-        "player_one_dual-3",
-        "Hide Gun 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING
-        }
-    },
-    ["lean7"] = {
-        "amb@world_human_leaning@male@wall@back@hands_together@idle_b",
-        "idle_b",
-        "Lean 7",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
     ["lean8"] = {
         "leaning_wall@holding_knee",
         "base",
@@ -293,15 +245,6 @@ Scully.Emotes = {
         "Lean 9",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["magic"] = {
-        "magic@dark_spell",
-        "base",
-        "Magic",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-            EmoteDuration = 1000
         }
     },
     ["modelpose2"] = {
@@ -400,34 +343,10 @@ Scully.Emotes = {
             onFootFlag = AnimFlag.LOOP
         }
     },
-    ["pose10"] = {
-        "perspective1@sharror",
-        "perspective1_clip",
-        "Pose 10",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["pose11"] = {
-        "perspective2@sharror",
-        "perspective2_clip",
-        "Pose 11",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
     ["pose12"] = {
         "stairpose1@sharror",
         "stairpose1_clip",
         "Pose 12",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["pose13"] = {
-        "stairpose2@sharror",
-        "stairpose2_clip",
-        "Pose 13",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
         }
@@ -540,14 +459,6 @@ Scully.Emotes = {
         "standfemale_sick@joker",
         "standfemale_sick_clip",
         "Stand Sick",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["standsick2"] = {
-        "femalestand3@joker",
-        "femalestand3_clip",
-        "Stand Sick 2",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
         }
@@ -1147,42 +1058,42 @@ Scully.PropEmotes = {
 
 -- Bailes con animacion propia
 Scully.Dances = {
-    ["fortnite"] = {
+    ["royale"] = {
         "custom@downward_fortnite",
         "Downward_fortnite",
-        "Fortnite - Downward",
+        "Royale - Downward",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
         }
     },
-    ["fortnite2"] = {
+    ["royale2"] = {
         "custom@pullup",
         "pullup",
-        "Fortnite - Pullup",
+        "Royale - Pullup",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
         }
     },
-    ["fortnite3"] = {
+    ["royale3"] = {
         "custom@rollie",
         "rollie",
-        "Fortnite - Rollie",
+        "Royale - Rollie",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
         }
     },
-    ["fortnite4"] = {
+    ["royale4"] = {
         "custom@wanna_see_me",
         "wanna_see_me",
-        "Fortnite - Wanna See Me",
+        "Royale - Wanna See Me",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
         }
     },
-    ["fortnite5"] = {
+    ["royale5"] = {
         "custom@billybounce",
         "billybounce",
-        "Fortnite - Billy Bounce",
+        "Royale - Billy Bounce",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
         }

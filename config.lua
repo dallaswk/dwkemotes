@@ -169,6 +169,13 @@ Config = {
     PlacementEnabled = true,
     DisablePlacementKeybindWhileMoving = true, -- When true, you cannot enter placement mode while moving. This only affects the keybind.
 
+    -- Cuanto se puede separar del suelo la ped con R / F al colocarla, en metros.
+    -- El limite de subida tambien ensancha el control anti-abuso que hay al
+    -- terminar la emote: sin eso, cualquier colocacion por encima de 1 m
+    -- devolvia al jugador a donde estaba antes de colocarse.
+    PlacementMaxHeightUp = 2.0,   -- Antes estaba fijo en 0.3
+    PlacementMaxHeightDown = 1.0, -- Antes estaba fijo en 0.5
+
     -- Old Props Spawning
     UseOldPropSpawning = false, -- Uses networked objects spawned client-side, for props. Only use this when you have issues spawning props.
 

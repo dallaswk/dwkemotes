@@ -15,25 +15,6 @@ CustomDP.Emotes = {
         "Male Pose 1",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
-    ["posepack2"] = {
-        "posepack2@diday",
-        "posepack2_clip",
-        "Male Pose 2",
-        AnimationOptions = {
-            EmoteLoop = true,
-            EmoteMoving = false,
-            Prop = 'mne_can_m',
-            PropBone = 60309,
-            PropPlacement = {
-                0.080,
-                0.050,
-                0.040,
-                263.00,
-                49.00,
-                347.00
-            },
-        },
-    },
     ["posepack3"] = {
         "posepack3@diday",
         "posepack3_clip",
@@ -57,6 +38,28 @@ CustomDP.Emotes = {
         "posepack6_clip",
         "Male Pose 6",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+    },
+}
+
+CustomDP.PropEmotes = {
+    ["posepack2"] = {
+        "posepack2@diday",
+        "posepack2_clip",
+        "Male Pose 2",
+        AnimationOptions = {
+            EmoteLoop = true,
+            EmoteMoving = false,
+            Prop = 'mne_can_m',
+            PropBone = 60309,
+            PropPlacement = {
+                0.080,
+                0.050,
+                0.040,
+                263.00,
+                49.00,
+                347.00
+            },
+        },
     },
 }
 

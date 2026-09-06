@@ -9,41 +9,6 @@ if not ENABLED then return end
 local CustomDP = {}
 
 CustomDP.Emotes = {
-    ["flexonem"] = {
-        "flexonem@poppin",
-        "flexonem_clip",
-        "Poppin Flex On Em",
-        AnimationOptions = {
-            EmoteLoop = true,
-            EmoteMoving = false,
-            Prop = 'p_banknote_onedollar_s',
-            PropBone = 60309,
-            PropPlacement = {
-                0.0,
-                0.0,
-                -0.16,
-                90.0,
-                0.0,
-                0.0
-            },
-            SecondProp = 'p_banknote_onedollar_s',
-            SecondPropBone = 28422,
-            SecondPropPlacement = {
-                0.0,
-                0.0,
-                -0.16,
-                90.0,
-                0.0,
-                0.0
-            },
-        },
-    },
-    ["fuckmyopps"] = {
-        "fuckmyopps@poppin",
-        "fuckmyopps_clip",
-        "Poppin Fuck My Opps",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
     ["penetrateem"] = {
         "penetrateem@poppin",
         "penetrateem_clip",
@@ -62,6 +27,27 @@ CustomDP.Emotes = {
         "Poppin Pose 3",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
+    ["posepoppin5"] = {
+        "posepoppin5@anim",
+        "posepoppin5_clip",
+        "Pose Poppin 5",
+        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+    },
+    ["pose5poppin"] = {
+        "pose5@poppin",
+        "pose5_clip",
+        "Poppin Pose 5",
+        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+    },
+    ["pose9poppin"] = {
+        "pose9@poppin",
+        "pose9_clip",
+        "Poppin Pose 9",
+        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+    },
+}
+
+CustomDP.PropEmotes = {
     ["posepoppin3"] = {
         "posepoppin3@anim",
         "posepoppin3_clip",
@@ -81,24 +67,6 @@ CustomDP.Emotes = {
             },
         },
     },
-    ["posepoppin4"] = {
-        "posepoppin4@anim",
-        "posepoppin4_clip",
-        "Pose Poppin 4",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["posepoppin5"] = {
-        "posepoppin5@anim",
-        "posepoppin5_clip",
-        "Pose Poppin 5",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["posepoppin6"] = {
-        "posepoppin6@anim",
-        "posepoppin6_clip",
-        "Pose Poppin 6",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
     ["pose3poppin"] = {
         "pose3@poppin",
         "pose3_clip",
@@ -117,36 +85,6 @@ CustomDP.Emotes = {
                 330.00
             },
         },
-    },
-    ["pose5poppin"] = {
-        "pose5@poppin",
-        "pose5_clip",
-        "Poppin Pose 5",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["pose6poppin"] = {
-        "pose6@poppin",
-        "pose6_clip",
-        "Poppin Pose 6",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["pose8poppin"] = {
-        "pose8@poppin",
-        "pose8_clip",
-        "Poppin Pose 8",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["pose9poppin"] = {
-        "pose9@poppin",
-        "pose9_clip",
-        "Poppin Pose 9",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["pose10poppin"] = {
-        "pose10@poppin",
-        "pose10_clip",
-        "Poppin Pose 10",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
 }
 

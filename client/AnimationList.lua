@@ -71,10 +71,6 @@ RP.Expressions = { ---- MOODS ----
         "smoking_inhale_1",
         "Mouthbreather 2"
     },
-    ["Neverblink"] = {
-        "pose_normal_1",
-        "Never Blink"
-    },
     ["Oneeye"] = {
         "pose_aiming_1",
         "One Eye"
@@ -103,10 +99,6 @@ RP.Expressions = { ---- MOODS ----
     ["Smug"] = {
         "mood_smug_1"
     },
-    ["Smug2"] = {
-        "mood_dancing_medium_4",
-        "Smug 2"
-    },
     ["Speculative"] = {
         "mood_aiming_1"
     },
@@ -119,10 +111,6 @@ RP.Expressions = { ---- MOODS ----
     ["Talking"] = {
         "mood_talking_1",
         "Talking"
-    },
-    ["Twitch"] = {
-        "mood_skydive_1",
-        "Twitch"
     },
     ["Sulking"] = {
         "mood_sulk_1"
@@ -1070,28 +1058,6 @@ RP.Shared = {
             bone = 0,
             pos = vector3(0.2700, 0.1200, 0.0000),
             rot = vector3(0.0000, 0.0000, 0.0000),
-        }
-    },
-    ["couplehhands"] = { -- Male Custom emote by Amnilka
-        "amnilka@photopose@couple@couplefirst",
-        "amnilka_couple_mal_005",
-        "Couple Heart Hands",
-        "couplehhands2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["couplehhands2"] = { -- Female Custom emote by Amnilka
-        "amnilka@photopose@couple@couplefirst",
-        "amnilka_couple_fem_005",
-        "Couple Heart Hands 2",
-        "couplehhands",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-            Attachto = true,
-            bone = 0,
-            pos = vector3(-0.1230, 0.4740, 0.0000),
-            rot = vector3(0.0000, 0.0000, 94.0000),
         }
     },
     ["couplewed1a"] = { -- Male Custom emote by EnchantedBrwny
@@ -5511,11 +5477,6 @@ RP.Emotes = {
         "WORLD_HUMAN_PROSTITUTE_LOW_CLASS",
         "Prostitue Low"
     },
-    ["puddle"] = {
-        ScenarioType.SCENARIO,
-        "WORLD_HUMAN_BUM_WASH",
-        "Puddle"
-    },
     ["record"] = {
         ScenarioType.SCENARIO,
         "WORLD_HUMAN_MOBILE_FILM_SHOCKING",
@@ -5847,15 +5808,6 @@ RP.Emotes = {
         "Stop",
         AnimationOptions = {
             onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["sitsad3"] = { -- Custom Emote By EnchantedBrwny
-        "ebrwny_pack000",
-        "ebrwny_sitf000",
-        "Sit Sad 3",
-        AnimationOptions = {
-			onFootFlag = AnimFlag.LOOP,
-			ExitEmote = "getup",
         }
     },
     ["sitsad4"] = { -- Custom Emote By EnchantedBrwny
@@ -6294,22 +6246,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
         }
     },
-    ["foldarms"] = {
-        "anim@amb@business@bgen@bgen_no_work@",
-        "stand_phone_phoneputdown_idle_nowork",
-        "Fold Arms",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["foldarms2"] = {
-        "anim@amb@nightclub@peds@",
-        "rcmme_amanda1_stand_loop_cop",
-        "Fold Arms 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
     ["crossarmsside"] = {
         "rcmnigel1a_band_groupies",
         "base_m2",
@@ -6411,15 +6347,6 @@ RP.Emotes = {
             ExitEmote = "surrender_exit",
         }
     },
-    ["surrender6"] = {
-        "rcmbarry",
-        "m_cower_01",
-        "Surrender 6",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-            ExitEmote = "getup",
-        }
-    },
     ["surrender7"] = {
         "anim@scripted@bty4@ig2_bounty_kneel@male@",
         "on_knee_idle_a",
@@ -6502,14 +6429,6 @@ RP.Emotes = {
         "mp_sleep",
         "sleep_loop",
         "Fall Asleep",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["fallasleep2"] = {
-        "mp_sleep",
-        "sleep_loopfemale",
-        "Fall Asleep 2",
         AnimationOptions = {
             onFootFlag = AnimFlag.MOVING,
         }
@@ -6787,7 +6706,7 @@ RP.Emotes = {
     ["kneelthot"] = {
         "anim@model_kylie_insta",
         "kylie_insta_clip",
-        "Kneel Thot Instagram",
+        "Kneel Thot Instapic",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
             StartDelay = 200,
@@ -7223,14 +7142,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.MOVING,
         }
     },
-    ["salute2"] = {
-        "anim@mp_player_intincarsalutestd@ps@",
-        "idle_a",
-        "Salute 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
     ["salute3"] = {
         "anim@mp_player_intuppersalute",
         "idle_a",
@@ -7450,22 +7361,6 @@ RP.Emotes = {
         "shamrock@wallpose2",
         "pose",
         "Wall Pose 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["wallpose3"] = { -- Credit to LadyyShamrockk for this custom emote
-        "shamrock@wallpose3",
-        "pose",
-        "Wall Pose 3",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["wallpose4"] = { -- Credit to LadyyShamrockk for this custom emote
-        "shamrock@wallpose4",
-        "pose",
-        "Wall Pose 4",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
         }
@@ -7741,49 +7636,6 @@ RP.Emotes = {
             PtfxCanHold = true
         }
     },
-    ['smokendrink'] = { -- Custom Emote By Darks Animations
-        "drx@male_smoke",
-        "male_smoke",
-        "Smoke And Whiskey",
-        AnimationOptions = {
-            Prop = 'prop_drink_whisky',
-            PropBone = 26612,
-            PropPlacement = {
-                0.0500,
-               -0.0700,
-               -0.0500,
-                0.0,
-                0.0,
-                0.0
-            },
-            SecondProp = 'ng_proc_cigarette01a',
-            SecondPropBone = 64113,
-            SecondPropPlacement = {
-                0.0270,
-                0.0080,
-                0.0050,
-              -11.6920,
-              -78.3079,
-                7.9470
-            },
-            onFootFlag = AnimFlag.MOVING,
-            PtfxAsset = "scr_mp_cig",
-            PtfxName = "ent_anim_cig_smoke",
-            PtfxNoProp = false,
-            PtfxPlacement = {
-               -0.07,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('smoke'),
-            PtfxWait = 0.8,
-            PtfxCanHold = true
-        }
-    },
     ["clapangry"] = {
         "anim@arena@celeb@flat@solo@no_props@",
         "angry_clap_a_player_a",
@@ -7820,14 +7672,6 @@ RP.Emotes = {
         "anim@mp_player_intcelebrationmale@slow_clap",
         "slow_clap",
         "Slow Clap 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["smell"] = {
-        "move_p_m_two_idles@generic",
-        "fidget_sniff_fingers",
-        "Smell",
         AnimationOptions = {
             onFootFlag = AnimFlag.MOVING,
         }
@@ -8045,14 +7889,6 @@ RP.Emotes = {
         "Type 5 - Stare",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["warmth"] = {
-        "amb@world_human_stand_fire@male@idle_a",
-        "idle_a",
-        "Warmth",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
         }
     },
     ["wave4"] = {
@@ -8506,22 +8342,6 @@ RP.Emotes = {
             onFootFlag = AnimFlag.MOVING,
         }
     },
-    ["peace5"] = {
-        "anim@mp_player_intincarpeacestd@ds@",
-        "idle_a_fp",
-        "Peace 5",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["peace6"] = {
-        "anim@mp_player_intincarpeacebodhi@ds@",
-        "idle_a",
-        "Peace 6",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
     ["peace7"] = {
         "anim@mp_player_intincarpeacebodhi@ds@",
         "idle_a_fp",
@@ -8938,15 +8758,6 @@ RP.Emotes = {
             ExitEmote = "getup",
         }
     },
-    ["fspose"] = {
-        "missfam5_yoga",
-        "c2_pose",
-        "F Sex Pose",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        },
-        AdultAnimation = true
-    },
     ["showerf"] = {
         "mp_safehouseshower@female@",
         "shower_enter_into_idle",
@@ -8983,14 +8794,6 @@ RP.Emotes = {
         "mp_safehouseshower@male@",
         "male_shower_idle_b",
         "Shower Male 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP
-        }
-    },
-    ["showerm3"] = {
-        "mp_safehouseshower@male@",
-        "male_shower_idle_c",
-        "Shower Male 3",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP
         }
@@ -9197,30 +9000,6 @@ RP.Emotes = {
         },
         AdultAnimation = true
     },
-    ["pee2"] = {
-        "missbigscore1switch_trevor_piss",
-        "piss_loop",
-        "Pee 2 (Male)",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-            PtfxAsset = "scr_amb_chop",
-            PtfxName = "ent_anim_dog_peeing",
-            PtfxNoProp = true,
-            PtfxPlacement = {
-                0.0130,
-                0.1030,
-                0.0,
-                0.0,
-                90.0,
-                90.0,
-                1.0
-            },
-            PtfxInfo = Translate('pee'),
-            PtfxWait = 0,
-            PtfxCanHold = true,
-        },
-        AdultAnimation = true
-    },
     ["pee3"] = {
         "missbigscore1switch_trevor_piss",
         "piss_loop",
@@ -9267,24 +9046,6 @@ RP.Emotes = {
         "anim@mp_player_intupperwank",
         "idle_a",
         "Wank 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        },
-        AdultAnimation = true
-    },
-    ["wank3"] = {
-        "mp_player_int_upperwank",
-        "mp_player_int_wank_02",
-        "Wank 3",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        },
-        AdultAnimation = true
-    },
-    ["wank4"] = {
-        "mp_player_int_upperwank",
-        "mp_player_int_wank_02_fp",
-        "Wank 4",
         AnimationOptions = {
             onFootFlag = AnimFlag.MOVING,
         },
@@ -9361,24 +9122,6 @@ RP.Emotes = {
             EmoteDuration = 2000
         }
     },
-	["cartauntb"] = {
-        "missarmenian1driving_taunts@lamar_1",
-        "cmonmynigga",
-        "Car Taunt 2",
-        AnimationOptions = {
-            vehicleRequirement = VehicleRequirement.REQUIRED,
-            EmoteDuration = 2000
-        }
-    },
-	["cartauntc"] = {
-        "missarmenian1driving_taunts@lamar_1",
-        "hahahakeepup",
-        "Car Taunt 3",
-        AnimationOptions = {
-            vehicleRequirement = VehicleRequirement.REQUIRED,
-            EmoteDuration = 2000
-        }
-    },
 	["cartauntd"] = {
         "missarmenian1driving_taunts@lamar_1",
         "manthisismeanttobe",
@@ -9397,33 +9140,6 @@ RP.Emotes = {
             EmoteDuration = 3000
         }
     },
-	["cartauntf"] = {
-        "missarmenian1driving_taunts@lamar_1",
-        "skoolinyoass",
-        "Car Taunt 6",
-        AnimationOptions = {
-            vehicleRequirement = VehicleRequirement.REQUIRED,
-            EmoteDuration = 3000
-        }
-    },
-	["cartauntg"] = {
-        "missarmenian1driving_taunts@lamar_1",
-        "youaintfuckin",
-        "Car Taunt 7",
-        AnimationOptions = {
-            vehicleRequirement = VehicleRequirement.REQUIRED,
-            EmoteDuration = 2000
-        }
-    },
-	["cartaunth"] = {
-        "missarmenian1driving_taunts@franklin",
-        "heyidontneedanybody",
-        "Car Taunt 8",
-        AnimationOptions = {
-            vehicleRequirement = VehicleRequirement.REQUIRED,
-            EmoteDuration = 2000
-        }
-    },
 	["cartaunti"] = {
         "missarmenian1driving_taunts@franklin",
         "heymotherfuckayoudriveslowasfuck",
@@ -9431,24 +9147,6 @@ RP.Emotes = {
         AnimationOptions = {
             vehicleRequirement = VehicleRequirement.REQUIRED,
             EmoteDuration = 3000
-        }
-    },
-	["cartauntj"] = {
-        "missarmenian1driving_taunts@franklin",
-        "kids_on_bicycles",
-        "Car Taunt 10",
-        AnimationOptions = {
-            vehicleRequirement = VehicleRequirement.REQUIRED,
-            EmoteDuration = 2000
-        }
-    },
-	["cartauntk"] = {
-        "missarmenian1driving_taunts@franklin",
-        "learnhowtouseastick",
-        "Car Taunt 11",
-        AnimationOptions = {
-            vehicleRequirement = VehicleRequirement.REQUIRED,
-            EmoteDuration = 2000
         }
     },
 	["cartauntl"] = {
@@ -9464,15 +9162,6 @@ RP.Emotes = {
         "mp_intro_seq@mcs_7_race_taunt",
         "mcs_7_taunt_female",
         "Car Taunt 13",
-        AnimationOptions = {
-            vehicleRequirement = VehicleRequirement.REQUIRED,
-            EmoteDuration = 5000
-        }
-    },
-	["cartauntn"] = {
-        "mp_intro_seq@mcs_7_race_taunt",
-        "mcs_7_taunt_male",
-        "Car Taunt 14",
         AnimationOptions = {
             vehicleRequirement = VehicleRequirement.REQUIRED,
             EmoteDuration = 5000
@@ -9700,14 +9389,6 @@ RP.Emotes = {
             EmoteDuration = 5000
         }
     },
-    ["shaka"] = {
-        "sign@hang_loose",
-        "base",
-        "Shaka 'Hang Loose'",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
     ["shaka2"] = {
         "sign@hang_loose_casual",
         "base",
@@ -9762,26 +9443,10 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
         }
     },
-    ["sexypose2"] = { -- Custom Emote By Little Spoon
-        "littlespoon@sexy004",
-        "sexy004",
-        "Sexy Pose 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
     ["sexypose3"] = { -- Custom Emote By Little Spoon
         "littlespoon@sexy005",
         "sexy005",
         "Sexy Pose 3",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["sexypose4"] = { -- Custom Emote By Little Spoon
-        "littlespoon@sexy006",
-        "sexy006",
-        "Sexy Pose 4",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
         }
@@ -9798,14 +9463,6 @@ RP.Emotes = {
         "littlespoon@sexy012",
         "sexy012",
         "Sexy Pose 6",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["sexypose7"] = { -- Custom Emote By Darks Animations
-        "bad_girls_pose3@darks37",
-        "bad_girls_pose3_clip",
-        "Sexy Pose 7",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
         }
@@ -10404,26 +10061,10 @@ RP.Emotes = {
             onFootFlag = AnimFlag.LOOP,
         }
     },
-    ["aphroditepose"] = { -- Custom Emote provided by corbs
-        "aphrodite1@corbs",
-        "aphrodite1_clip",
-        "Aphrodite Pose",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
     ["aphroditepose2"] = { -- Custom Emote provided by corbs
         "aphrodite2@corbs",
         "aphrodite2_clip",
         "Aphrodite Pose 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-        }
-    },
-    ["aphroditepose3"] = { -- Custom Emote provided by corbs
-        "aphrodite3@corbs",
-        "aphrodite3_clip",
-        "Aphrodite Pose 3",
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
         }
@@ -17997,25 +17638,6 @@ RP.PropEmotes = {
             onFootFlag = AnimFlag.MOVING,
         }
     },
-    ["jerkf"] = {
-        "switch@trevor@jerking_off",
-        "trev_jerking_off_loop",
-        "JerkOff! Female",
-        AnimationOptions = {
-            Prop = 'prop_cs_dildo_01',
-            PropBone = 28422,
-            PropPlacement = {
-                0.09,
-                0.05,
-                -0.03,
-                90.0,
-                80.0,
-                30.0
-            },
-            onFootFlag = AnimFlag.MOVING,
-        },
-        AdultAnimation = true
-    },
     ["hoe"] = {
         "anim@amb@drug_field_workers@rake@male_a@base",
         "base",
@@ -19362,7 +18984,7 @@ RP.PropEmotes = {
     ["selfiethot"] = { -- Struggleville
         "anim@sitting_thot",
         "sitting_thot_clip",
-        "Selfie Thot Instagram",
+        "Selfie Thot Instapic",
         AnimationOptions = {
             Prop = "prop_phone_ing",
             PropTextureVariations = {
@@ -19405,7 +19027,7 @@ RP.PropEmotes = {
     ["selfiefloor"] = { -- Custom Emote By Struggleville
         "anim@selfie_floor_cute",
         "floor_cute_clip",
-        "Selfie Floor Instagram",
+        "Selfie Floor Instapic",
         AnimationOptions = {
             Prop = "prop_phone_ing",
             PropTextureVariations = {
@@ -24343,6 +23965,49 @@ RP.PropEmotes = {
                 0.0711684
             },
             onFootFlag = AnimFlag.LOOP,
+        }
+    },
+    ['smokendrink'] = { -- Custom Emote By Darks Animations
+        "drx@male_smoke",
+        "male_smoke",
+        "Smoke And Whiskey",
+        AnimationOptions = {
+            Prop = 'prop_drink_whisky',
+            PropBone = 26612,
+            PropPlacement = {
+                0.0500,
+               -0.0700,
+               -0.0500,
+                0.0,
+                0.0,
+                0.0
+            },
+            SecondProp = 'ng_proc_cigarette01a',
+            SecondPropBone = 64113,
+            SecondPropPlacement = {
+                0.0270,
+                0.0080,
+                0.0050,
+              -11.6920,
+              -78.3079,
+                7.9470
+            },
+            onFootFlag = AnimFlag.MOVING,
+            PtfxAsset = "scr_mp_cig",
+            PtfxName = "ent_anim_cig_smoke",
+            PtfxNoProp = false,
+            PtfxPlacement = {
+               -0.07,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            },
+            PtfxInfo = Translate('smoke'),
+            PtfxWait = 0.8,
+            PtfxCanHold = true
         }
     },
 }

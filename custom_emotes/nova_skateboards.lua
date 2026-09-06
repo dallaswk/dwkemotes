@@ -9,10 +9,14 @@ if not ENABLED then return end
 local CustomDP = {}
 
 CustomDP.Emotes = {
-    ["skatesit2"] = {
+    -- skatesit3, no skatesit2: ese nombre ya lo ocupa la pose de Chocoholic
+    -- que vive en RP.PropEmotes (AnimationList.lua). Con las dos registradas
+    -- el menu avisaba del duplicado y se quedaba con una u otra segun el orden
+    -- en que Lua recorriese las tablas, que no es estable entre reinicios.
+    ["skatesit3"] = {
         "female_sitting_skateboard2@francis",
         "female_sitting_skateboard2_clip",
-        "Skateboard Sit 2",
+        "Skateboard Sit 3",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
     ["skatessmoke"] = {

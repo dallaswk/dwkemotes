@@ -150,14 +150,6 @@ CustomDP.Emotes = {
             EmoteLoop = true
         }
     },
-    ["pmonggob"] = {
-        "pazeee@monggob@animations",
-        "pazeee@monggob@clip",
-        "搏击 B",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
     ["pmonggoc"] = {
         "pazeee@monggoc@animations",
         "pazeee@monggoc@clip",
@@ -166,26 +158,10 @@ CustomDP.Emotes = {
             EmoteLoop = true
         }
     },
-    ["pmonggod"] = {
-        "pazeee@monggod@animations",
-        "pazeee@monggod@clip",
-        "搏击 D",
-        AnimationOptions = {
-            EmoteLoop = true
-        }
-    },
     ["pmonggoe"] = {
         "pazeee@monggoe@animations",
         "pazeee@monggoe@clip",
         "搏击 E",
-        AnimationOptions = {
-            Flag = 2
-        }
-    },
-    ["pmonggof"] = {
-        "pazeee@monggof@animations",
-        "pazeee@monggof@clip",
-        "搏击 F",
         AnimationOptions = {
             Flag = 2
         }
@@ -479,14 +455,6 @@ CustomDP.Emotes = {
         "伤心 A",
         AnimationOptions = {
             EmoteLoop = true
-        }
-    },
-    ["psadb"] = {
-        "pazeee@sadb@animations",
-        "pazeee@sadb@clip",
-        "伤心 B",
-        AnimationOptions = {
-            Flag = 2
         }
     },
     ["psadc"] = {

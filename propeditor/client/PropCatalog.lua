@@ -6,8 +6,9 @@
 --   1. Los props que ya usan las emotes del pack (Prop/SecondProp). Salen de
 --      recorrer EmoteData en caliente, asi que se actualizan solos cuando se
 --      anade un pack nuevo y ademas viajan garantizado en el stream.
---   2. Esta lista de props de base del juego, para tener de donde tirar cuando
---      lo que se busca no lo usa ninguna emote todavia.
+--   2. Esta lista de props de base del juego, mas los propios del recurso que
+--      viajan en stream/[Props]/dwk/, para tener de donde tirar cuando lo que se
+--      busca no lo usa ninguna emote todavia.
 --
 -- La lista no aspira a estar completa (el juego tiene miles de modelos): es un
 -- punto de partida. Cualquier otro modelo se puede escribir a mano en el campo
@@ -25,6 +26,9 @@ PropEditorCatalog = {
         'prop_cs_whiskey_bottle', 'ba_prop_battle_whiskey_bottle_2_s',
         'ba_prop_battle_whiskey_opaque_s', 'prop_shot_glass', 'prop_plastic_cup_02',
         'prop_ecola_can', 'prop_energy_drink', 'p_amb_coffeecup_01',
+        -- Propio del recurso, en stream/[Props]/dwk/: vaso doble de poliestireno
+        -- con bebida morada y hielos. Origen en la base, 19 cm de alto.
+        'dwk_leancup',
     },
     ['Comida'] = {
         'prop_cs_burger_01', 'prop_food_bs_burger1', 'prop_food_burg2', 'prop_food_burg3',

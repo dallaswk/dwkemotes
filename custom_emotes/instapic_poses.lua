@@ -1,5 +1,9 @@
--- Seimen Instagram Pose Pack
+-- Seimen Instapic Pose Pack (antes "Instagram Pose")
 -- Source files: stream/[NUEVOS EMOTES]/instagrampose*@seimen.ycd
+--
+-- Los dict y clip de abajo siguen diciendo "instagrampose": son los nombres
+-- internos de los .ycd y cambiarlos exige regenerar los archivos. No se ven en
+-- ningun sitio del juego; lo que lee el jugador son la clave y la etiqueta.
 
 local ENABLED = true
 if not ENABLED then return end
@@ -9,34 +13,37 @@ if not ENABLED then return end
 local CustomDP = {}
 
 CustomDP.Emotes = {
-    ["instagrampose"] = {
+    ["instapicpose"] = {
         "instagrampose@seimen",
         "instagrampose_clip",
-        "Instagram Pose",
+        "Instapic Pose",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
-    ["instagrampose5"] = {
+    ["instapicpose5"] = {
         "instagrampose5@seimen",
         "instagrampose5_clip",
-        "Instagram Pose 5",
+        "Instapic Pose 5",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
-    ["instagrampose6"] = {
-        "instagrampose6@seimen",
-        "instagrampose6_clip",
-        "Instagram Pose 6",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["instagrampose7"] = {
+    ["instapicpose7"] = {
         "instagrampose7@seimen",
         "instagrampose7_clip",
-        "Instagram Pose 7",
+        "Instapic Pose 7",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
-    ["instagrampose8"] = {
+    ["instapicpose9"] = {
+        "instagrampose9@seimen",
+        "instagrampose9_clip",
+        "Instapic Pose 9",
+        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+    },
+}
+
+CustomDP.PropEmotes = {
+    ["instapicpose8"] = {
         "instagrampose8@seimen",
         "instagrampose8_clip",
-        "Instagram Pose 8",
+        "Instapic Pose 8",
         AnimationOptions = {
             EmoteLoop = true,
             EmoteMoving = false,
@@ -51,12 +58,6 @@ CustomDP.Emotes = {
                 0.00
             },
         },
-    },
-    ["instagrampose9"] = {
-        "instagrampose9@seimen",
-        "instagrampose9_clip",
-        "Instagram Pose 9",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
 }
 

@@ -40,11 +40,8 @@ return {
     ["pfunnypuncha"] = "Puñetazo gracioso A",
     ["pfunnypunchb"] = "Puñetazo gracioso B",
     ["pmonggoa"] = "Pelear A",
-    ["pmonggob"] = "Pelear B",
     ["pmonggoc"] = "Pelear C",
-    ["pmonggod"] = "Pelear D",
     ["pmonggoe"] = "Pelear E",
-    ["pmonggof"] = "Pelear F",
 
     -- Tonterías
     ["pmonkeya"] = "Mono A",
@@ -86,7 +83,6 @@ return {
 
     -- Estados de ánimo
     ["psada"] = "Triste A",
-    ["psadb"] = "Triste B",
     ["psadc"] = "Triste C",
     ["psadd"] = "Triste D",
     ["pinhalea"] = "Respirar hondo",

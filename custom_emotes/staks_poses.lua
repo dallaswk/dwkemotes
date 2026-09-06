@@ -9,12 +9,6 @@ if not ENABLED then return end
 local CustomDP = {}
 
 CustomDP.Emotes = {
-    ["stakpose8"] = {
-        "stak@pose8",
-        "stakpose8_clip",
-        "Stak Pose 8",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
     ["stakpose17"] = {
         "stakpose17@animation",
         "stakpose17_clip",

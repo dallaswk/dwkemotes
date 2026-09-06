@@ -22,9 +22,9 @@ Config.CustomCategories[('New Roleplay Emotes')] = {
         "pcheckpocketsa", "pdeadb", "penjoyviewa", "penjoyviewb", "pfisthandskya", "pfisthandskyb",
         "pgamehanda", "pgamehandb", "phideandseeka", "phideandseekb", "pinhalea", "pmotord",
         "pmotore", "pmotorf", "ppalmfistsalutea", "ppalmfistsaluteb", "ppickupa", "ppickupb", "ppickupd",
-        "ppickupe", "ppickuph", "ppickupi", "ppickupj", "ppickupm", "psada", "psadb", "psadc", "psadd", "pteamdisc2a", "pteamdisc2b", "pteamdisc2c",
+        "ppickupe", "ppickuph", "ppickupi", "ppickupj", "ppickupm", "psada", "psadc", "psadd", "pteamdisc2a", "pteamdisc2b", "pteamdisc2c",
         "ptherea", "pwhatsthata", "pyappinga", "pyappingb", "pyappingc", "pyappingd",
-        "pmonggoa", "pmonggob", "pmonggoc", "pmonggod", "pmonggoe", "pmonggof", "ppoopa", "psitgrounda",
+        "pmonggoa", "pmonggoc", "pmonggoe", "ppoopa", "psitgrounda",
         "psitgroundd", "psitgrounde", "pmonkeya", "pmonkeyb", "pmonkeyc"
     },
     [EmoteType.PROP_EMOTES] = {

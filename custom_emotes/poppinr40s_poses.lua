@@ -21,6 +21,15 @@ CustomDP.Emotes = {
         "Poppin 40s 2",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
+    ["traykpoppin"] = {
+        "traykpoppin@anim",
+        "traykpoppin_clip",
+        "Trayk Poppin",
+        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+    },
+}
+
+CustomDP.PropEmotes = {
     ["poppinr40s3"] = {
         "poppinr40s3@anim",
         "poppinr40s3_clip",
@@ -49,18 +58,6 @@ CustomDP.Emotes = {
                 177.00
             },
         },
-    },
-    ["poppinr40s5"] = {
-        "poppinr40s5@anim",
-        "poppinr40s5_clip",
-        "Poppin R40s 5",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["traykpoppin"] = {
-        "traykpoppin@anim",
-        "traykpoppin_clip",
-        "Trayk Poppin",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
 }
 
