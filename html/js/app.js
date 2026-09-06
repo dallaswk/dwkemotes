@@ -152,16 +152,23 @@ const App = {
     /**
      * Nombre accesible + tooltip de un boton que solo lleva icono.
      *
-     * Se queda en el `title` nativo a proposito: el `data-rrp-tip` del sistema
-     * pinta el globo con ::after dentro del elemento, y `#emote-menu` recorta
-     * con `overflow: hidden` para redondear las esquinas — el globo de los
-     * botones del borde derecho saldria cortado por la mitad.
+     * Usa el `data-rrp-tip` del sistema, no el `title` nativo: el nativo tarda
+     * casi un segundo en salir y lo pinta el sistema operativo, asi que ni se
+     * parece al resto del menu.
+     *
+     * Va siempre en `bottom`. El globo se pinta con ::after dentro del propio
+     * boton y `#emote-menu` recorta con `overflow: hidden` para redondear las
+     * esquinas: hacia arriba, que es donde el sistema lo pone por defecto, se
+     * saldria del panel. Hacia abajo cabe de sobra. Del que queda pegado al
+     * borde derecho se encarga una regla del CSS del recurso.
      */
     _tipFor(id, label) {
         const el = document.getElementById(id);
         if (!el) return;
         el.setAttribute('aria-label', label);
-        el.title = label;
+        el.setAttribute('data-rrp-tip', label);
+        el.setAttribute('data-rrp-tip-pos', 'bottom');
+        el.removeAttribute('title');
     },
 
     _mountStaticIcons() {
@@ -236,16 +243,21 @@ const App = {
         const input = document.getElementById('search-input');
         if (input) {
             input.placeholder = Store.t('searchemotes');
-            input.value = '';
+            // La busqueda sobrevive al cierre: se repone tal cual estaba en vez
+            // de vaciarse, y solo desaparece cuando el jugador la borra.
+            input.value = Store.searchTerm;
         }
-        document.getElementById('search-clear').classList.add('hidden');
+        document.getElementById('search-clear').classList.toggle('hidden', !Store.searchTerm);
         // Iconos sin etiqueta: tooltip del sistema, no el nativo del navegador.
         this._tipFor('settings-btn', Store.t('settings'));
         this._tipFor('close-btn', Store.t('btn_back'));
 
         this._buildSidebar();
         this._buildFooter();
-        this._updateCategoryTitle();
+        // updateSidebar y no _updateCategoryTitle a secas: si se vuelve con una
+        // busqueda puesta, ninguna categoria esta activa y el titulo tiene que
+        // decir que lo que se ve es un resultado de busqueda.
+        this.updateSidebar();
         this._updateStatusBar();
         this._syncWalkLockButton();
         this.applySettings();
@@ -259,7 +271,9 @@ const App = {
     _closeMenu() {
         this._menuEl.classList.add('hidden');
         Store.isOpen = false;
-        Search.clear();
+        // La busqueda NO se limpia aqui: se queda puesta hasta que el jugador
+        // la borre (la X del campo, Escape, o cambiar de categoria). Cerrar el
+        // menu para mirar algo y volver no deberia costar reescribirla.
         Settings.close();
         Grid.stopPreview();
         SmoothScroll.stop();
@@ -350,6 +364,10 @@ const App = {
     _buildSidebar() {
         this._sidebarEl.replaceChildren();
         this._sidebarEl.classList.toggle('with-labels', !!Store.settings.showLabels);
+        // Tambien en la raiz: con los nombres a la derecha la barra es mas
+        // ancha, y el panel tiene que crecer lo mismo para que la rejilla no
+        // pierda ancho. Sin la clase aqui, el CSS del panel no puede saberlo.
+        this._menuEl.classList.toggle('with-labels', !!Store.settings.showLabels);
 
         let lastCustomIdx = -1;
 

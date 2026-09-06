@@ -56,21 +56,11 @@ const Store = {
     // tiene los ajustes guardados. Ver _migrateSettings.
     SETTINGS_VERSION: 2,
 
-    // Paleta del acento: los dos teales del sistema de diseno ResetRP
-    // (design-system/tokens.css). Fuente unica -- el selector de ajustes lee de
-    // aqui. No anadir colores que no esten en tokens.css.
-    //
-    // El amarillo del sistema NO esta y no puede estar: aqui el acento es lo
-    // que marca la categoria activa, la tarjeta seleccionada y los favoritos, y
-    // el amarillo avisa, no selecciona. Pintar con el lo que esta elegido es
-    // justo el error que el sistema señala.
-    ACCENTS: [
-        '#019685',  // --rrp-teal: el verde ResetRP, seleccion y accion
-        '#01A995',  // --rrp-teal-strong
-    ],
-
     DEFAULT_SETTINGS: {
-        accent: '#019685',   // --rrp-teal
+        // Fijo, ya no ajustable: es `--rrp-teal`, el color con el que el sistema
+        // de diseno marca lo seleccionado y la accion principal. Sigue aqui
+        // porque applySettings lo inyecta como `--accent` y sus derivados.
+        accent: '#019685',
         v: 2,                // = SETTINGS_VERSION
         columns: 2,
         scale: 100,
@@ -108,7 +98,9 @@ const Store = {
         this.mostUsed = data.mostUsed || [];
         this.config = data.config || {};
         this.translations = data.translations || {};
-        this.searchTerm = '';
+        // `searchTerm` NO se reinicia: la busqueda sobrevive a cerrar y volver a
+        // abrir el menu, y solo se va cuando el jugador la borra o cambia de
+        // categoria. En el primer arranque ya vale '' por su valor inicial.
         this.activeWalk = data.activeWalk || '';
         this.activeWalkLabel = data.activeWalkLabel || '';
         this.walkLock = !!data.walkLock;
@@ -258,14 +250,13 @@ const Store = {
         // aparecer en el objeto de ajustes cada vez que se exporta el perfil.
         delete s.opacity;
         delete s.compact;
-        // El acento tiene que salir de la paleta del sistema de diseno. Quien
-        // venia de una version anterior tiene guardado uno de los colores
-        // viejos (azul, morado, rosa...), que ya no esta en el selector: si no
-        // se migra aqui, applySettings lo reinyecta en linea y el menu sigue
-        // pintado con el acento antiguo aunque el CSS ya no lo contemple.
-        if (!this.ACCENTS.some(c => c.toLowerCase() === String(s.accent).toLowerCase())) {
-            s.accent = this.DEFAULT_SETTINGS.accent;
-        }
+        // El acento ya no es una preferencia: es el teal del sistema de diseno,
+        // el que marca lo seleccionado y la accion principal, y elegir otro solo
+        // servia para romper esa lectura. Se repone siempre, no solo al migrar:
+        // sin el selector no habria forma de recuperarse de un valor guardado de
+        // una version anterior, y applySettings lo reinyectaria en linea dejando
+        // el menu pintado de un color que el CSS ya no contempla.
+        s.accent = this.DEFAULT_SETTINGS.accent;
         for (const flag of ['animations', 'confirmPlay', 'showRecents', 'showMostUsed', 'showLabels']) {
             s[flag] = !!s[flag];
         }
@@ -343,10 +334,13 @@ const Store = {
         for (const id of Object.keys(this.customLists)) order.push(id);
         for (const name of Object.keys(this.categories)) order.push(name);
 
-        if (this.config.keybindingEnabled) order.push(this.KEYBINDS);
         if (this.walks.length > 0) order.push(this.WALKS);
         if (this.expressions.length > 0) order.push(this.EXPRESSIONS);
         if (this.emojis.length > 0) order.push(this.EMOJIS);
+        // Los atajos van los ultimos: no son animaciones, son la configuracion
+        // de las teclas. Entre las categorias de contenido partian la lista en
+        // dos sin razon.
+        if (this.config.keybindingEnabled) order.push(this.KEYBINDS);
 
         this.categoryOrder = order;
     },

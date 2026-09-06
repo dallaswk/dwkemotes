@@ -66,7 +66,20 @@ CustomDP.Emotes = {
         "posepoppin3@anim",
         "posepoppin3_clip",
         "Pose Poppin 3",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+        AnimationOptions = {
+            EmoteLoop = true,
+            EmoteMoving = false,
+            Prop = 'beanmachine_cup2',
+            PropBone = 60309,
+            PropPlacement = {
+                0.080,
+                -0.090,
+                0.050,
+                275.00,
+                160.00,
+                7.00
+            },
+        },
     },
     ["posepoppin4"] = {
         "posepoppin4@anim",
@@ -90,7 +103,20 @@ CustomDP.Emotes = {
         "pose3@poppin",
         "pose3_clip",
         "Poppin Pose 3b",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+        AnimationOptions = {
+            EmoteLoop = true,
+            EmoteMoving = false,
+            Prop = 'prop_cigar_03',
+            PropBone = 28422,
+            PropPlacement = {
+                0.140,
+                0.386,
+                -0.060,
+                183.00,
+                316.00,
+                330.00
+            },
+        },
     },
     ["pose5poppin"] = {
         "pose5@poppin",

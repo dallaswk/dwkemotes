@@ -65,10 +65,6 @@ const Settings = {
         const s = Store.settings;
 
         this._bodyEl.appendChild(this._section(Store.t('appearance'), [
-            this._colorRow(Store.t('accentcolor'), s.accent, (value) => {
-                Store.setSetting('accent', value);
-                App.applySettings();
-            }),
             this._segmentRow(Store.t('columns'), [1, 2, 3, 4], s.columns, (value) => {
                 Store.setSetting('columns', value);
                 App.applySettings({ relayout: true });
@@ -162,28 +158,6 @@ const Settings = {
         text.textContent = label;
         row.appendChild(text);
 
-        return row;
-    },
-
-    _colorRow(label, current, onChange) {
-        const row = this._row(label);
-        const wrap = document.createElement('div');
-        wrap.className = 'settings-colors';
-
-        for (const color of Store.ACCENTS) {
-            const dot = document.createElement('button');
-            dot.type = 'button';
-            dot.className = 'color-dot' + (color.toLowerCase() === String(current).toLowerCase() ? ' active' : '');
-            dot.style.background = color;
-            dot.setAttribute('aria-label', color);
-            dot.onclick = () => {
-                wrap.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('active', d === dot));
-                onChange(color);
-            };
-            wrap.appendChild(dot);
-        }
-
-        row.appendChild(wrap);
         return row;
     },
 

@@ -13,7 +13,30 @@ CustomDP.Emotes = {
         "doak@2@94glocky",
         "doak2_clip",
         "Glocky Doak 2",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+        AnimationOptions = {
+            EmoteLoop = true,
+            EmoteMoving = false,
+            Prop = 'prop_bskball_01',
+            PropBone = 14201,
+            PropPlacement = {
+                0.000,
+                0.014,
+                0.260,
+                10.00,
+                317.00,
+                88.00
+            },
+            SecondProp = 'prop_cs_bs_cup',
+            SecondPropBone = 52301,
+            SecondPropPlacement = {
+                0.000,
+                -0.080,
+                -0.520,
+                259.00,
+                141.00,
+                345.00
+            },
+        },
     },
     ["glockygunposefrom"] = {
         "gunpose@from94",

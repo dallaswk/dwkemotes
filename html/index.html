@@ -18,34 +18,39 @@
 </head>
 <body>
     <div id="emote-menu" class="hidden" role="dialog" aria-label="dwkemotes">
-        <nav class="sidebar" id="sidebar" aria-label="Categorias"></nav>
+        <!-- El cuerpo es la fila (categorias + contenido); el pie va fuera, como
+             hermano, para que cruce el panel entero y no arranque despues de la
+             barra de categorias. -->
+        <div class="menu-body">
+            <nav class="sidebar" id="sidebar" aria-label="Categorias"></nav>
 
-        <div class="menu-main">
-            <header class="menu-header">
-                <div class="drag-handle" id="drag-handle" title="Arrastrar (doble clic para restablecer)"></div>
-                <div class="search-row">
-                    <div class="search-container">
-                        <span id="search-icon-slot"></span>
-                        <input type="text" id="search-input" autocomplete="off" spellcheck="false" aria-label="Buscar" />
-                        <button id="search-clear" class="search-clear hidden" type="button" aria-label="Limpiar">&times;</button>
+            <div class="menu-main">
+                <header class="menu-header">
+                    <div class="drag-handle" id="drag-handle" title="Arrastrar (doble clic para restablecer)"></div>
+                    <div class="search-row">
+                        <div class="search-container">
+                            <span id="search-icon-slot"></span>
+                            <input type="text" id="search-input" autocomplete="off" spellcheck="false" aria-label="Buscar" />
+                            <button id="search-clear" class="search-clear hidden" type="button" aria-label="Limpiar">&times;</button>
+                        </div>
+                        <button id="walklock-btn" class="header-btn hidden" type="button" role="switch" aria-checked="false"></button>
+                        <button id="settings-btn" class="header-btn" type="button" aria-label="Ajustes"></button>
+                        <button id="close-btn" class="header-btn" type="button" aria-label="Cerrar"></button>
                     </div>
-                    <button id="walklock-btn" class="header-btn hidden" type="button" role="switch" aria-checked="false"></button>
-                    <button id="settings-btn" class="header-btn" type="button" aria-label="Ajustes"></button>
-                    <button id="close-btn" class="header-btn" type="button" aria-label="Cerrar"></button>
-                </div>
-            </header>
+                </header>
 
-            <div class="category-title" id="category-title"></div>
-            <div class="status-bar hidden" id="status-bar"></div>
+                <div class="category-title" id="category-title"></div>
+                <div class="status-bar hidden" id="status-bar"></div>
 
-            <div class="content-area">
-                <div class="content-scroll" id="content-scroll">
-                    <div id="emote-grid" class="emote-grid" role="listbox"></div>
+                <div class="content-area">
+                    <div class="content-scroll" id="content-scroll">
+                        <div id="emote-grid" class="emote-grid" role="listbox"></div>
+                    </div>
                 </div>
             </div>
-
-            <footer class="menu-footer" id="menu-footer"></footer>
         </div>
+
+        <footer class="menu-footer" id="menu-footer"></footer>
 
         <!-- Panel de ajustes (se superpone al contenido) -->
         <section id="settings-panel" class="settings-panel hidden" aria-label="Ajustes">

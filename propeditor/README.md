@@ -59,6 +59,101 @@ minuto por emote y se ve lo que se está tocando.
 
 ---
 
+## Dejarlo fijo en el pack
+
+Hay **dos capas**, y conviene tenerlas claras:
+
+| Capa | Dónde | Quién manda |
+|---|---|---|
+| Ajuste en caliente | `propeditor/data/prop_overrides.json` | Pisa lo que declare la emote |
+| Pack | El `AnimationOptions` del `.lua` | Lo que queda si no hay ajuste |
+
+**Lo que ajustas ya es permanente en cuanto le das a Guardar**: el JSON sobrevive
+a los reinicios y se aplica al arrancar. No hace falta nada más para que funcione.
+
+Lo que consigues bajándolo al `.lua` es que el pack se valga por sí mismo. Mientras
+la verdad viva en el JSON, el ajuste se pierde si copias el recurso sin
+`propeditor/data/`, o si algún día desactivas el editor. Y si alguien edita el
+`.lua` a mano, no verá ningún efecto, porque el JSON le está pisando el valor.
+
+### Los cuatro pasos
+
+1. **Exporta**, en la consola del servidor:
+
+   ```
+   emoteprops export
+   ```
+
+   Escribe `propeditor/data/prop_overrides_export.lua` con un bloque por emote.
+
+2. **Pega** el bloque en el `AnimationOptions` de esa emote, en su `.lua` de
+   `custom_emotes/`. Sustituye los campos `Prop*` que ya tuviera; **el resto de
+   campos se dejan como estaban** (`EmoteLoop`, `EmoteDuration`, `Ptfx*`…), que el
+   export no los toca.
+
+   Si la emote tenía el bloque en una línea, se expande:
+
+   ```lua
+   -- antes
+   AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+
+   -- después
+   AnimationOptions = {
+       EmoteLoop = true,
+       EmoteMoving = false,
+       Prop = 'mne_can_pink',
+       PropBone = 60309,
+       PropPlacement = {
+           0.090,
+           0.000,
+           0.026,
+           91.00,
+           157.00,
+           178.00
+       },
+   },
+   ```
+
+3. **Reinicia** el recurso (`restart dwkemotes`) y comprueba en el juego que se ve
+   igual que antes de tocar nada. Si algo no cuadra, el ajuste sigue en el JSON:
+   no has perdido nada.
+
+4. **Descarta el ajuste en caliente**, para que a partir de ahí mande el pack:
+
+   ```
+   emoteprops clear <emote>
+   ```
+
+   Con `emoteprops clear all` de golpe, pero solo cuando hayas bajado **todas** las
+   que aparecen en `emoteprops list`: lo que no hayas pegado se pierde.
+
+### Cosas que se aprenden a base de tropezar
+
+- **Una emote de escenario nunca puede llevar prop.** Las que se declaran con
+  `ScenarioType.*` (`maid`, `WORLD_HUMAN_*`…) las reproduce el juego entero:
+  `OnEmotePlay` hace `return` en `client/Emote.lua:964`, mucho antes del código
+  que engancha props (`client/Emote.lua:1045`). El editor te dejará ajustar el
+  prop y guardarlo, pero en el juego no aparecerá. Para un escenario con objeto,
+  hay que convertirlo en una emote normal con su `dict` y su `anim`.
+
+- **`client/AnimationList.lua` no se toca.** Es la biblioteca heredada y el pack
+  la mantiene intacta a propósito. Si la emote que has ajustado vive ahí, no
+  pegues nada en ese fichero: redefínela en un `.lua` de `custom_emotes/`, que se
+  carga después y gana. El ajuste en caliente, mientras tanto, funciona igual.
+
+- **El slot 2 no existe sin el slot 1.** `addProps()` solo mira `SecondProp` si
+  `Prop` está puesto. El editor ya lo tiene en cuenta y asciende el segundo si
+  dejas el primero vacío, pero si lo pegas a mano, respétalo.
+
+- **Comprueba que el modelo viaja en el servidor.** El editor solo ofrece modelos
+  que pasan `IsModelInCdimage`, así que lo que elijas desde el buscador está
+  garantizado. Si escribes uno a mano, mira el aviso bajo el campo. Y para los
+  props custom con `.ytyp`, hace falta además su línea `DLC_ITYP_REQUEST` en
+  `fxmanifest.lua`, o el modelo existe pero sale invisible. `/propscheck` lista
+  los que falten.
+
+---
+
 ## Cómo desactivarlo
 
 Comentar o borrar el bloque `Editor de props en vivo (propeditor/)` del final de

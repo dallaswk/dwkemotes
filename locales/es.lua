@@ -144,7 +144,6 @@ return {
     ['appearance'] = "Apariencia",
     ['behaviour'] = "Comportamiento",
     ['data'] = "Datos",
-    ['accentcolor'] = "Color de acento",
     ['columns'] = "Columnas",
     ['uiscale'] = "Escala de la interfaz",
     ['opacity'] = "Opacidad del panel",

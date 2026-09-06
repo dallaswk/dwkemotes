@@ -46,7 +46,30 @@ CustomDP.Emotes = {
         "causezzgangsin3@gangsign",
         "barrio_clip",
         "Causezz Sign 4",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
+        AnimationOptions = {
+            EmoteLoop = true,
+            EmoteMoving = false,
+            Prop = 'mne_can_pink',
+            PropBone = 60309,
+            PropPlacement = {
+                0.090,
+                0.000,
+                0.026,
+                91.00,
+                157.00,
+                178.00
+            },
+            SecondProp = 'lux_prop_lighter_luxe',
+            SecondPropBone = 28422,
+            SecondPropPlacement = {
+                0.050,
+                0.000,
+                -0.020,
+                107.00,
+                331.00,
+                122.00
+            },
+        },
     },
     ["causezzgangsign5"] = {
         "causezzgangsign5@gangsign",

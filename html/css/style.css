@@ -135,11 +135,18 @@
     --focus-glow: var(--rrp-focus-glow);   /* campos: halo teal sobre su borde */
 
     --nav-width: 3.25rem;
-    --nav-width-labels: 6.4rem;
+    /* Con el nombre a la derecha del icono. Cuando iba debajo, en dos lineas
+       centradas, bastaban 6.4rem. */
+    --nav-width-labels: 8.5rem;
+    /* Lo que ha crecido la barra al pasar el nombre a la derecha. El panel suma
+       esta diferencia cuando las etiquetas estan encendidas, para que la rejilla
+       conserve el ancho que tenia. */
+    --nav-labels-growth: 2.1rem;
     /* El panel crece el mismo rem que la barra de categorias: la barra es un
        hijo de ancho fijo y la rejilla se queda con el resto, asi que sin esto
        ensanchar las categorias se lo comeria a las tarjetas. */
-    --panel-width: calc(clamp(19rem, 23vw, 27rem) + (var(--cols) - 2) * 5rem);
+    --panel-base: calc(clamp(19rem, 23vw, 27rem) + (var(--cols) - 2) * 5rem);
+    --panel-width: var(--panel-base);
 }
 
 html {
@@ -293,9 +300,22 @@ body.no-anim *::after {
                 0 16px 46px rgba(0, 0, 0, 0.55),
                 inset 0 1px 0 rgba(255, 255, 255, 0.05),
                 0 0 28px rgba(var(--rrp-teal-rgb), 0.16);
+    /* En columna: arriba el cuerpo (categorias + contenido) y debajo el pie, que
+       asi cruza el panel entero. Dentro de `.menu-main` arrancaba despues de la
+       barra de categorias y dejaba un escalon a la izquierda. */
     display: flex;
+    flex-direction: column;
     animation: panelIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
+}
+
+/* La fila de siempre: barra de categorias y contenido. `min-height: 0` para que
+   pueda encogerse por debajo de su contenido y sea la rejilla la que se
+   desplace, no el panel el que crezca. */
+.menu-body {
+    flex: 1;
+    display: flex;
+    min-height: 0;
 }
 
 /* La linea del canto izquierdo de `.rrp-dock__card.is-active`, que se apaga por
@@ -347,6 +367,11 @@ body.no-anim *::after {
 
 .sidebar.with-labels { width: var(--nav-width-labels); }
 
+/* La barra con los nombres a la derecha pide mas ancho que cuando iban debajo.
+   El panel crece esa misma diferencia para que la rejilla no pierda ancho al
+   encender las etiquetas. */
+#emote-menu.with-labels { --panel-width: calc(var(--panel-base) + var(--nav-labels-growth)); }
+
 /* Misma barra de desplazamiento que la rejilla: la del navegador se pintaba
    en blanco y rompia la escala de fondo del sistema. */
 .sidebar::-webkit-scrollbar { width: 0.25rem; }
@@ -375,6 +400,16 @@ body.no-anim *::after {
     transition: background var(--transition), color var(--transition);
     font: inherit;
     position: relative;
+}
+
+/* Con el nombre encendido la fila se lee de izquierda a derecha: icono y nombre
+   en linea, como `.rrp-nav__item`. En el modo de solo iconos la fila se sigue
+   centrando, que es donde la columna tenia sentido. */
+.sidebar.with-labels .sidebar-item {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.55rem;
+    padding: 0.5rem 0.6rem;
 }
 
 /* Hover: sube la superficie, no el color. */
@@ -435,6 +470,22 @@ body.no-anim *::after {
     max-width: 100%;
     overflow: hidden;
     overflow-wrap: anywhere;
+}
+
+/* En linea el nombre ocupa el hueco que sobra y se corta con puntos suspensivos
+   en una sola linea: el recorte a dos lineas era para la columna, donde el ancho
+   no daba de si. El nombre completo sigue estando en el `title` de la fila. */
+.sidebar.with-labels .sidebar-label {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    font-size: 0.74rem;
+    line-height: 1.2;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: normal;
 }
 
 .sidebar-add { color: var(--text-tertiary); }
@@ -542,22 +593,56 @@ body.no-anim *::after {
 
 .search-clear:hover { color: var(--text); }
 
+/* El `.rrp-btn--icon` del sistema: cuadrado, con borde y sobre la superficie
+   hundida. Antes iba sin borde y con un fondo que ya era `surface-3`, con lo
+   que el hover -- que sube a `surface-3` -- no cambiaba practicamente nada y el
+   boton parecia un icono suelto en vez de un control. */
 .header-btn {
     display: grid;
     place-items: center;
     width: 1.7rem;
     height: 1.7rem;
     flex-shrink: 0;
-    border: none;
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    background: var(--bg-button);
+    background: var(--rrp-surface-2);
     color: var(--text-secondary);
     cursor: pointer;
-    transition: background var(--transition), color var(--transition);
+    transition: background var(--transition), color var(--transition),
+                border-color var(--transition);
 }
 
-.header-btn:hover { background: var(--bg-card-hover); color: var(--text); }
-.header-btn.active { background: var(--accent-dim); color: var(--accent); }
+/* Hover neutro, como en todo el sistema: sube la superficie y marca mas el
+   borde, sin tenir. El teal esta reservado a lo que esta encendido. */
+.header-btn:hover {
+    background: var(--rrp-surface-3);
+    border-color: var(--border-strong);
+    color: var(--text);
+}
+
+/* `.rrp-btn:active`: se hunde un pixel al pulsarlo. */
+.header-btn:active { transform: translateY(1px); }
+
+/* Conmutador encendido (el bloqueo de caminar). El sistema lo marca con velo y
+   borde del acento, nunca con un bloque macizo, y sin el halo inferior de
+   `.rrp-nav__item`: ese dice "estas aqui" dentro de un grupo donde solo manda
+   uno, y esto dice "esto esta encendido". */
+.header-btn.active {
+    background: var(--accent-dim);
+    border-color: var(--accent-border);
+    color: var(--accent);
+}
+
+/* El globo del sistema se pinta con ::after dentro del propio boton y el panel
+   recorta con `overflow: hidden` por las esquinas redondeadas. Centrado, el del
+   ultimo boton se saldria por el lado derecho: se ancla a su borde en vez de
+   centrarse. Los demas tienen sitio de sobra. */
+.search-row .header-btn:last-child[data-rrp-tip]::after {
+    left: auto;
+    right: 0;
+    transform: none;
+}
+
 .header-icon { font-size: 0.8rem; }
 
 /* ── Titulo de categoria ───────────────────────────────────────────────── */
@@ -1053,11 +1138,8 @@ body.no-anim *::after {
     color: var(--text-secondary);
 }
 
-.settings-colors {
-    display: flex;
-    gap: 0.28rem;
-}
-
+/* `.color-dot` lo sigue usando el selector de color de las listas del jugador
+   (el modal de crear/editar lista); el del acento ya no existe. */
 .color-dot {
     width: 0.95rem;
     height: 0.95rem;

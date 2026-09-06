@@ -306,7 +306,11 @@ servidor vea el objeto bailando. Al guardar, el ajuste se escribe en
 `propeditor/data/prop_overrides.json` y se reparte a todos los clientes en el
 momento: los props se rehacen sin reiniciar el recurso.
 
-Cuando el ajuste esté bien, se pasa al pack desde la consola del servidor:
+### Dejarlo fijo en el pack
+
+Lo que guardas **ya es permanente**: el JSON sobrevive a los reinicios y se aplica
+al arrancar. Bajarlo al `.lua` sirve para que el pack se valga por sí mismo, sin
+depender de `propeditor/data/`. Desde la consola del servidor:
 
 ```
 emoteprops list                 # lo ajustado hasta ahora
@@ -314,10 +318,21 @@ emoteprops export               # escribe propeditor/data/prop_overrides_export.
 emoteprops clear <emote|all>    # devuelve la emote a los props de su pack
 ```
 
-`export` deja el bloque `AnimationOptions` de cada animación listo para pegar en
-su `.lua`. Aquí no hay `apply` automático como en `/emoteoffset`: los props se
-declaran en bloques repartidos por muchos ficheros y con formatos muy distintos,
-y reescribirlos a ciegas destrozaría packs ajenos.
+El ciclo es: `export` → pegar el bloque `AnimationOptions` en el `.lua` de la
+animación → `restart` y comprobar en el juego → `emoteprops clear <emote>` para
+que a partir de ahí mande el pack.
+
+Aquí no hay `apply` automático como en `/emoteoffset`: los props se declaran en
+bloques repartidos por muchos ficheros y con formatos muy distintos, y
+reescribirlos a ciegas destrozaría packs ajenos.
+
+Dos avisos que ahorran un rato de desconcierto: **una animación de escenario
+nunca puede llevar prop** (el juego la reproduce entera y `OnEmotePlay` sale antes
+de enganchar nada), y **`client/AnimationList.lua` no se toca** — si la animación
+vive ahí, se redefine en `custom_emotes/`, que se carga después y gana.
+
+El detalle completo, con ejemplo y los casos raros, está en
+**[`propeditor/README.md`](propeditor/README.md)**.
 
 Todo el editor vive en **[`propeditor/`](propeditor/README.md)**: comentando el
 bloque del final de `fxmanifest.lua` desaparece por completo, incluidos los

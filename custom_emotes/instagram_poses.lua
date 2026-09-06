@@ -40,15 +40,15 @@ CustomDP.Emotes = {
         AnimationOptions = {
             EmoteLoop = true,
             EmoteMoving = false,
-            Prop = 'prop_amb_phone',
+            Prop = 'prop_npc_phone_02',
             PropBone = 28422,
             PropPlacement = {
-                0.0,
-                0.0,
-                -0.05,
-                0.0,
-                0.0,
-                0.0
+                0.090,
+                0.014,
+                0.050,
+                227.00,
+                175.00,
+                0.00
             },
         },
     },
