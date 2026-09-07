@@ -96,6 +96,41 @@
             </div>
         </div>
 
+        <div id="playlist-modal" class="modal hidden">
+            <div class="modal-content playlist-modal-content">
+                <div id="playlist-modal-form">
+                    <div class="list-modal-header">
+                        <div id="playlist-modal-icon" class="list-modal-icon"></div>
+                        <h3 id="playlist-modal-title"></h3>
+                    </div>
+                    <input type="text" id="playlist-name-input" class="list-name-input" maxlength="40" autocomplete="off" spellcheck="false" />
+                    <div id="playlist-color-picker" class="color-picker"></div>
+                    <div class="playlist-loop-row">
+                        <span id="playlist-loop-label"></span>
+                        <button id="playlist-loop-toggle" class="switch" type="button" role="switch" aria-checked="false">
+                            <span class="switch-knob"></span>
+                        </button>
+                    </div>
+                    <div id="playlist-steps" class="playlist-steps"></div>
+                    <p id="playlist-empty" class="playlist-empty hidden"></p>
+                    <div class="list-modal-actions">
+                        <button id="playlist-cancel-btn" class="list-btn list-btn-cancel" type="button"></button>
+                        <button id="playlist-save-btn" class="list-btn list-btn-save" type="button"></button>
+                    </div>
+                    <button id="playlist-delete-btn" class="list-btn-delete hidden" type="button"></button>
+                </div>
+                <div id="playlist-confirm-delete" class="list-confirm hidden">
+                    <div class="list-confirm-icon" id="playlist-confirm-icon"></div>
+                    <p class="list-confirm-title" id="playlist-confirm-title"></p>
+                    <p class="list-confirm-msg" id="playlist-confirm-msg"></p>
+                    <div class="list-modal-actions">
+                        <button id="playlist-confirm-back" class="list-btn list-btn-cancel" type="button"></button>
+                        <button id="playlist-confirm-yes" class="list-btn list-btn-danger" type="button"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Capa de superposicion: arriba a la izquierda, fuera de #emote-menu a
@@ -120,6 +155,7 @@
     <script src="js/grid.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/playlist.js"></script>
     <!-- Editor de props (propeditor/). Va el ultimo y no toca nada del menu:
          se monta solo cuando el cliente le manda 'propeditor:open'. Si el
          directorio no esta, este 404 tampoco rompe nada. -->

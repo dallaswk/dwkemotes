@@ -44,10 +44,6 @@ Config.PropEditor = {
     stepRotFine = 1.0,
     stepRotCoarse = 10.0,
 
-    -- Cuanto puede despegarse del suelo la ped con Q / E. Se guarda en la emote
-    -- como PedHeightOffset y lo aplica Emote.lua al reproducirla.
-    limitPedHeight = 1.5,
-
     -- Limites de la posicion del prop respecto al hueso. Un prop pegado a una
     -- mano nunca necesita mas de medio metro; el tope evita perderlo de vista
     -- por un cero de mas al teclear.

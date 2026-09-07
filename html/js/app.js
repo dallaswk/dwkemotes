@@ -527,6 +527,8 @@ const App = {
 
         if (Store.isCustomList(cat)) {
             addAction(Store.t('editlist'), () => this.showListModal(cat));
+        } else if (cat === Store.PLAYLISTS) {
+            addAction(Store.t('newplaylist'), () => PlaylistEditor.open(null));
         } else if (cat === Store.WALKS) {
             addAction(Store.t('normalreset'), () => NUI.resetWalkStyle());
         } else if (cat === Store.EXPRESSIONS) {
@@ -799,12 +801,14 @@ const App = {
         if (Search.isFocused()) return;
 
         const inModal = !document.getElementById('list-modal').classList.contains('hidden')
-            || !document.getElementById('keybind-modal').classList.contains('hidden');
+            || !document.getElementById('keybind-modal').classList.contains('hidden')
+            || (typeof PlaylistEditor !== 'undefined' && PlaylistEditor.isOpen());
 
         if (e.key === 'Escape') {
             if (inModal) {
                 this.hideListModal();
                 this.hideKeybindModal();
+                if (typeof PlaylistEditor !== 'undefined') PlaylistEditor.close();
             } else if (Settings.isOpen()) {
                 Settings.close();
             } else {

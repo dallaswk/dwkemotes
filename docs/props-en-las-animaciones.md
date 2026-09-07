@@ -5,21 +5,25 @@ Inventario de props que usan las emotes de dwkemotes y de los modelos streameado
 ## Resumen
 
 - Props referenciados por las emotes (campos Prop/SecondProp + pasados por helpers): **293**
-- Modelos de prop streameados en este recurso (.ydr/.yft dentro de stream/): **183**
-- De esos, usados o citados: **138**, sin uso: **45**
+- Modelos de prop streameados en este recurso (.ydr/.yft dentro de stream/): **180**
+- De esos, usados o citados: **136**, sin uso: **44**
 - .ytyp de arquetipos: 32 en stream, 32 registrados con DLC_ITYP_REQUEST en fxmanifest.lua (OK)
 
 Los props se adjuntan a la mano con AttachEntityToEntity (campo Prop de cada emote). Para que un prop custom se vea hace falta que el modelo (.ydr/.yft + texturas .ytd) viaje en el stream Y que el juego lo registre: los .ydr sueltos FiveM los auto-registra por nombre de fichero, pero los que vienen con .ytyp necesitan la linea data_file 'DLC_ITYP_REQUEST' 'stream/<nombre>.ytyp' en fxmanifest.lua. Sin esa linea el prop no aparece y no hay error en consola.
 
 ## Modelos streameados (por carpeta)
 
+> **Quitada la carpeta `[Props]\basegame`.** Tenia tres modelos que sustituian a
+> props del juego base (`prop_phone_ing`, `prop_amb_phone`, `prop_cs_hand_radio`)
+> pero viajaban sin sus `.ytd`. El del movil llegaba sin las 8 carcasas de color, y
+> por eso ninguna de las 57 emotes con `PropTextureVariations` podia cambiarlo:
+> `SetObjectTextureVariation` no tenia entre que elegir. Al no streamearlos, el
+> juego usa sus modelos originales, que si traen las variantes.
+
 | Modelo | Carpeta | Estado |
 |---|---|---|
 | a3d_egrang1 | [Custom Emotes]\Pazeee | usado |
 | paze_kingchair1 | [Custom Emotes]\Pazeee | usado |
-| prop_amb_phone | [Props]\basegame | SIN USO |
-| prop_cs_hand_radio | [Props]\basegame | usado |
-| prop_phone_ing | [Props]\basegame | usado |
 | brum_cherryshake_bubblegum | [Props]\Brummiee | usado |
 | brum_cherryshake_cherry | [Props]\Brummiee | usado |
 | brum_cherryshake_chocolate | [Props]\Brummiee | usado |
@@ -395,7 +399,7 @@ Los props se adjuntan a la mano con AttachEntityToEntity (campo Prop de cada emo
 | prop_cs_bs_cup | 1 | AnimationList.lua | nativo / no en este stream -> verificar en servidor |
 | prop_cs_burger_01 | 5 | AnimationList.lua | nativo / no en este stream -> verificar en servidor |
 | prop_cs_dildo_01 | 1 | AnimationList.lua | nativo / no en este stream -> verificar en servidor |
-| prop_cs_hand_radio | 1 | AnimationList.lua | custom + stream (OK) |
+| prop_cs_hand_radio | 1 | AnimationList.lua | nativo del juego |
 | prop_cs_hotdog_01 | 2 | AnimationList.lua | nativo / no en este stream -> verificar en servidor |
 | prop_cs_hotdog_02 | 1 | AnimationList.lua | nativo / no en este stream -> verificar en servidor |
 | prop_cs_magazine | 1 | AnimationList.lua | nativo / no en este stream -> verificar en servidor |
@@ -432,7 +436,7 @@ Los props se adjuntan a la mano con AttachEntityToEntity (campo Prop de cada emo
 | prop_orang_can_01 | 1 | AnimationList.lua | nativo / no en este stream -> verificar en servidor |
 | prop_pap_camera_01 | 3 | AnimationList.lua | nativo / no en este stream -> verificar en servidor |
 | prop_pencil_01 | 1 | AnimationList.lua | nativo / no en este stream -> verificar en servidor |
-| prop_phone_ing | 18 | AnimationList.lua | custom + stream (OK) |
+| prop_phone_ing | 18 | AnimationList.lua | nativo del juego (con sus 8 variantes de color) |
 | prop_plastic_cup_02 | 1 | AnimationList.lua | nativo / no en este stream -> verificar en servidor |
 | prop_player_phone_02 | 1 | pazeee_animations.lua | nativo / no en este stream -> verificar en servidor |
 | prop_police_id_board | 1 | AnimationList.lua | custom + stream (OK) |

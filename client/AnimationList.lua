@@ -5670,15 +5670,6 @@ RP.Emotes = {
             ExitEmote = "getup",
         }
     },
-    ["femalesitcute2"] = {
-        "beach_1@janina234",
-        "beach_1_clip",
-        "Female Sit Cute 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-            ExitEmote = "getup",
-        }
-    },
     ["femaleonknees"] = {
         "beach_4@janina234",
         "beach_4_clip",
@@ -5686,15 +5677,6 @@ RP.Emotes = {
         AnimationOptions = {
             onFootFlag = AnimFlag.LOOP,
             ExitEmote = "standup",
-        }
-    },
-    ["femaleonknees2"] = {
-        "anim@female_model_21",
-        "f_model_21_clip",
-        "Female On Knees Pose 2",
-        AnimationOptions = {
-            onFootFlag = AnimFlag.LOOP,
-            ExitEmote = "getup",
         }
     },
     ["fashionpose1"] = { -- Custom Emote Provided To RpEmotes By Prue颜
@@ -13003,42 +12985,6 @@ RP.PropEmotes = {
             onFootFlag = AnimFlag.MOVING,
         }
     },
-    ["soda7"] = {
-        "amb@code_human_wander_drinking@male@base",
-        "static",
-        "Soda 7- Junk Cup",
-        AnimationOptions = {
-            Prop = 'rpemotesreborn_soda01',
-            PropBone = 28422,
-            PropPlacement = {
-                0.0060,
-                0.0010,
-                0.0,
-                0.0,
-                0.0,
-                80.0
-            },
-            onFootFlag = AnimFlag.MOVING,
-        }
-   },
-    ["soda8"] = {
-        "amb@code_human_wander_drinking@male@base",
-        "static",
-        "Soda 8 - Junk Cup",
-        AnimationOptions = {
-            Prop = 'rpemotesreborn_soda02',
-            PropBone = 28422,
-            PropPlacement = {
-                0.0060,
-                0.0010,
-                0.0,
-                0.0,
-                0.0,
-                80.0
-            },
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
     ["soda9"] = {
         "amb@world_human_drinking@coffee@male@idle_a",
         "idle_c",
@@ -13107,24 +13053,6 @@ RP.PropEmotes = {
                 0.0,
                 0.0,
                 0.0
-            },
-            onFootFlag = AnimFlag.MOVING,
-        }
-    },
-    ["sipsoda"] = {
-        "smo@milkshake_idle",
-        "milkshake_idle_clip",
-        "Sip Soda Cup - Junk",
-        AnimationOptions = {
-            Prop = 'rpemotesreborn_soda01',
-            PropBone = 28422,
-            PropPlacement = {
-               0.0470,
-               0.0040,
-              -0.0600,
-            -88.0263,
-            -25.0367,
-            -27.3898
             },
             onFootFlag = AnimFlag.MOVING,
         }
@@ -18700,49 +18628,6 @@ RP.PropEmotes = {
             PtfxInfo = Translate('camera'),
             PtfxWait = 200
         }
-    },
-    ["selfieslut"] = { -- Custom Emote By Struggleville
-        "anim@female_floor_slutarch_selfie",
-        "slutarch_selfie_clip",
-        "Selfie Slut Pose",
-        AnimationOptions = {
-            Prop = "prop_phone_ing",
-            PropTextureVariations = {
-                {Name = "<font color=\"#00A0F4\">Blue", Value = 0},
-                {Name = "<font color=\"#1AA20E\">Green", Value = 1},
-                {Name = "<font color=\"#800B0B\">Dark Red", Value = 2},
-                {Name = "<font color=\"#FF7B00\">Orange", Value = 3},
-                {Name = "<font color=\"#5F5F5F\">Grey", Value = 4},
-                {Name = "<font color=\"#a356fa\">Purple", Value = 5},
-                {Name = "<font color=\"#FF0099\">Pink", Value = 6},
-                {Name = "Black", Value = 7}
-            },
-            PropBone = 58868, -- Right Finger 20
-            PropPlacement = {
-                0.0350,
-                0.0140,
-                0.0290,
-              167.9999,
-              180.0000,
-               -8.8999
-            },
-            onFootFlag = AnimFlag.LOOP,
-            PtfxAsset = "scr_tn_meet",
-            PtfxName = "scr_tn_meet_phone_camera_flash",
-            PtfxPlacement = {
-                -0.015,
-                0.0,
-                0.041,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            },
-            PtfxInfo = Translate('camera'),
-            PtfxWait = 200
-
-        },
-        AdultAnimation = true
     },
     ["selfiesit"] = { -- Emote by WhiskerValeMod. Need to configure camera flash and texture variants
         "mouse@female_sitting_selfie",

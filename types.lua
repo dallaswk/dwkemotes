@@ -28,7 +28,11 @@ EmoteType = {
     EXITS = 'Exits',
     EMOTES = 'Emotes',
     PROP_EMOTES = 'PropEmotes',
-    EMOJI = 'Emojis'
+    EMOJI = 'Emojis',
+    -- No es un tipo de animacion: es una secuencia de ellas. Existe como
+    -- EmoteType para poder guardarla en un slot de keybind, que solo sabe
+    -- distinguir por este campo (client/Keybinds.lua).
+    PLAYLIST = 'Playlist'
 }
 
 EmoteTypeEmoji = {
@@ -40,7 +44,8 @@ EmoteTypeEmoji = {
     ['Exits'] = '🏃‍♂️‍➡️',
     ['Emotes'] = '🎬',
     ['PropEmotes'] = '📦',
-    ['Emojis'] = '🤪'
+    ['Emojis'] = '🤪',
+    ['Playlist'] = '🎞️'
 }
 
 ---@enum PlacementState
@@ -69,6 +74,10 @@ AceCategoryFromEmoteType = {
     [EmoteType.EXPRESSIONS] = EmoteType.EXPRESSIONS,
     [EmoteType.WALKS] = EmoteType.WALKS,
     [EmoteType.EMOJI] = EmoteType.EMOJI,
+    -- Una playlist no tiene permiso propio: el ACE se comprueba paso a paso
+    -- sobre cada animacion. Esta entrada existe para que HasEmotePermission no
+    -- indexe permissions.categories[nil] si alguien le pasa el tipo.
+    [EmoteType.PLAYLIST] = EmoteType.EMOTES,
 }
 
 
@@ -113,7 +122,6 @@ AceCategoryFromEmoteType = {
 ---@field PropBone? integer
 ---@field PropPlacement? number[]
 ---@field PropNoCollision? boolean
----@field PedHeightOffset? number metros que la ped se despega del suelo al reproducir
 ---@field StartDelay? integer
 ---@field SecondProp? string
 ---@field SecondPropBone? integer
@@ -169,6 +177,9 @@ AceCategoryFromEmoteType = {
 ---@field AnimalEmote? boolean
 ---@field AdultAnimation? boolean
 ---@field abusable? boolean true if the emote or walk style has abuse potential such as letting a player change their movement speed, or move through a wall.
+---@field HideFromMenu? boolean la emote existe y se puede lanzar (/e, tecla, playlist,
+--- otro recurso), pero no aparece en el menu ni en su buscador. Para props de un MLO o
+--- de un negocio, que solo tienen sentido dentro y llenarian la rejilla para todos.
 ---@field emoteType EmoteType
 
 ---@class SharedEmoteData : EmoteData

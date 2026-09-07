@@ -27,18 +27,6 @@ CustomDP.Emotes = {
         "Gun Face",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
-    ["nova_sitbourbonsolo"] = {
-        "t4x4k@sitbourbonsolo",
-        "t4x4k_clip",
-        "Sit Bourbon Solo",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["nova_sitburbonsolof"] = {
-        "t4x4k@sitburbonsolof",
-        "t4x4k_clip",
-        "Sit Bourbon Solo F",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
 }
 
 RegisterAddonEmotes(CustomDP)

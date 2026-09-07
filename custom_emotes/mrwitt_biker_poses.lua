@@ -39,12 +39,6 @@ CustomDP.Emotes = {
         "Biker Relaxing Break",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
-    ["mrwittbikersanchez"] = {
-        "mrwitt@sanchez_reparaturmagie",
-        "mrwitt",
-        "Biker Sanchez Repair",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
     ["mrwittbikergaze"] = {
         "mrwitt@seductive_biker_gaze",
         "mrwitt",

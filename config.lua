@@ -28,6 +28,10 @@ Config = {
     GroupEmoteDefaultArea = 5.0,
     GroupEmoteMaxArea = 10.0,
     GroupEmoteCountdownTime = 10, -- Time in seconds to wait before starting group emote
+    -- Color del circulo que marca el area al montar algo en grupo. Es el teal de
+    -- ResetRP (#019685), el mismo acento que usa el menu; antes era blanco puro.
+    -- {rojo, verde, azul, opacidad}, cada uno de 0 a 255.
+    GroupEmoteMarkerColor = { 1, 150, 133, 200 },
 
     -- Realism/Anti-Exploit
     EmoteCooldownMs = nil, -- Emote Cooldown in milliseconds. Prevents switching emotes too quickly. If nil, no cooldown is enforced
@@ -186,6 +190,19 @@ Config = {
     -- Clave replicada que usan otros recursos para leer los props del jugador.
     StateBagKey = 'dwkemotes:props',
     LegacyStateBagKey = 'rpemotes:props', -- Espejo para compatibilidad. nil para desactivarlo.
+
+    -- ── Playlists (categoria "Playlist") ──
+    -- Secuencias de animaciones que se reproducen una tras otra. Cada paso dura
+    -- lo que diga su entrada: casi todas las animaciones del catalogo son poses
+    -- en bucle que no terminan solas, asi que el temporizador es la unica senal
+    -- de avance posible.
+    PlaylistsEnabled = true,
+    PlaylistDefaultDuration = 5000, -- ms que dura un paso recien anadido
+    PlaylistMinDuration = 500,      -- Suelo y techo de lo que se puede teclear en el editor.
+    PlaylistMaxDuration = 60000,    -- El servidor revalida estos mismos limites.
+    MaxPlaylists = 20,              -- Playlists por jugador
+    MaxPlaylistItems = 64,          -- Pasos por playlist
+    PlaylistGroupEnabled = true,    -- Permitir lanzarlas en grupo (/gemote y menu contextual)
 
     -- ── Historial de uso (categorias "Recientes" y "Mas usados") ──
     RecentsEnabled = true,

@@ -463,6 +463,12 @@ function RouteEmoteToFunction(emoteName, emoteType, textureVariation)
         ShowEmoji(emoteName)
         return
     end
+    if emoteType == EmoteType.PLAYLIST then
+        -- Tiene que ir antes del final: ahi abajo cualquier tipo desconocido se
+        -- trata como nombre de animacion suelta, y el id de una playlist no lo es.
+        PlaylistStart(emoteName)
+        return
+    end
     EmoteCommandStart({ emoteName, textureVariation or 1 })
 end
 

@@ -100,6 +100,10 @@ const Settings = {
                 App.applySettings();   // el pie gana o pierde el atajo de Enter
             }),
             this._hint(Store.t('confirmplayhint')),
+            this._toggleRow(Store.t('closeonplay'), s.closeOnPlay, (value) => {
+                Store.setSetting('closeOnPlay', value);
+            }),
+            this._hint(Store.t('closeonplayhint')),
         ];
 
         // "Caminar con la animacion" no es un ajuste de la interfaz: el estado

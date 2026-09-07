@@ -27,6 +27,48 @@ local function createGroupEmoteRequest(reqid, emote, radius, source)
     }
 end
 
+--- El payload de una peticion de grupo es un nombre de animacion (lo de siempre)
+--- o la tabla de una playlist. Se sanea aqui porque llega de la red: sin esto un
+--- cliente podria mandar mil pasos y el servidor los repartiria a todo el mundo.
+---@param emote any
+---@return string|table|nil
+local function sanitizeGroupPayload(emote)
+    if type(emote) == "string" then
+        return #emote > 0 and #emote <= 64 and emote or nil
+    end
+
+    if type(emote) ~= "table" or not emote.playlist then return nil end
+    if type(emote.items) ~= "table" then return nil end
+
+    local maxItems = Config.MaxPlaylistItems or 64
+    local minMs = Config.PlaylistMinDuration or 500
+    local maxMs = Config.PlaylistMaxDuration or 60000
+
+    local items = {}
+    for _, item in ipairs(emote.items) do
+        if type(item) ~= "table" then return nil end
+        if type(item.name) ~= "string" or #item.name == 0 or #item.name > 64 then return nil end
+
+        local ms = tonumber(item.duration) or minMs
+        if ms < minMs then ms = minMs end
+        if ms > maxMs then ms = maxMs end
+
+        items[#items + 1] = {
+            name = item.name,
+            emoteType = type(item.emoteType) == "string" and item.emoteType or nil,
+            duration = math.floor(ms),
+        }
+
+        if #items > maxItems then return nil end
+    end
+
+    if #items == 0 then return nil end
+
+    local label = type(emote.label) == "string" and string.sub(emote.label, 1, 40) or "playlist"
+
+    return { playlist = true, label = label, loop = emote.loop == true, items = items }
+end
+
 RegisterNetEvent("dwkemotes:server:startGroupEmote", function(emote, players, radius)
     local source = source
     -- We will send the list of players from the client.
@@ -35,6 +77,10 @@ RegisterNetEvent("dwkemotes:server:startGroupEmote", function(emote, players, ra
 
     if not Player(source).state.canEmote then return end
     if type(players) ~= "table" or #players == 0 then return end
+
+    emote = sanitizeGroupPayload(emote)
+    if not emote then return end
+    if type(emote) == "table" and not Config.PlaylistGroupEnabled then return end
 
     local radius = radius
     if not tonumber(radius) or radius > Config.GroupEmoteMaxArea or radius < 1 then

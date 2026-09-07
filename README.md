@@ -21,6 +21,7 @@ mantiene sin cambios: más de 1.000 emotes, bailes, formas de caminar, estados d
 | Búsqueda | `includes()` sin orden | Puntuación por relevancia con resaltado |
 | Columnas | 2 fijas | 1 a 4, a elección del jugador |
 | Historial | — | Categorías **Recientes** y **Más usadas** |
+| Secuencias | — | Categoría **Playlist**: varias animaciones encadenadas |
 | Personalización | — | Panel de ajustes en el propio menú |
 | Posición del panel | Se perdía al recargar | Se recuerda |
 | Perfil | Atado al navegador | Exportable e importable como JSON |
@@ -350,6 +351,7 @@ dwkemotes/
 │   ├── EmoteMenu.lua          Puente Lua ↔ NUI, payload y callbacks
 │   ├── Migrate.lua            Importación de datos de rpemotes        [nuevo]
 │   ├── Usage.lua              Historial de uso                        [nuevo]
+│   ├── Playlist.lua           Secuencias de animaciones               [nuevo]
 │   ├── OffsetEditor.lua       Editor de SyncOffset en vivo            [nuevo]
 │   ├── Syncing.lua            Animaciones compartidas
 │   └── …
@@ -366,6 +368,7 @@ dwkemotes/
 │       ├── store.js           Estado, ajustes, favoritos, listas
 │       ├── grid.js            Rejilla virtualizada
 │       ├── settings.js        Panel de ajustes                        [nuevo]
+│       ├── playlist.js        Editor de playlists                     [nuevo]
 │       ├── search.js
 │       ├── smoothScroll.js
 │       ├── nui.js

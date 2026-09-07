@@ -9,16 +9,6 @@ if not ENABLED then return end
 local CustomDP = {}
 
 CustomDP.Emotes = {
-    ["nova_skatercap"] = {
-        "skatergirl_cap@francis",
-        "skatergirl_cap_clip",
-        "Skater Girl Cap",
-        AnimationOptions = {
-            EmoteLoop = true,
-            EmoteMoving = false,
-            PedHeightOffset = 1.05,
-        },
-    },
     ["nova_standduo1a"] = {
         "stand_duo1a@cosmo",
         "stand_duo1a_clip",
@@ -41,12 +31,6 @@ CustomDP.Emotes = {
         "male_posing@cosmo",
         "male_posing_clip",
         "Male Posing",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
-    ["nova_selfie007"] = {
-        "selfiepose_007@cosmo",
-        "selfiepose_007_clip",
-        "Selfie Pose 007",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
 }

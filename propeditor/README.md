@@ -34,27 +34,6 @@ En pantalla:
 | Guardar | `Enter`, o el botón |
 | Salir | `Retroceso`, o el botón |
 
-### Levantar a la ped del suelo (`Q`/`E`)
-
-A veces el prop está bien colocado y lo que no encaja es la altura de la propia
-ped: una pose pensada para estar sentada, o para apoyarse en algo que en este
-sitio está más alto. `Q` y `E` la despegan del suelo, y a diferencia de todo lo
-demás del editor **eso no es un offset del prop**: se guarda en la emote como
-`AnimationOptions.PedHeightOffset`, en metros.
-
-Al reproducir la emote, `client/Emote.lua` añade el flag `2048` (override de
-física, el mismo que usa `Placement.lua` para posar sobre mobiliario) y sube a la
-ped esos metros. Sin ese flag la ped cae al suelo en cuanto arranca la animación.
-
-Dentro del editor la emote ya está corriendo y se lanzó **sin** ese flag, así que
-el editor sostiene a la ped a esa altura frame a frame mientras lo tienes
-abierto. Al cerrar la devuelve al suelo, se haya guardado o no: si se guardó, la
-altura aparece la próxima vez que lances la emote, que es cuando se puede poner
-el flag.
-
-El tope es `limitPedHeight` en `propeditor/config.lua` (1,5 m). Una emote sin
-props pero con altura es un override válido y se guarda igual.
-
 ### Por qué mover el prop era tan raro antes
 
 `AttachEntityToEntity` no coloca el prop en coordenadas del mundo: el offset va en

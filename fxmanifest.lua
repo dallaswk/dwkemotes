@@ -59,6 +59,9 @@ client_scripts {
     'client/Binoculars.lua',
     'client/Crouch.lua',
     'client/Emote.lua',
+    -- Playlist.lua envuelve EmoteCancel(), definida en Emote.lua: tiene que ir
+    -- despues o se quedaria con un nil.
+    'client/Playlist.lua',
     'client/GroupEmote.lua',
     'client/EmoteMenu.lua',
     'client/PropsCheck.lua',

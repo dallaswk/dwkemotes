@@ -27,6 +27,8 @@ const Store = {
     // ── Estado local ──
     favorites: {},
     customLists: {},
+    /** Las mantiene Lua (KVP); aqui solo viven en memoria para pintarlas. */
+    playlists: [],
     settings: {},
     currentCategory: null,
     searchTerm: '',
@@ -44,11 +46,13 @@ const Store = {
     EMOJIS: '__emojis__',
     CUSTOM_PREFIX: '__custom_',
     MAX_CUSTOM_LISTS: 10,
+    PLAYLISTS: '__playlists__',
 
     _LS: 'dwkemotes:',
     _LEGACY_LS: 'rpemotes:',
     _GTA_CODE_RE: /~[a-zA-Z]~/g,
     _labelMap: {},
+    _variantMap: {},
     _searchIndex: [],
 
     // Version del formato de ajustes. Se sube cuando un valor por defecto
@@ -67,6 +71,9 @@ const Store = {
         previewDelay: 500,
         animations: true,
         confirmPlay: true,
+        // Cerrar el menu al lanzar una animacion. Desactivado por defecto: es el
+        // comportamiento que tenia el menu antes de que esto fuese elegible.
+        closeOnPlay: false,
         showRecents: true,
         showMostUsed: true,
         // Barra lateral de solo iconos. Cada uno lleva su tooltip y su
@@ -96,6 +103,7 @@ const Store = {
         this.emojis = data.emojis || [];
         this.recents = data.recents || [];
         this.mostUsed = data.mostUsed || [];
+        this.playlists = data.playlists || [];
         this.config = data.config || {};
         this.translations = data.translations || {};
         // `searchTerm` NO se reinicia: la busqueda sobrevive a cerrar y volver a
@@ -130,6 +138,7 @@ const Store = {
         if (data.recents) this.recents = data.recents;
         if (data.mostUsed) this.mostUsed = data.mostUsed;
         if (data.keybinds) this.keybinds = data.keybinds;
+        if (data.playlists) this.playlists = data.playlists;
     },
 
     _applyServerDefaults(ui) {
@@ -257,7 +266,7 @@ const Store = {
         // una version anterior, y applySettings lo reinyectaria en linea dejando
         // el menu pintado de un color que el CSS ya no contempla.
         s.accent = this.DEFAULT_SETTINGS.accent;
-        for (const flag of ['animations', 'confirmPlay', 'showRecents', 'showMostUsed', 'showLabels']) {
+        for (const flag of ['animations', 'confirmPlay', 'closeOnPlay', 'showRecents', 'showMostUsed', 'showLabels']) {
             s[flag] = !!s[flag];
         }
         return s;
@@ -284,9 +293,17 @@ const Store = {
 
     _buildLabelMap() {
         this._labelMap = {};
+        this._variantMap = {};
         for (const emotes of Object.values(this.categories)) {
             for (const e of emotes) {
                 this._labelMap[e.emoteType + '_' + e.name] = e.label || e.name;
+                // Las variantes de textura solo viajan en el payload de las
+                // categorias de Lua. Favoritos, recientes y listas guardan
+                // unicamente name/label/emoteType, asi que hay que reponerlas
+                // desde aqui o esas tarjetas se quedan sin selector de color.
+                if (e.propVariations) {
+                    this._variantMap[e.emoteType + '_' + e.name] = e.propVariations;
+                }
             }
         }
         for (const w of this.walks) this._labelMap['Walks_' + w.name] = w.label || w.name;
@@ -331,6 +348,9 @@ const Store = {
         if (this.settings.showRecents && this.recents.length > 0) order.push(this.RECENTS);
         if (this.settings.showMostUsed && this.mostUsed.length > 0) order.push(this.MOST_USED);
 
+        // La playlist va con las listas del jugador, no con las del catalogo:
+        // su contenido lo pone el, no el servidor.
+        if (this.config.playlistsEnabled) order.push(this.PLAYLISTS);
         for (const id of Object.keys(this.customLists)) order.push(id);
         for (const name of Object.keys(this.categories)) order.push(name);
 
@@ -374,6 +394,7 @@ const Store = {
             case this.WALKS:       return this.t('walkingstyles');
             case this.EXPRESSIONS: return this.t('moods');
             case this.EMOJIS:      return this.t('emojis');
+            case this.PLAYLISTS:   return this.t('playlists');
             default:               return this._strip(cat);
         }
     },
@@ -388,6 +409,7 @@ const Store = {
             case this.WALKS:       return 'walk';
             case this.EXPRESSIONS: return 'masks';
             case this.EMOJIS:      return 'smile';
+            case this.PLAYLISTS:   return 'music';
         }
 
         const t = this.translations;
@@ -439,6 +461,7 @@ const Store = {
         if (cat === this.WALKS) return this.walks.length;
         if (cat === this.EXPRESSIONS) return this.expressions.length;
         if (cat === this.EMOJIS) return this.emojis.length;
+        if (cat === this.PLAYLISTS) return this.playlists.length;
         if (this.categories[cat]) return this.categories[cat].length;
         return 0;
     },
@@ -509,6 +532,20 @@ const Store = {
             });
         }
 
+        if (cat === this.PLAYLISTS) {
+            // Estas tarjetas no son animaciones: no pasan por _enrich (que
+            // resolveria un label del catalogo que no existe) ni por permisos.
+            return this.playlists.map(pl => ({
+                name: pl.id,
+                label: pl.name,
+                emoteType: 'Playlist',
+                hasPermission: true,
+                _isPlaylist: true,
+                _playlist: pl,
+                _badge: String((pl.items || []).length),
+            }));
+        }
+
         if (this.isCustomList(cat)) {
             const list = this.customLists[cat];
             return list ? Object.values(list.emotes).map(e => this._enrich(e)) : [];
@@ -523,6 +560,10 @@ const Store = {
                 _isKeybind: true,
                 _slot: kb.slot,
                 _isEmpty: !kb.emoteName,
+                // Un slot puede apuntar a una playlist: sin esta marca la
+                // tarjeta intentaria lanzarla como si fuese una animacion
+                // suelta y no encontraria nada en el catalogo.
+                _isPlaylist: kb.emoteType === 'Playlist',
             }));
         }
 
@@ -569,11 +610,15 @@ const Store = {
      */
     _enrich(item) {
         const e = { ...item };
-        const live = this._labelMap[e.emoteType + '_' + e.name];
+        const key = e.emoteType + '_' + e.name;
+        const live = this._labelMap[key];
         if (live) {
             e.label = live;
         } else {
             e.hasPermission = false;
+        }
+        if (!e.propVariations && this._variantMap[key]) {
+            e.propVariations = this._variantMap[key];
         }
         switch (e.emoteType) {
             case 'Walks':
@@ -663,6 +708,42 @@ const Store = {
     },
 
     // ─────────────────────────────────────────────────────────────────────────
+    // Playlists
+    //
+    // A diferencia de las listas personalizadas, estas no se guardan aqui: la
+    // fuente de verdad es el KVP del cliente, en Lua, porque una playlist tiene
+    // que poder lanzarse con el menu cerrado. Este objeto solo mantiene la copia
+    // que llego en el payload y la refresca con lo que devuelve cada callback.
+    // ─────────────────────────────────────────────────────────────────────────
+
+    getPlaylist(id) {
+        return this.playlists.find(pl => pl.id === id) || null;
+    },
+
+    /** Refresca la copia local con la lista que devuelve Lua tras cada cambio. */
+    setPlaylists(list) {
+        this.playlists = Array.isArray(list) ? list : [];
+        this._buildCategoryOrder();
+        if (this.currentCategory === this.PLAYLISTS) this._updateFilteredItems();
+    },
+
+    /** Si una animacion se puede encadenar. Debe coincidir con IsPlaylistable (Lua). */
+    isPlaylistable(item) {
+        if (!item || item._isPlaylist) return false;
+        return ['Emotes', 'Dances', 'PropEmotes', 'AnimalEmotes'].includes(item.emoteType);
+    },
+
+    /** Paso nuevo a partir de una tarjeta del menu. */
+    newPlaylistItem(item) {
+        return {
+            name: item.name,
+            emoteType: item.emoteType,
+            label: item.label || item.name,
+            duration: this.config.playlistDefaultDuration || 5000,
+        };
+    },
+
+    // ─────────────────────────────────────────────────────────────────────────
     // Perfil exportable
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -673,6 +754,7 @@ const Store = {
             _version: 1,
             favorites: this.favorites,
             customLists: this.customLists,
+            playlists: this.playlists,
             settings: this.settings,
         }, null, 2);
     },
@@ -703,6 +785,16 @@ const Store = {
         if (data.settings && typeof data.settings === 'object') {
             this.settings = this._sanitizeSettings({ ...this.DEFAULT_SETTINGS, ...data.settings });
             this.saveSettings();
+        }
+        // Las playlists las guarda Lua, asi que la importacion tiene que bajar
+        // hasta alli; la copia local se refresca con lo que responda.
+        if (Array.isArray(data.playlists)) {
+            NUI.replacePlaylists(data.playlists).then(resp => {
+                if (resp && resp.playlists) {
+                    this.setPlaylists(resp.playlists);
+                    if (typeof App !== 'undefined') App.refreshCurrentView();
+                }
+            });
         }
 
         this._buildCategoryOrder();

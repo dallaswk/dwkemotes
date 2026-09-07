@@ -19,12 +19,6 @@ CustomDP.Emotes = {
         "Valentine Rosehead",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
-    ["drxval_holdrose"] = {
-        "drx@valentine_f_holdrose",
-        "drx",
-        "Valentine Hold Rose",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
 }
 
 CustomDP.Shared = {

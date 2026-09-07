@@ -15,12 +15,6 @@ CustomDP.Emotes = {
         "FFP Lean",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
-    ["ffp_selfie1st"] = {
-        "anim@female_selfie_1st_01",
-        "f_selfie_1st_01_clip",
-        "FFP 1st Person Selfie",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
     ["ffp_model1"] = {
         "anim@female_model_01",
         "f_model_01_clip",
@@ -42,25 +36,6 @@ CustomDP.Emotes = {
 }
 
 CustomDP.PropEmotes = {
-    ["ffp_smoke"] = {
-        "anim@female_smoke_01",
-        "f_smoke_01_clip",
-        "FFP Smoke",
-        AnimationOptions = {
-            EmoteLoop = true,
-            EmoteMoving = false,
-            Prop = 'p_cs_joint_01',
-            PropBone = 28422,
-            PropPlacement = {
-                0.090,
-                0.014,
-                -0.014,
-                0.00,
-                172.00,
-                0.00
-            },
-        },
-    },
 }
 
 RegisterAddonEmotes(CustomDP)

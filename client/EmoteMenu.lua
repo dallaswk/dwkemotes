@@ -383,6 +383,10 @@ local function buildEmoteItems(emoteDataSource, emoteType, filterTypes)
             if not found then goto continue end
         end
 
+        if data.HideFromMenu then
+            goto continue
+        end
+
         -- Check config flags
         if data.emoteType == EmoteType.ANIMAL_EMOTES and not Config.AnimalEmotesEnabled then
             goto continue
@@ -428,6 +432,12 @@ local function buildCategories()
         for _, emoteInfo in ipairs(emoteList) do
             local data = getEmoteData(emoteInfo.name, emoteInfo.emoteType)
             if data then
+                -- Emotes que existen pero no se listan: se siguen pudiendo lanzar
+                -- con /e, con una tecla o desde otro recurso, pero no ocupan sitio
+                -- en la rejilla. Ver HideFromMenu en types.lua.
+                if data.HideFromMenu then
+                    goto continue
+                end
                 -- Check config flags
                 if data.emoteType == EmoteType.ANIMAL_EMOTES and not Config.AnimalEmotesEnabled then
                     goto continue
@@ -461,7 +471,7 @@ local function buildCategories()
     for emoteName, data in pairs(EmoteData) do
         local isRegularEmote = data.emoteType == EmoteType.EMOTES
         local isAnimalEmote = Config.AnimalEmotesEnabled and data.emoteType == EmoteType.ANIMAL_EMOTES
-        if isRegularEmote or isAnimalEmote then
+        if (isRegularEmote or isAnimalEmote) and not data.HideFromMenu then
             if not CachedPlayerModel or IsModelCompatible(CachedPlayerModel, emoteName) then
                 local item = {
                     name = emoteName,
@@ -577,6 +587,13 @@ local function getRelevantConfig()
         walkingStylesEnabled = Config.WalkingStylesEnabled,
         emojiMenuEnabled = shouldShowEmojiMenu(),
         recentsEnabled = Config.RecentsEnabled ~= false,
+        playlistsEnabled = Config.PlaylistsEnabled ~= false,
+        playlistGroupEnabled = Config.PlaylistGroupEnabled ~= false,
+        playlistDefaultDuration = Config.PlaylistDefaultDuration or 5000,
+        playlistMinDuration = Config.PlaylistMinDuration or 500,
+        playlistMaxDuration = Config.PlaylistMaxDuration or 60000,
+        maxPlaylists = Config.MaxPlaylists or 20,
+        maxPlaylistItems = Config.MaxPlaylistItems or 64,
         ui = Config.UI or {},
     }
 end
@@ -599,7 +616,7 @@ local function getTranslations()
     local keys = {
         'emotes', 'danceemotes', 'animalemotes', 'propemotes', 'shareemotes',
         'cancelemote', 'walkingstyles', 'moods', 'favorites', 'keybinds', 'emojis',
-        'searchemotes', 'searchnoresult', 'normalreset', 'resetdef',
+        'searchemotes', 'searchnoresult', 'searchmenudesc', 'normalreset', 'resetdef',
         'btn_select', 'btn_back', 'btn_place', 'btn_play',
         'btn_set_favorite', 'btn_remove_favorite', 'btn_setkeybind', 'btn_delkeybind',
         'btn_groupselect', 'cancelemoteinfo', 'favoritesinfo',
@@ -619,7 +636,13 @@ local function getTranslations()
         'hint_category', 'hint_favorite', 'hint_rightclick', 'hint_more',
         'hint_cancel', 'hint_place',
         'walklock', 'walklockhint',
-        'confirmplay', 'confirmplayhint', 'hint_play',
+        'confirmplay', 'confirmplayhint', 'hint_play', 'closeonplay', 'closeonplayhint',
+        'playlists', 'playlistsinfo', 'newplaylist', 'editplaylist', 'deleteplaylist',
+        'createplaylist', 'saveplaylist', 'playlistname', 'maxplaylists',
+        'emptyplaylist', 'emptyplaylists', 'addedtoplaylist', 'playlistloop',
+        'playlistloophint', 'playliststep', 'playlistseconds', 'playlistduplicate',
+        'playlistremove', 'playlistdrag', 'playliststeps', 'addtoplaylist',
+        'playlistnotplayable', 'maxplaylistitems', 'playlistsaved', 'playlistgroup',
     }
     local t = {}
     for _, key in ipairs(keys) do
@@ -670,6 +693,7 @@ local function buildMenuPayload()
         emojis = buildEmojiData(),
         recents = GetRecentEmotes and GetRecentEmotes() or {},
         mostUsed = GetMostUsedEmotes and GetMostUsedEmotes() or {},
+        playlists = (Config.PlaylistsEnabled and GetPlaylists) and GetPlaylists() or {},
         config = getRelevantConfig(),
         translations = getTranslations(),
     }
@@ -782,6 +806,10 @@ function OpenEmoteMenu()
         cachedPayload.emojis = buildEmojiData()
         cachedPayload.recents = GetRecentEmotes and GetRecentEmotes() or {}
         cachedPayload.mostUsed = GetMostUsedEmotes and GetMostUsedEmotes() or {}
+        -- Las playlists se editan con el menu abierto y desde el propio menu,
+        -- pero tambien las puede cambiar una importacion de perfil: se refrescan
+        -- aqui porque `categories` se queda cacheado y estas no.
+        cachedPayload.playlists = (Config.PlaylistsEnabled and GetPlaylists) and GetPlaylists() or {}
         cachedPayload.config = getRelevantConfig()
         local status = buildActiveStatus()
         for k, v in pairs(status) do cachedPayload[k] = v end
@@ -879,6 +907,10 @@ RegisterNUICallback('playSharedEmote', function(data, cb)
 end)
 
 RegisterNUICallback('groupEmote', function(data, cb)
+    -- Aqui el menu se cierra siempre, al margen de "cerrar al reproducir": lo
+    -- siguiente es elegir el area sobre el mundo, y con la rejilla delante no se
+    -- ve el marcador.
+    CloseNUIMenu()
     OnGroupEmoteRequest(data.name)
     cb({})
 end)
@@ -1052,6 +1084,62 @@ RegisterNUICallback('refreshUsage', function(_, cb)
         cachedPayload.mostUsed = mostUsed
     end
     SendNUIMessage({ action = "updateUsage", recents = recents, mostUsed = mostUsed })
+    cb({})
+end)
+
+-- ─── Playlists ───
+-- El editor vive en la NUI, pero las playlists se guardan aqui: tienen que poder
+-- lanzarse con el menu cerrado (una tecla, /playlist, una peticion de grupo).
+
+RegisterNUICallback('playPlaylist', function(data, cb)
+    -- El menu no se cierra aqui: eso lo decide el ajuste "cerrar al reproducir"
+    -- del jugador, y quien lo mira es la interfaz.
+    if Config.PlaylistsEnabled then
+        PlaylistStart(data.id)
+    end
+    cb({})
+end)
+
+RegisterNUICallback('savePlaylist', function(data, cb)
+    if not Config.PlaylistsEnabled then return cb({ ok = false }) end
+
+    local saved, reason = SavePlaylist(data)
+    if not saved then
+        return cb({ ok = false, reason = reason })
+    end
+
+    local all = GetPlaylists()
+    if cachedPayload then cachedPayload.playlists = all end
+
+    cb({ ok = true, id = saved.id, playlists = all })
+end)
+
+RegisterNUICallback('deletePlaylist', function(data, cb)
+    if not Config.PlaylistsEnabled then return cb({ ok = false }) end
+
+    DeletePlaylist(data.id)
+
+    local all = GetPlaylists()
+    if cachedPayload then cachedPayload.playlists = all end
+
+    cb({ ok = true, playlists = all })
+end)
+
+RegisterNUICallback('replacePlaylists', function(data, cb)
+    if not Config.PlaylistsEnabled then return cb({ ok = false }) end
+
+    local all = ReplacePlaylists(data.playlists)
+    if cachedPayload then cachedPayload.playlists = all end
+
+    cb({ ok = true, playlists = all })
+end)
+
+RegisterNUICallback('groupPlaylist', function(data, cb)
+    if Config.PlaylistsEnabled and Config.PlaylistGroupEnabled then
+        -- Misma excepcion que groupEmote: hay que ver el mundo para marcar el area.
+        CloseNUIMenu()
+        OnGroupPlaylistRequest(data.id)
+    end
     cb({})
 end)
 

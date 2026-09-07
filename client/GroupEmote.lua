@@ -4,6 +4,14 @@ local groupEmoteOriginCoords = vector3(0)
 local groupEmoteOriginRadius = Config.GroupEmoteDefaultArea
 local groupEmoteEndTime = nil
 
+-- Color del circulo del area. Se resuelve una vez y no en cada fotograma: el
+-- marcador se dibuja dentro del bucle de seleccion.
+local markerColor = Config.GroupEmoteMarkerColor or { 1, 150, 133, 200 }
+local markerR = markerColor[1] or 1
+local markerG = markerColor[2] or 150
+local markerB = markerColor[3] or 133
+local markerA = markerColor[4] or 200
+
 RegisterCommand('gemote', function(source, args, raw)
     if not LocalPlayer.state.canEmote then return end
     if IsPedInAnyVehicle(PlayerPedId(), true) then
@@ -47,7 +55,7 @@ local function setGroupArea(emotename, initialRadius)
         DisableControlAction(0, 264, true) -- Melee Attack 2
 
         SimpleHelpText(Translate("groupemoteradiushelp", emotename))
-        DrawMarker(1, coords.x, coords.y, coords.z-1, 0.0,0.0,0.0,0.0,0.0,0.0,returnRadius*2,returnRadius*2,0.5, 255,255,255,200, false, false, 2, false, nil,nil,false)
+        DrawMarker(1, coords.x, coords.y, coords.z-1, 0.0,0.0,0.0,0.0,0.0,0.0,returnRadius*2,returnRadius*2,0.5, markerR,markerG,markerB,markerA, false, false, 2, false, nil,nil,false)
 
         if IsDisabledControlJustPressed(0, 14) and returnRadius > 1 then
             returnRadius = returnRadius - 1
@@ -70,36 +78,93 @@ local function setGroupArea(emotename, initialRadius)
     return returnRadius
 end
 
-function OnGroupEmoteRequest(emotename)
+--- El nombre que se ensena en las notificaciones. `payload` es un nombre de
+--- animacion (lo de siempre) o la tabla de una playlist.
+---@param payload string|table
+---@return string
+local function payloadLabel(payload)
+    if type(payload) == 'table' then return payload.label or 'playlist' end
+
+    local emote = EmoteData[payload]
+    return emote and emote.label or payload
+end
+
+--- Parte comun de lanzar algo en grupo: elegir el area, reunir a quien esta
+--- dentro y mandarlo al servidor. Lo unico que cambia entre una animacion suelta
+--- y una playlist es el payload que viaja.
+---@param payload string|table
+---@return boolean
+local function startGroupRequest(payload)
     if groupEmoteReqId then
         SimpleNotify(Translate("cannotstartgroupemote"))
+        return false
+    end
+
+    local label = payloadLabel(payload)
+
+    local emoteRadius = setGroupArea(label, Config.GroupEmoteDefaultArea)
+    if emoteRadius < 0 then return false end
+
+    local players = {}
+    local originCoords = GetEntityCoords(PlayerPedId())
+    for _, src in pairs(GetActivePlayers()) do
+        local crds = GetEntityCoords(GetPlayerPed(src))
+        if #(originCoords - crds) <= emoteRadius then
+            players[#players + 1] = GetPlayerServerId(tonumber(src))
+        end
+    end
+
+    if #players == 0 then
+        SimpleNotify(Translate('nobodyclose'))
+        return false
+    end
+
+    TriggerServerEvent("dwkemotes:server:startGroupEmote", payload, players, emoteRadius)
+    SimpleNotify(Translate("requestedgroupemote", label, #players))
+
+    return true
+end
+
+function OnGroupEmoteRequest(emotename)
+    local emote = EmoteData[emotename]
+
+    -- Las compartidas no valen: necesitan pareja y su propio handshake. Viven en
+    -- SharedEmoteData, asi que ni siquiera aparecen en EmoteData.
+    if emote == nil or emote.emoteType == EmoteType.SHARED then
+        SimpleNotify(Translate("notvalidgroupemote"))
         return
     end
 
-    local emoteRadius = setGroupArea(emotename, Config.GroupEmoteDefaultArea)
-    if emoteRadius < 0 then return end
+    startGroupRequest(emotename)
+end
 
-    local emote = EmoteData[emotename]
-    if emote ~= nil and emote.type ~= EmoteType.SHARED then
-        local players = {}
-        local originCoords = GetEntityCoords(PlayerPedId())
-        for _,src in pairs(GetActivePlayers()) do
-            local crds = GetEntityCoords(GetPlayerPed(src))
-            if #(originCoords - crds) <= emoteRadius then
-                players[#players+1] = GetPlayerServerId(tonumber(src))
-            end
-        end
-        if #players > 0 then
-        else
-            SimpleNotify(Translate('nobodyclose'))
-            return
-        end
+--- Lanza una playlist en grupo. Viaja la secuencia entera, no el id: los demas
+--- no tienen por que tener guardada la playlist de quien la lanza.
+---@param id string
+function OnGroupPlaylistRequest(id)
+    if not (Config.PlaylistsEnabled and Config.PlaylistGroupEnabled) then return end
 
-        TriggerServerEvent("dwkemotes:server:startGroupEmote", emotename, players, emoteRadius)
-        SimpleNotify(Translate("requestedgroupemote", emote.label, #players))
-    else
+    local list = GetPlaylist and GetPlaylist(id)
+    if not list or #list.items == 0 then
         SimpleNotify(Translate("notvalidgroupemote"))
+        return
     end
+
+    local items = {}
+    for _, item in ipairs(list.items) do
+        items[#items + 1] = {
+            name = item.name,
+            emoteType = item.emoteType,
+            duration = item.duration,
+        }
+    end
+
+    startGroupRequest({
+        playlist = true,
+        label = list.name,
+        loop = list.loop == true,
+        items = items,
+    })
 end
 
 -- Start countdown timer thread
@@ -148,9 +213,8 @@ RegisterNetEvent("dwkemotes:client:requestGroupEmote", function(emotename, reqid
 
     local isRequestAnim = true
 
-    local emote = EmoteData[emotename]
     PlaySound(-1, "NAV", "HUD_AMMO_SHOP_SOUNDSET", false, 0, true)
-    SimpleNotify(Translate('doyouwanna') .. emote.label .. "~w~)")
+    SimpleNotify(Translate('doyouwanna') .. payloadLabel(emotename) .. "~w~)")
     -- The player has Config.GroupEmoteCountdownTime seconds to accept the request
     groupEmoteEndTime = GetGameTimer() + (Config.GroupEmoteCountdownTime * 1000)
     local timer = Config.GroupEmoteCountdownTime * 1000
@@ -173,7 +237,7 @@ RegisterNetEvent("dwkemotes:client:requestGroupEmote", function(emotename, reqid
                     groupEmoteAccepted = true
                     groupEmoteOriginCoords = zone.coords
                     groupEmoteOriginRadius = zone.radius
-                    SimpleNotify(Translate("acceptedgroupemote", emote.label))
+                    SimpleNotify(Translate("acceptedgroupemote", payloadLabel(emotename)))
                     startCountdownTimer()
                     TriggerServerEvent("dwkemotes:server:confirmGroupEmote", reqid)
                     TriggerEvent("dwkemotes:client:autoCancel")
@@ -207,10 +271,18 @@ RegisterNetEvent("dwkemotes:client:requestGroupEmote", function(emotename, reqid
     end
 end)
 
-RegisterNetEvent("dwkemotes:client:doGroupEmote", function(emotename)
+RegisterNetEvent("dwkemotes:client:doGroupEmote", function(payload)
     -- Clear group emote state
     groupEmoteReqId = nil
     groupEmoteAccepted = false
     groupEmoteEndTime = nil
-    OnEmotePlay(emotename, nil)
+
+    -- Una playlist llega como tabla con la secuencia entera dentro; lo demas
+    -- sigue siendo un nombre de animacion suelto.
+    if type(payload) == 'table' and payload.playlist then
+        PlaylistStartFromData(payload.items, payload.loop)
+        return
+    end
+
+    OnEmotePlay(payload, nil)
 end)

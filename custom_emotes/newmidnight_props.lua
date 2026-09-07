@@ -13,6 +13,10 @@
 --      un modelo del mapa da problemas. De aqui solo salen sus archetypes.
 --      => Los peluches necesitan que `newmidnight` este arrancado.
 --
+--  Las catorce van con HideFromMenu: existen y se lanzan con /e, con una tecla,
+--  desde una playlist o desde otro recurso, pero no se listan en el menu. Son props
+--  del MLO y fuera de el no pintan nada; en la rejilla solo estorbarian a todos.
+--
 --  Los trece .ytyp estan declarados como DLC_ITYP_REQUEST en el fxmanifest.
 --  Sin esa declaracion el archetype no se registra y el prop no aparece, ademas
 --  SIN aviso ninguno en la consola del cliente.
@@ -35,6 +39,7 @@ Midnight.PropEmotes = {}
 local function peluche(index, model, label)
     Midnight.PropEmotes[('dwk_peluche%d'):format(index)] = {
         "impexp_int-0", "mp_m_waremech_01_dual-0", label,
+        HideFromMenu = true,
         AnimationOptions = {
             EmoteLoop = true,
             EmoteMoving = true,
@@ -60,6 +65,7 @@ peluche(4, 'dwk_peluche_04', 'Peluche 4 (Midnight)')
 local function bebida(name, model, label)
     Midnight.PropEmotes[name] = {
         "mp_player_intdrink", "loop_bottle", label,
+        HideFromMenu = true,
         AnimationOptions = {
             EmoteLoop = true,
             EmoteMoving = true,
@@ -87,6 +93,7 @@ bebida('dwk_shaker',     'mne_shaker',    'Shaker (Midnight)')
 -- mano a la boca. La segunda es la de las patatas fritas, mas inclinada.
 Midnight.PropEmotes['dwk_pops'] = {
     "amb@world_human_drinking@coffee@male@idle_a", "idle_c", "Palomitas (Midnight)",
+    HideFromMenu = true,
     AnimationOptions = {
         EmoteLoop = true,
         EmoteMoving = true,
@@ -105,6 +112,7 @@ Midnight.PropEmotes['dwk_pops'] = {
 -- persona. Se corrige aqui; si de verdad querias la _fp, es cambiar la palabra.
 Midnight.PropEmotes['dwk_pops2'] = {
     "mp_player_inteat@burger", "mp_player_int_eat_burger", "Palomitas 2 (Midnight)",
+    HideFromMenu = true,
     AnimationOptions = {
         EmoteLoop = true,
         EmoteMoving = true,

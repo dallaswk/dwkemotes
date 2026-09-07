@@ -45,4 +45,12 @@ const NUI = {
     searchBlur()                                     { return this.callback('searchBlur'); },
     clearUsage()                                     { return this.callback('clearUsage'); },
     refreshUsage()                                   { return this.callback('refreshUsage'); },
+
+    // Playlists. Se guardan del lado Lua (KVP) porque tienen que poder lanzarse
+    // con el menu cerrado; aqui solo se editan.
+    playPlaylist(id)                                 { return this.callback('playPlaylist', { id }); },
+    savePlaylist(playlist)                           { return this.callback('savePlaylist', playlist); },
+    deletePlaylist(id)                               { return this.callback('deletePlaylist', { id }); },
+    replacePlaylists(playlists)                      { return this.callback('replacePlaylists', { playlists }); },
+    groupPlaylist(id)                                { return this.callback('groupPlaylist', { id }); },
 };

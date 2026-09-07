@@ -27,12 +27,6 @@ CustomDP.Emotes = {
         "FP68 Model 219",
         AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
     },
-    ["sp68_selfie151"] = {
-        "smo@female_selfie_151",
-        "f_selfie_151_clip",
-        "FP68 Selfie 151",
-        AnimationOptions = { EmoteLoop = true, EmoteMoving = false },
-    },
 }
 
 CustomDP.PropEmotes = {

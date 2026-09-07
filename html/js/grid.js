@@ -238,6 +238,8 @@ const Grid = {
             text.textContent = `${Store.t('searchnoresult')} "${Store.searchTerm}"`;
         } else if (Store.isCustomList(Store.currentCategory)) {
             text.textContent = Store.t('emptylist');
+        } else if (Store.currentCategory === Store.PLAYLISTS) {
+            text.textContent = Store.t('emptyplaylists');
         } else if (Store.currentCategory === Store.FAVORITES) {
             text.textContent = Store.t('emptyfavorites');
         } else if (Store.currentCategory === Store.RECENTS || Store.currentCategory === Store.MOST_USED) {
@@ -335,6 +337,14 @@ const Grid = {
             const variant = document.createElement('span');
             variant.className = 'card-variant';
             variant.textContent = item.propVariations.length + 'v';
+            variant.title = Store.t('variant');
+            // El badge es el selector de color. Antes lo abria un clic en
+            // cualquier parte de la tarjeta, y como eso se comia la
+            // reproduccion la emote parecia no responder.
+            variant.onclick = (e) => {
+                e.stopPropagation();
+                this._showVariants(card, item);
+            };
             card.appendChild(variant);
         }
 
@@ -343,13 +353,9 @@ const Grid = {
 
         card.onclick = (e) => {
             if (item.hasPermission === false) return;
-            if (hasVariants && !e.shiftKey) {
-                this._showVariants(card, item);
-                return;
-            }
             if (!this._readyToActivate(item, index, e)) return;
             // El doble clic es una decision tomada: lanza y sale del menu.
-            this._activate(item, e, { close: e.detail >= 2 });
+            this._activate(item, e);
         };
 
         card.oncontextmenu = (e) => {
@@ -399,7 +405,7 @@ const Grid = {
         card.onclick = (e) => {
             if (item._isEmpty) return;
             if (!this._readyToActivate(item, index, e)) return;
-            this._activate(item, e, { close: e.detail >= 2 });
+            this._activate(item, e);
         };
         card.oncontextmenu = (e) => {
             e.preventDefault();
@@ -416,6 +422,7 @@ const Grid = {
             case 'Walks':        return 'walk';
             case 'Expressions':  return 'masks';
             case 'Emojis':       return 'smile';
+            case 'Playlist':     return 'music';
             default:             return 'play';
         }
     },
@@ -424,7 +431,52 @@ const Grid = {
         if (item._isKeybind || item._isEmoji) return null;
         if (item._isWalk) return '/walk ' + item.name.toLowerCase();
         if (item._isExpression) return '/mood ' + item.name.toLowerCase();
+        // Una playlist se lanza por nombre, no por id: es lo que el jugador
+        // teclearia.
+        if (item._isPlaylist) return '/playlist ' + (item.label || '');
         return '/e ' + item.name;
+    },
+
+    /**
+     * Entradas de playlist del menu contextual. Sobre una tarjeta de playlist
+     * son las acciones de la propia lista; sobre una animacion, el submenu para
+     * anadirla al final de una playlist (siempre al final: asi salen las
+     * repetidas, que es justo lo que se quiere para una coreografia).
+     */
+    _appendPlaylistEntries(menu, item) {
+        if (!Store.config.playlistsEnabled) return;
+
+        if (item._isPlaylist) {
+            menu.appendChild(this._ctxDivider());
+
+            const edit = this._ctxItem('sliders', Store.t('editplaylist'));
+            edit.onclick = () => {
+                this._closeContextMenu();
+                PlaylistEditor.open(item.name);
+            };
+            menu.appendChild(edit);
+            return;
+        }
+
+        if (!Store.isPlaylistable(item)) return;
+
+        menu.appendChild(this._ctxDivider());
+
+        for (const pl of Store.playlists) {
+            const entry = this._ctxItem('music', pl.name, pl.color);
+            entry.onclick = () => {
+                PlaylistEditor.addToPlaylist(pl.id, item);
+                this._closeContextMenu();
+            };
+            menu.appendChild(entry);
+        }
+
+        const newPlaylist = this._ctxItem('plus', Store.t('newplaylist'));
+        newPlaylist.onclick = () => {
+            this._closeContextMenu();
+            PlaylistEditor.open(null, item);
+        };
+        menu.appendChild(newPlaylist);
     },
 
     // ─── Acciones ───
@@ -470,21 +522,30 @@ const Grid = {
     /**
      * Lanza lo que sea el elemento: animacion, forma de caminar, animo o emoji.
      *
+     * Que el menu se cierre despues lo decide el jugador con el ajuste "cerrar
+     * al reproducir", y nada mas: ni el doble clic ni el tipo de elemento hacen
+     * excepciones. La unica que hay son las animaciones en grupo, que cierran
+     * siempre porque despues hay que elegir el area sobre el mundo.
+     *
+     * Cerrar el menu no corta la animacion: en Lua solo se quita el foco y se
+     * retira el ped de vista previa.
+     *
      * @param {object} item
      * @param {MouseEvent?} e evento que lo origino, o null si vino del teclado
-     * @param {{close?: boolean}} [opts] `close` cierra el menu despues de
-     *   lanzarlo, para los gestos que ya son una decision tomada (doble clic y
-     *   "Reproducir" del menu contextual). Cerrar el menu no corta la
-     *   animacion: en Lua solo se quita el foco y se retira el ped de vista
-     *   previa.
      */
-    _activate(item, e, opts) {
+    _activate(item, e) {
         this.stopPreview();
+
+        if (item._isPlaylist) {
+            NUI.playPlaylist(item.name);
+            if (Store.settings.closeOnPlay) NUI.closeMenu();
+            return;
+        }
 
         // La colocacion se queda con el control de la interfaz por su cuenta,
         // asi que aqui no se cierra nada.
         if (e && e.shiftKey && Store.config.placementEnabled
-            && !item._isWalk && !item._isExpression && !item._isEmoji) {
+            && !item._isWalk && !item._isExpression && !item._isEmoji && !item._isPlaylist) {
             NUI.placeEmote(item.name);
             return;
         }
@@ -504,7 +565,7 @@ const Grid = {
             this._scheduleUsageRefresh();
         }
 
-        if (opts && opts.close) NUI.closeMenu();
+        if (Store.settings.closeOnPlay) NUI.closeMenu();
     },
 
     /**
@@ -552,7 +613,8 @@ const Grid = {
 
         const delay = Store.settings.previewDelay;
         if (!delay || delay <= 0) return;
-        if (item._isWalk || item._isEmoji || item._isKeybind || item.hasPermission === false) return;
+        if (item._isWalk || item._isEmoji || item._isKeybind || item._isPlaylist
+            || item.hasPermission === false) return;
         if (!Store.isOpen || Date.now() < this._previewSuppressedUntil) return;
 
         const key = item.emoteType + ':' + item.name;
@@ -653,6 +715,9 @@ const Grid = {
             } else {
                 NUI.playEmote(item.name, item.emoteType, Number(value));
             }
+
+            this._scheduleUsageRefresh();
+            if (Store.settings.closeOnPlay) NUI.closeMenu();
         };
 
         cardEl.appendChild(dropdown);
@@ -730,7 +795,8 @@ const Grid = {
 
         const item = Store.filteredItems[this._selectedIndex];
         const delay = Store.settings.previewDelay;
-        if (!delay || !item || item._isKeybind || item._isWalk || item._isEmoji || item.hasPermission === false) return;
+        if (!delay || !item || item._isKeybind || item._isWalk || item._isEmoji || item._isPlaylist
+            || item.hasPermission === false) return;
 
         const key = item.emoteType + ':' + item.name;
         if (this._activePreviewKey === key) return;
@@ -794,34 +860,38 @@ const Grid = {
             const playEntry = this._ctxItem('play', Store.t('btn_play'));
             playEntry.onclick = () => {
                 this._closeContextMenu();
-                this._activate(item, null, { close: true });
+                this._activate(item, null);
             };
             menu.appendChild(playEntry);
             menu.appendChild(this._ctxDivider());
         }
 
-        // Favorito
-        const isFav = Store.isFavorite(item.name, item.emoteType);
-        const favEntry = this._ctxItem(
-            isFav ? 'star' : 'starOutline',
-            isFav ? Store.t('btn_remove_favorite') : Store.t('btn_set_favorite'),
-            isFav ? 'var(--accent)' : null
-        );
-        favEntry.onclick = () => {
-            const nowFav = Store.toggleFavorite(emoteId, emoteData);
-            card.classList.toggle('favorited', nowFav);
-            Toast.show(
-                Store.t(nowFav ? 'addedtofavorites' : 'removedfromfavorites').replace('%s', emoteData.label),
-                nowFav ? 'success' : 'info'
+        // Favorito. Una playlist no entra: favoritos indexa por emoteType_name
+        // contra el catalogo, y una playlist no esta ahi.
+        if (!item._isPlaylist) {
+            const isFav = Store.isFavorite(item.name, item.emoteType);
+            const favEntry = this._ctxItem(
+                isFav ? 'star' : 'starOutline',
+                isFav ? Store.t('btn_remove_favorite') : Store.t('btn_set_favorite'),
+                isFav ? 'var(--accent)' : null
             );
-            if (Store.currentCategory === Store.FAVORITES) App.refreshCurrentView();
-            this._closeContextMenu();
-        };
-        menu.appendChild(favEntry);
+            favEntry.onclick = () => {
+                const nowFav = Store.toggleFavorite(emoteId, emoteData);
+                card.classList.toggle('favorited', nowFav);
+                Toast.show(
+                    Store.t(nowFav ? 'addedtofavorites' : 'removedfromfavorites').replace('%s', emoteData.label),
+                    nowFav ? 'success' : 'info'
+                );
+                if (Store.currentCategory === Store.FAVORITES) App.refreshCurrentView();
+                this._closeContextMenu();
+            };
+            menu.appendChild(favEntry);
+        }
 
         // Colocar en el mundo
         const placeable = Store.config.placementEnabled
-            && !item._isWalk && !item._isExpression && !item._isEmoji && !item._isKeybind;
+            && !item._isWalk && !item._isExpression && !item._isEmoji && !item._isKeybind
+            && !item._isPlaylist;
         if (placeable) {
             const placeEntry = this._ctxItem('pin', Store.t('btn_place'));
             placeEntry.onclick = () => {
@@ -834,13 +904,21 @@ const Grid = {
 
         // Emote de grupo
         const groupable = !item._isWalk && !item._isExpression && !item._isEmoji && !item._isKeybind
-            && item.emoteType !== 'Shared';
+            && item.emoteType !== 'Shared'
+            && (!item._isPlaylist || Store.config.playlistGroupEnabled);
         if (groupable) {
-            const groupEntry = this._ctxItem('users', Store.t('btn_groupselect'));
+            const groupEntry = this._ctxItem(
+                'users',
+                item._isPlaylist ? Store.t('playlistgroup') : Store.t('btn_groupselect')
+            );
             groupEntry.onclick = () => {
                 this._closeContextMenu();
                 this.stopPreview();
-                NUI.groupEmote(item.name);
+                if (item._isPlaylist) {
+                    NUI.groupPlaylist(item.name);
+                } else {
+                    NUI.groupEmote(item.name);
+                }
             };
             menu.appendChild(groupEntry);
         }
@@ -868,7 +946,7 @@ const Grid = {
         }
 
         // Listas personalizadas
-        const listIds = Object.keys(Store.customLists);
+        const listIds = item._isPlaylist ? [] : Object.keys(Store.customLists);
         if (listIds.length > 0) {
             menu.appendChild(this._ctxDivider());
             for (const listId of listIds) {
@@ -889,13 +967,17 @@ const Grid = {
             }
         }
 
-        menu.appendChild(this._ctxDivider());
-        const newList = this._ctxItem('plus', Store.t('newlist'));
-        newList.onclick = () => {
-            this._closeContextMenu();
-            App.showListModal(null, item);
-        };
-        menu.appendChild(newList);
+        if (!item._isPlaylist) {
+            menu.appendChild(this._ctxDivider());
+            const newList = this._ctxItem('plus', Store.t('newlist'));
+            newList.onclick = () => {
+                this._closeContextMenu();
+                App.showListModal(null, item);
+            };
+            menu.appendChild(newList);
+        }
+
+        this._appendPlaylistEntries(menu, item);
 
         const panelEl = document.getElementById('emote-menu');
         panelEl.appendChild(menu);

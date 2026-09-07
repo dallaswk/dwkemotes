@@ -47,7 +47,6 @@ local function snapshot(opts)
         SecondPropBone = opts.SecondPropBone,
         SecondPropPlacement = opts.SecondPropPlacement,
         SecondPropNoCollision = opts.SecondPropNoCollision,
-        PedHeightOffset = opts.PedHeightOffset,
     }
 end
 
@@ -87,16 +86,12 @@ local function applyOverride(name, data)
             o.Prop, o.PropBone, o.PropPlacement, o.PropNoCollision
         opts.SecondProp, opts.SecondPropBone, opts.SecondPropPlacement, opts.SecondPropNoCollision =
             o.SecondProp, o.SecondPropBone, o.SecondPropPlacement, o.SecondPropNoCollision
-        opts.PedHeightOffset = o.PedHeightOffset
         return true
     end
 
     opts.Prop, opts.PropBone, opts.PropPlacement, opts.PropNoCollision = slotToOptions(data.slot1)
     opts.SecondProp, opts.SecondPropBone, opts.SecondPropPlacement, opts.SecondPropNoCollision =
         slotToOptions(data.slot2)
-
-    local height = tonumber(data.pedHeight) or 0.0
-    opts.PedHeightOffset = height ~= 0.0 and height or nil
 
     return true
 end
@@ -626,24 +621,6 @@ local function closeEditor(silent)
     SetNuiFocusKeepInput(false)
     SendNUIMessage({ action = 'propeditor:close' })
 
-    -- La ped vuelve al suelo siempre, se haya guardado o no: si se guardo, la
-    -- altura la aplica Emote.lua la proxima vez que se lance la emote, que es
-    -- cuando puede poner el flag de fisica que hace falta para sostenerla.
-    if session.pedHeight and session.pedHeight ~= 0.0 then
-        local ped = PlayerPedId()
-        local coords = GetEntityCoords(ped)
-        SetEntityCoordsNoOffset(ped, coords.x, coords.y, session.pedBaseZ, false, false, false)
-    end
-
-    if session.frozePed and DoesEntityExist(session.ped) then
-        FreezeEntityPosition(session.ped, false)
-    end
-
-    -- La vigilancia vuelve al final: mientras se descongela y se baja al ped la
-    -- animacion aun da tumbos, y reactivarla antes cancelaria la emote justo al
-    -- cerrar el editor.
-    SetAnimationWatchSuspended(false)
-
     -- Los props reales se rehacen desde AnimationOptions, que ya lleva lo
     -- guardado (o lo de siempre, si se salio sin guardar).
     local emoteName = session.emote
@@ -678,7 +655,7 @@ local function normalizedSlots()
         end
     end
 
-    return { slot1 = out[1], slot2 = out[2], pedHeight = round3(session.pedHeight or 0.0) }
+    return { slot1 = out[1], slot2 = out[2] }
 end
 
 function SavePropEditorSession()
@@ -692,9 +669,6 @@ local function startEditor(emoteName)
     if not emote then
         return SimpleNotify(('La emote %s no existe'):format(emoteName), 'error')
     end
-
-    -- La altura que la emote ya trae puesta: la aplica Emote.lua al lanzarla.
-    local pedHeightNow = tonumber(emote.AnimationOptions and emote.AnimationOptions.PedHeightOffset) or 0.0
 
     editing = true
     session = {
@@ -712,32 +686,8 @@ local function startEditor(emoteName)
         dirty = false,
         bones = {},
         basis = {},
-        -- Altura de la ped. La ped no anda mientras el editor esta abierto, asi
-        -- que pedBaseZ sirve de referencia fija durante toda la sesion.
-        pedHeight = pedHeightNow,
-        -- El suelo del que se parte. Si la emote ya venia con altura, Emote.lua
-        -- la subio al lanzarla, asi que hay que descontarla de la Z actual o el
-        -- editor la sumaria por segunda vez.
-        pedBaseZ = GetEntityCoords(PlayerPedId()).z - pedHeightNow,
-        -- Ultima altura ya aplicada al ped. Recolocarlo en cada frame corta la
-        -- reproduccion de la animacion sin descanso: es lo que dejaba al ped en
-        -- T-pose dentro del editor. Solo se toca cuando el valor cambia.
-        pedHeightApplied = pedHeightNow,
     }
     session.bones = usableBones()
-
-    -- Recolocar el ped corta la reproduccion durante unos frames y la vigilancia
-    -- de Emote.lua lee eso como "la animacion ha terminado", asi que cancelaba
-    -- la emote nada mas empezar. Mismo trato que en el editor de offsets.
-    SetAnimationWatchSuspended(true)
-
-    -- Y congelado, que sigue admitiendo SetEntityCoords pero ya no lo empuja la
-    -- fisica: sin esto la altura se pierde en cuanto se suelta el ped.
-    if not IsEntityPositionFrozen(session.ped) then
-        FreezeEntityPosition(session.ped, true)
-        session.frozePed = true
-    end
-
     -- Los props reales se quitan: a partir de aqui manda la copia del editor,
     -- que es la unica que se puede recolocar sin reiniciar la emote. Esto
     -- tambien los quita de la pantalla del resto, via state bag.
@@ -793,24 +743,6 @@ local function startEditor(emoteName)
 
             updateCamera()
             sendBonePoints()
-
-            -- La emote que ya esta corriendo se lanzo sin el flag de override de
-            -- fisica, pero el ped esta congelado, asi que basta con recolocarlo
-            -- cuando la altura cambia. Hacerlo en cada frame es justo lo que no
-            -- deja arrancar a la animacion.
-            if session.pedHeight ~= session.pedHeightApplied then
-                local coords = GetEntityCoords(ped)
-                SetEntityCoordsNoOffset(ped, coords.x, coords.y,
-                    session.pedBaseZ + session.pedHeight, false, false, false)
-                session.pedHeightApplied = session.pedHeight
-
-                -- Moverlo puede haber cortado la pose. Se relanza solo si de
-                -- verdad dejo de sonar, para no reiniciarla en cada pulsacion
-                -- mientras se mantiene Q o E.
-                if not IsCurrentAnimationPlaying() then
-                    ReplayCurrentAnimation()
-                end
-            end
 
             local coarse = IsDisabledControlPressed(0, 21)   -- Shift
             local rotating = IsDisabledControlPressed(0, 36) -- Ctrl
@@ -892,24 +824,6 @@ local function startEditor(emoteName)
                 or key(35, 'x', viewRight, 1)        -- D: derecha
                 or key(45, 'z', viewUp, 1)           -- R: subir
                 or key(49, 'z', viewUp, -1)          -- F: bajar
-
-            -- Q / E suben y bajan a la PED, no al prop. Va aparte de todo lo
-            -- anterior a proposito: no es un offset respecto a un hueso, es la
-            -- emote entera despegandose del suelo, y se guarda en la propia
-            -- emote (PedHeightOffset) en vez de en el PropPlacement.
-            local function nudgePed(direction)
-                local limit = CFG.limitPedHeight or 1.5
-                session.pedHeight = clamp(session.pedHeight + direction * step, limit)
-                session.dirty = true
-                moved = true
-            end
-
-            if IsDisabledControlPressed(0, 44) then     -- Q
-                nudgePed(1)
-            elseif IsDisabledControlPressed(0, 46) then -- E
-                nudgePed(-1)
-            end
-
             -- Flechas: orbitar. Es la alternativa de teclado a arrastrar con el
             -- raton sobre el fondo, que es como se usa normalmente.
             if IsDisabledControlPressed(0, 174) then session.camYaw = (session.camYaw - 1.5) % 360 end
